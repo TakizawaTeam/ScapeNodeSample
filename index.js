@@ -3,6 +3,7 @@ const DB = require('./Database');
 (async conf=>{
   const Node = require('./Node.js');
   console.log(Node.name);
+  await Node.one.create({key: "Test3", value: "Test3"});
 
   /*
   await DB.connect(async connection=>{

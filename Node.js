@@ -6,26 +6,26 @@ exports = {
   current: null,
   one: { /* HASHによる直接操作 */
     create: async obj=>{
-      return await DB.connect( connection=>{
-        const Node = DB.get_collection(`${APP.name}/nodes`);
+      return await DB.connect(async connection=>{
+        const Node = await DB.get_collection(`${APP.name}/nodes`);
         return Node.insertOne(obj);
       });
     },
     read: async _hash=>{
-      return await DB.connect( connection=>{
-        const Node = DB.get_collection(`${APP.name}/nodes`);
+      return await DB.connect(async connection=>{
+        const Node = await DB.get_collection(`${APP.name}/nodes`);
         return Node.findOne({hash: _hash});
       });
     },
     update: async (hash, obj)=>{
-      return await DB.connect( connection=>{
-        const Node = DB.get_collection(`${APP.name}/nodes`);
+      return await DB.connect(async connection=>{
+        const Node = await DB.get_collection(`${APP.name}/nodes`);
         return Node.updateOne({hash: _hash}, obj);
       });
     },
     delete: async _hash=>{
-      return await DB.connect( connection=>{
-        const Node = DB.get_collection(`${APP.name}/nodes`);
+      return await DB.connect(async connection=>{
+        const Node = await DB.get_collection(`${APP.name}/nodes`);
         return Node.deleteOne({hash: _hash});
       });
     },
