@@ -1,0 +1,11 @@
+<script>
+var server = new WebSocket("ws:localhost:2222/");
+server.onmessage = function(e) { console.log(e.data); }
+
+var exec_server = new WebSocket("ws:localhost:2222/exec");
+exec_server.onmessage = function(e) { console.log(e.data); }
+
+var eval_server = new WebSocket("ws:localhost:2222/eval");
+eval_server.onmessage = function(e) { console.log(e.data); }
+//ws.onopen = function(conn){ console.log("open websocket!"); }
+</script>
