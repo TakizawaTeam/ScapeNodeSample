@@ -55,7 +55,7 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   }else if(req.url == "/eval"){
     get_result = async function(m){
       const result = await eval_func(m);
-      return result;//JSON.stringify({result: result});
+      return result;
     };
   }else{}
 

@@ -1,0 +1,40 @@
+<a href="https://www.pinterest.jp/pin/370491506847213715/?nic=1a&sender=860539578707256912">参考画像</a>
+
+<hr>
+
+<style>
+#main{
+
+}
+.object{
+
+}
+</style>
+<script>
+const TEST_NUM = 30;
+const BASE_GRID_SIZE = 10;
+const getRandomChar = ()=>String.fromCharCode(65+parseInt(Math.random()*(25+1)));
+const createGridDom = ()=>{
+  const dom = document.createElement("div");
+  dom.setAttribute("class", "object");
+  dom.style.left = "-10px";
+  dom.style.top = "-10px";
+  dom.style.width = "10px";
+  dom.style.height = "10px";
+  document.body.appendChild(dom);
+};
+const createObject = ()=>{
+  return {
+    code: `${getRandomChar()}${getRandomChar()}`,
+    size: parseInt(Math.random()*(25+1),
+    dom: createGridDom(),
+  };
+};
+
+let objects = [];
+for(let i=0;i<TEST_NUM;i++){
+  objects.push(createObject());
+}
+</script>
+
+<div id="main"></div>
