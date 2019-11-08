@@ -3,38 +3,57 @@
 <hr>
 
 <style>
+body{
+  margin: 0px;
+  height: 100%;
+}
 #main{
-
+  width: 100%;
+  height: 100%;
 }
 .object{
-
+  position: relative;
 }
 </style>
 <script>
-const TEST_NUM = 30;
-const BASE_GRID_SIZE = 10;
-const getRandomChar = ()=>String.fromCharCode(65+parseInt(Math.random()*(25+1)));
-const createGridDom = ()=>{
-  const dom = document.createElement("div");
-  dom.setAttribute("class", "object");
-  dom.style.left = "-10px";
-  dom.style.top = "-10px";
-  dom.style.width = "10px";
-  dom.style.height = "10px";
-  document.body.appendChild(dom);
-};
-const createObject = ()=>{
-  return {
-    code: `${getRandomChar()}${getRandomChar()}`,
-    size: parseInt(Math.random()*(25+1),
-    dom: createGridDom(),
-  };
-};
+const getRandom = (max, min=0)=>min + parseInt(Math.random()*((max-min)+1));
+const getRandomAlphabet = ()=>String.fromCharCode(getRandom(90, 65));
 
-let objects = [];
-for(let i=0;i<TEST_NUM;i++){
-  objects.push(createObject());
+function _onload(){
+  const main = document.querySelector("#main");
+
+  const TEST_NUM = 30;
+  const BASE_GRID_SIZE = 10;
+  const createGridDom = status=>{
+    const dom = document.createElement("div");
+    dom.setAttribute("class", "object");
+    dom.style.left = `${getRandom(300)}px`;
+    dom.style.top = `${getRandom(300)}px`;
+    dom.style.width = `${status["size"]*10}px`;
+    dom.style.height = `${status["size"]*10}px`;
+    dom.innerText = status["name"];
+    //dom.style.backgroundColor = `rgba(${getRandom(255)}, ${getRandom(255)}, ${getRandom(255)}, 255)`;
+    main.appendChild(dom);
+    return dom;
+  };
+  const createObject = ()=>{
+    const status = {
+      code: `${getRandomAlphabet()}${getRandomAlphabet()}`,
+      size: getRandom(10),
+    }
+    return {
+      code: status["code"],
+      size: status["size"],
+      dom: createGridDom(status),
+    };
+  };
+
+  let objects = [];
+  for(let i=0;i<TEST_NUM;i++) objects.push(createObject());
+
+
 }
+window.onload = _onload;
 </script>
 
 <div id="main"></div>
