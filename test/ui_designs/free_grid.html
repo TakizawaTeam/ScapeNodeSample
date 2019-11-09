@@ -25,23 +25,34 @@ function _onload(){
   const TEST_NUM = 30;
   const BASE_GRID_SIZE = 10;
   const createGridDom = status=>{
+    const colors = {
+      r: getRandom(255),
+      g: getRandom(255),
+      b: getRandom(255),
+    };
     const dom = document.createElement("div");
     dom.setAttribute("class", "object");
-    dom.style.left = `${getRandom(300)}px`;
-    dom.style.top = `${getRandom(300)}px`;
+    dom.style.left = `${getRandom(30)*10}px`;
+    dom.style.top = `${getRandom(30)*10}px`;
     dom.style.width = `${status["size"]*10}px`;
     dom.style.height = `${status["size"]*10}px`;
-    dom.innerText = status["name"];
-    //dom.style.backgroundColor = `rgba(${getRandom(255)}, ${getRandom(255)}, ${getRandom(255)}, 255)`;
+    dom.style.fontSize = `${status["size"]*10}px`;
+    dom.style.color = colors.r+colors.g+colors.b < (765/2) ? 'white' : 'black';
+    dom.innerText = status["num"];
+    dom.style.backgroundColor = `rgba(${colors.r}, ${colors.g}, ${colors.b}, 255)`;
     main.appendChild(dom);
     return dom;
   };
+  let object_number = 1;
   const createObject = ()=>{
     const status = {
+      num: object_number++,
       code: `${getRandomAlphabet()}${getRandomAlphabet()}`,
       size: getRandom(10),
     }
     return {
+      number: status["num"],
+      table: {x: -999, y:-999},
       code: status["code"],
       size: status["size"],
       dom: createGridDom(status),
@@ -50,8 +61,11 @@ function _onload(){
 
   let objects = [];
   for(let i=0;i<TEST_NUM;i++) objects.push(createObject());
+  console.log(objects);
 
+  objects.forEach(obj=>{
 
+  });
 }
 window.onload = _onload;
 </script>
