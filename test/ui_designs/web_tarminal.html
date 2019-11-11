@@ -1,0 +1,19 @@
+<style>
+.tarminal{
+  background-color: black;
+  color: white;
+}
+</style>
+<script>
+_onload = function(e){
+  const tarminal_dom = document.querySelector(".tarminal");
+  tarminal_dom.addEventListener('keydown',function(e){
+    //if(event.keyCode==66) event.preventDefault();
+  });
+};
+window.onload = _onload;
+</script>
+
+
+<hr>
+<textarea class="tarminal"></textarea>
