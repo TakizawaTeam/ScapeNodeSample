@@ -6,14 +6,45 @@
 </style>
 <script>
 _onload = function(e){
+  const KEY_NAME = {
+    ENTER: 13,
+    BACKSPACE: 8,
+    ARROW_LEFT: 37,
+    ARROW_UP: 38,
+    ARROW_RIGHT: 39,
+    ARROW_DOWN: 40,
+  };
   const tarminal_dom = document.querySelector(".tarminal");
-  tarminal_dom.addEventListener('keydown',function(e){
-    //if(event.keyCode==66) event.preventDefault();
+  let commit_cursor = null;
+  tarminal_dom.addEventListener('keydown',function(event){
+    const _input = event.keyCode;
+    const _current = tarminal_dom.selectionStart;
+    const isBefore = (diff=0)=>(_current+diff)<commit_cursor;
+    const setCursor = v=>tarminal_dom.setSelectionRange(v, v);
+
+    if(_input==KEY_NAME["ENTER"]){
+      commit_cursor = _current;
+    }else if(_input==KEY_NAME["BACKSPACE"]){
+      if(isBefore(1)){
+        setCursor(commit_cursor);
+        return false;
+      }
+    }else if(_input>=KEY_NAME["ARROW_LEFT"] && _input<=KEY_NAME["ARROW_DOWN"]){
+      if(_input==KEY_NAME["UP"] || _input==KEY_NAME["DOWN"]){
+        return false;
+      }else if(_input==KEY_NAME["LEFT"]){
+        if(isBefore(1)) return false;
+      }
+    }
   });
 };
 window.onload = _onload;
 </script>
 
-
+<p style="overflow-y: scroll;">
+1. Enterを押したら、確定カーソル位置を更新してコマンドを送信<br>
+2. 確定カーソル位置以下なら、Backspaceをさせない<br>
+3. 確定カーソル位置以下なら、カーソル移動をさせない<br>
+</p>
 <hr>
 <textarea class="tarminal"></textarea>
