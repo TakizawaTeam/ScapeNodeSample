@@ -21,19 +21,20 @@ _onload = function(e){
     const _current = tarminal_dom.selectionStart;
     const isBefore = (diff=0)=>(_current+diff)<commit_cursor;
     const setCursor = v=>tarminal_dom.setSelectionRange(v, v);
+    const setCancel = ()=>event.preventDefault();
 
     if(_input==KEY_NAME["ENTER"]){
-      commit_cursor = _current;
+      commit_cursor = _current+1;
     }else if(_input==KEY_NAME["BACKSPACE"]){
-      if(isBefore(1)){
+      if(isBefore(-1)){
         setCursor(commit_cursor);
-        return false;
+        setCancel();
       }
     }else if(_input>=KEY_NAME["ARROW_LEFT"] && _input<=KEY_NAME["ARROW_DOWN"]){
       if(_input==KEY_NAME["UP"] || _input==KEY_NAME["DOWN"]){
-        return false;
+        setCancel();
       }else if(_input==KEY_NAME["LEFT"]){
-        if(isBefore(1)) return false;
+        if(isBefore(-1)) setCancel();
       }
     }
   });
