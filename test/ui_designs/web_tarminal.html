@@ -15,6 +15,7 @@ _onload = function(e){
       ARROW_RIGHT: 39,
       ARROW_DOWN: 40,
     };
+    const prefix = ">";
     const setCursor = v=>dom.setSelectionRange(v, v);
     const getCursor = ()=>dom.selectionStart;
     const getCommitCursor = ()=>parseInt(dom.dataset.commit_cursor);
@@ -46,6 +47,13 @@ _onload = function(e){
       const _current = getCursor();
       if(isBefore(_current-1)) setCursor( getCommitCursor() );
     });
+    dom.addEventListener('keyup',function(e){
+      if(e.keyCode==13) dom.value += prefix;
+    });
+
+    (init=>{
+      dom.value += prefix;
+    })();
   };
 
   const _textarea = document.querySelector(".tarminal");
@@ -60,4 +68,8 @@ window.onload = _onload;
 3. 確定カーソル位置以下なら、カーソル移動をさせない<br>
 </p>
 <hr>
-<textarea class="tarminal"></textarea>
+<textarea class="tarminal"></textarea
+<p>
+バグ：
+・コミットされた後に、prefixが追加されている
+</p>
