@@ -61,7 +61,7 @@ _onload = function(e){
       const _current = getCursor();
       if(!getInputFlg()) setCancel(e);
 
-      if(_input==KEY_NAME["ENTER"]){
+      if(_input==KEY_NAME["ENTER"] && dom.value.slice(-1)=="\n"){
         setCommitCursor( _current+1 );
         dom.value += prefix;
         setInputFlg(true);
@@ -91,4 +91,5 @@ window.onload = _onload;
 <p>
 バグ：<br>
 ・コミットされた後に、prefixが追加されている<br>
+・日本語入力で確定した際にも、コミットされてしまう<br>
 </p>
