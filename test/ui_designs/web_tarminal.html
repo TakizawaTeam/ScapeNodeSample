@@ -3,6 +3,10 @@
   background-color: black;
   color: white;
 }
+.test{
+  width: 100%;
+  height: 200px;
+}
 </style>
 <script>
 _onload = function(e){
@@ -22,14 +26,19 @@ _onload = function(e){
     const setCommitCursor = n=>dom.dataset.commit_cursor=n;
     const setCancel = e=>e.preventDefault();
     const isBefore = curr=>curr<getCommitCursor();
+    const toBool = str=>str.toLowerCase() === 'true';
+    const getInputFlg = ()=>toBool(dom.dataset.input_flag);
+    const setInputFlg = f=>dom.dataset.input_flag=f;
 
-    dom.dataset.commit_cursor = 0;
+    dom.dataset.commit_cursor = 0; //確定文字数
+    dom.dataset.input_flag = "true"; //入力可能フラグ
     dom.addEventListener('keydown',function(e){
       const _input = e.keyCode;
       const _current = getCursor();
+      if(!getInputFlg()) setCancel(e);
 
       if(_input==KEY_NAME["ENTER"]){
-        setCommitCursor( _current+1 );
+        setInputFlg(false);
       }else if(_input==KEY_NAME["BACKSPACE"]){
         if(isBefore(_current-1)){
           setCursor( getCommitCursor() );
@@ -43,16 +52,25 @@ _onload = function(e){
         }
       }
     });
-    dom.addEventListener('click',function(e){
+    dom.addEventListener('mousedown',function(e){
       const _current = getCursor();
       if(isBefore(_current-1)) setCursor( getCommitCursor() );
     });
     dom.addEventListener('keyup',function(e){
-      if(e.keyCode==13) dom.value += prefix;
+      const _input = e.keyCode;
+      const _current = getCursor();
+      if(!getInputFlg()) setCancel(e);
+
+      if(_input==KEY_NAME["ENTER"]){
+        setCommitCursor( _current+1 );
+        dom.value += prefix;
+        setInputFlg(true);
+      }
     });
 
-    (init=>{
+    (init=()=>{
       dom.value += prefix;
+      setCommitCursor( getCursor() );
     })();
   };
 
@@ -68,8 +86,9 @@ window.onload = _onload;
 3. 確定カーソル位置以下なら、カーソル移動をさせない<br>
 </p>
 <hr>
-<textarea class="tarminal"></textarea
+<textarea class="tarminal test"></textarea>
+<hr>
 <p>
-バグ：
-・コミットされた後に、prefixが追加されている
+バグ：<br>
+・コミットされた後に、prefixが追加されている<br>
 </p>
