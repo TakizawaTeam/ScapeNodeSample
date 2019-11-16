@@ -81,15 +81,17 @@ window.onload = _onload;
 </script>
 
 <p style="overflow-y: scroll;">
-1. Enterを押したら、確定カーソル位置を更新してコマンドを送信<br>
-2. 確定カーソル位置以下なら、Backspaceをさせない<br>
-3. 確定カーソル位置以下なら、カーソル移動をさせない<br>
+1. Enterを押したら、確定カーソル位置を更新<br>
+2. 確定カーソル位置以下なら入力キャンセル<br>
+3. Backspaceやカーソル移動後、確定カーソル位置以下でも入力キャンセル<br>
 </p>
 <hr>
 <textarea class="tarminal test"></textarea>
 <hr>
 <p>
-バグ：<br>
+v1バグ：<br>
 ・コミットされた後に、prefixが追加されている<br>
 ・日本語入力で確定した際にも、コミットされてしまう<br>
+・ドラッグやコピーができない<br>
+v2バグ：<br>
 </p>
