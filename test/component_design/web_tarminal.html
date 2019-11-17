@@ -41,6 +41,9 @@ _onload = function(e){
       if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
       if(isBefore(_current-1,-1)) setCancel(e);
       if(_input==KEY_CODE["ENTER"]){
+        const line_num = dom.value.lastIndexOf("\n");
+        const command = dom.value.slice(line_num, dom.value.length);
+        dom.dispatchEvent(new CustomEvent("tarminal-commit", {detail:{command: command}});
         if(dom.value.length!=getCursor()) setCursor(dom.value.length);
         setInputFlg(false);
       }
@@ -55,6 +58,9 @@ _onload = function(e){
         dom.value += prefix;
         setInputFlg(true);
       }
+    });
+    dom.addEventListener('tarminal-commit',function(e){
+      console.log(e.detail.command);
     });
 
     (init=()=>{
@@ -83,4 +89,5 @@ v1バグ：<br>
 ・日本語入力で確定した際にも、コミットされてしまう<br>
 ・ドラッグやコピーができない<br>
 v2バグ：<br>
+・確定カーソル位置以下でも、日本語だと入力出来てしまう<br>
 </p>
