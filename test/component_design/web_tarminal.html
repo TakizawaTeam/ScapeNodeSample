@@ -1,0 +1,86 @@
+<style>
+.tarminal{
+  background-color: black;
+  color: white;
+}
+.test{
+  width: 100%;
+  height: 200px;
+}
+</style>
+<script>
+_onload = function(e){
+  const setTerminalUI = dom=>{ // set textarea
+    const KEY_CODE = {
+      ENTER: 13,
+      BACKSPACE: 8,
+      LEFT: 37,
+      UP: 38,
+      RIGHT: 39,
+      DOWN: 40,
+    };
+    const prefix = "$";
+    const setCursor = v=>dom.setSelectionRange(v, v);
+    const getCursor = ()=>dom.selectionStart;
+    const getCommitCursor = ()=>parseInt(dom.dataset.commit_cursor);
+    const setCommitCursor = n=>dom.dataset.commit_cursor=n;
+    const setCancel = e=>e.preventDefault();
+    const isBefore = (curr,diff=0)=>curr<getCommitCursor()+diff;
+    const toBool = str=>str.toLowerCase() === 'true';
+    const getInputFlg = ()=>toBool(dom.dataset.input_flag);
+    const setInputFlg = f=>dom.dataset.input_flag=f;
+
+    dom.dataset.commit_cursor = 0; //確定文字数
+    dom.dataset.input_flag = "true"; //入力可能フラグ
+    dom.addEventListener('keydown',function(e){
+      const _input = e.keyCode;
+      const _current = getCursor();
+
+      if(!getInputFlg()) setCancel(e);
+      if(_input==KEY_CODE["UP"] || _input==KEY_CODE["DOWN"]) setCancel(e);
+      if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
+      if(isBefore(_current-1,-1)) setCancel(e);
+      if(_input==KEY_CODE["ENTER"]){
+        if(dom.value.length!=getCursor()) setCursor(dom.value.length);
+        setInputFlg(false);
+      }
+    });
+    dom.addEventListener('keyup',function(e){
+      const _input = e.keyCode;
+      const _current = getCursor();
+      if(!getInputFlg()) setCancel(e);
+
+      if(_input==KEY_CODE["ENTER"] && dom.value.slice(-1)=="\n"){
+        setCommitCursor( _current+1 );
+        dom.value += prefix;
+        setInputFlg(true);
+      }
+    });
+
+    (init=()=>{
+      dom.value += prefix;
+      setCommitCursor( getCursor() );
+    })();
+  };
+
+  const _textarea = document.querySelector(".tarminal");
+  setTerminalUI(_textarea);
+};
+window.onload = _onload;
+</script>
+
+<p style="overflow-y: scroll;">
+1. Enterを押したら、確定カーソル位置を更新<br>
+2. 確定カーソル位置以下なら入力キャンセル<br>
+3. Backspaceやカーソル移動後、確定カーソル位置以下でも入力キャンセル<br>
+</p>
+<hr>
+<textarea class="tarminal test"></textarea>
+<hr>
+<p>
+v1バグ：<br>
+・コミットされた後に、prefixが追加されている<br>
+・日本語入力で確定した際にも、コミットされてしまう<br>
+・ドラッグやコピーができない<br>
+v2バグ：<br>
+</p>
