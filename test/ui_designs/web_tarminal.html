@@ -11,13 +11,13 @@
 <script>
 _onload = function(e){
   const setTerminalUI = dom=>{ // set textarea
-    const KEY_NAME = {
+    const KEY_CODE = {
       ENTER: 13,
       BACKSPACE: 8,
-      ARROW_LEFT: 37,
-      ARROW_UP: 38,
-      ARROW_RIGHT: 39,
-      ARROW_DOWN: 40,
+      LEFT: 37,
+      UP: 38,
+      RIGHT: 39,
+      DOWN: 40,
     };
     const prefix = ">";
     const setCursor = v=>dom.setSelectionRange(v, v);
@@ -25,7 +25,7 @@ _onload = function(e){
     const getCommitCursor = ()=>parseInt(dom.dataset.commit_cursor);
     const setCommitCursor = n=>dom.dataset.commit_cursor=n;
     const setCancel = e=>e.preventDefault();
-    const isBefore = curr=>curr<getCommitCursor();
+    const isBefore = (curr,diff=0)=>curr<getCommitCursor()+diff;
     const toBool = str=>str.toLowerCase() === 'true';
     const getInputFlg = ()=>toBool(dom.dataset.input_flag);
     const setInputFlg = f=>dom.dataset.input_flag=f;
@@ -35,33 +35,22 @@ _onload = function(e){
     dom.addEventListener('keydown',function(e){
       const _input = e.keyCode;
       const _current = getCursor();
-      if(!getInputFlg()) setCancel(e);
 
-      if(_input==KEY_NAME["ENTER"]){
+      if(!getInputFlg()) setCancel(e);
+      if(_input==KEY_CODE["UP"] || _input==KEY_CODE["DOWN"]) setCancel(e);
+      if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
+      if(isBefore(_current-1,-1)) setCancel(e);
+      if(_input==KEY_CODE["ENTER"]){
+        if(dom.value.length!=getCursor()) setCursor(dom.value.length);
         setInputFlg(false);
-      }else if(_input==KEY_NAME["BACKSPACE"]){
-        if(isBefore(_current-1)){
-          setCursor( getCommitCursor() );
-          setCancel(e);
-        }
-      }else if(_input>=KEY_NAME["ARROW_LEFT"] && _input<=KEY_NAME["ARROW_DOWN"]){
-        if(_input==KEY_NAME["ARROW_UP"] || _input==KEY_NAME["ARROW_DOWN"]){
-          setCancel(e);
-        }else if(_input==KEY_NAME["ARROW_LEFT"]){
-          if(isBefore(_current-1)) setCancel(e);
-        }
       }
-    });
-    dom.addEventListener('mousedown',function(e){
-      const _current = getCursor();
-      if(isBefore(_current-1)) setCursor( getCommitCursor() );
     });
     dom.addEventListener('keyup',function(e){
       const _input = e.keyCode;
       const _current = getCursor();
       if(!getInputFlg()) setCancel(e);
 
-      if(_input==KEY_NAME["ENTER"] && dom.value.slice(-1)=="\n"){
+      if(_input==KEY_CODE["ENTER"] && dom.value.slice(-1)=="\n"){
         setCommitCursor( _current+1 );
         dom.value += prefix;
         setInputFlg(true);
