@@ -29,6 +29,7 @@ _onload = function(e){
     const toBool = str=>str.toLowerCase() === 'true';
     const getInputFlg = ()=>toBool(dom.dataset.input_flag);
     const setInputFlg = f=>dom.dataset.input_flag=f;
+    const dispatchCustomEvent = (dom, name, params)=>dom.dispatchEvent(new CustomEvent(name, {detail:params}));
 
     dom.dataset.commit_cursor = 0; //確定文字数
     dom.dataset.input_flag = "true"; //入力可能フラグ
@@ -41,9 +42,9 @@ _onload = function(e){
       if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
       if(isBefore(_current-1,-1)) setCancel(e);
       if(_input==KEY_CODE["ENTER"]){
-        const line_num = dom.value.lastIndexOf("\n");
-        const command = dom.value.slice(line_num, dom.value.length);
-        dom.dispatchEvent(new CustomEvent("tarminal-commit", {detail:{command: command}});
+        const line_num = dom.value.lastIndexOf("$");
+        const command = dom.value.slice(line_num+1, dom.value.length);
+        dispatchCustomEvent(dom, "tarminal-commit", {command: command});
         if(dom.value.length!=getCursor()) setCursor(dom.value.length);
         setInputFlg(false);
       }
