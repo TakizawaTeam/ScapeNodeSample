@@ -13,7 +13,7 @@
   outline: 0;
 }
 .tarm-url{
-  width:80%;
+  width:calc(80% - 17px);
   outline:0;
   height:17px;
   color:#888;
@@ -26,6 +26,21 @@
   padding:0px;
   outline:0;
   background-color: #FAA;
+  cursor: pointer;
+}
+.tarm-menu{
+  display: inline-block;
+  vertical-align: top;
+  width: 15px;
+  height: 15px;
+  background-color: #000;
+  cursor: move;
+  border: solid 1px #CCC;
+  text-align: center;
+  /*テキスト選択不可*/
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 .ditail{overflow-y: scroll;}
 </style>
@@ -105,8 +120,9 @@ window.onload = _onload;
 <hr>
 
 <div class="tarminal">
-  <div>
-    <input type="text" class="tarm-url"/><!--
+  <div><!--
+    --><div class="tarm-menu">1</div><!--
+    --><input type="text" class="tarm-url"/><!--
     --><input type="button" value="connect!" class="tarm-btn"/>
   </div>
   <textarea class="tarm-win"></textarea>
