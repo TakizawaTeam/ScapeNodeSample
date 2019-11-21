@@ -46,7 +46,9 @@
 </style>
 <script>
 _onload = function(e){
-  const setTerminalUI = dom=>{ // set textarea
+  const setTerminalUI = tarminal=>{ // set textarea
+    const dom = tarminal.querySelector(".tarm-win");
+    const header = tarminal.querySelector(".tarm-header");
     const KEY_CODE = {
       ENTER: 13,
       BACKSPACE: 8,
@@ -99,6 +101,9 @@ _onload = function(e){
     dom.addEventListener('tarminal-commit',function(e){
       console.log(e.detail.command);
     });
+    header.querySelector(".tarm-btn").addEventListener('click',function(e){
+      console.log("click!");
+    });
 
     (init=()=>{
       dom.value += prefix;
@@ -106,8 +111,8 @@ _onload = function(e){
     })();
   };
 
-  const _textarea = document.querySelector(".tarm-win");
-  setTerminalUI(_textarea);
+  const tarminal = document.querySelector(".tarminal");
+  setTerminalUI(tarminal);
 };
 window.onload = _onload;
 </script>
@@ -120,7 +125,7 @@ window.onload = _onload;
 <hr>
 
 <div class="tarminal">
-  <div><!--
+  <div class="tarm-header"><!--
     --><div class="tarm-menu">1</div><!--
     --><input type="text" class="tarm-url"/><!--
     --><input type="button" value="connect!" class="tarm-btn"/>
