@@ -28,6 +28,9 @@
   background-color: #FAA;
   cursor: pointer;
 }
+.tarm-btn.open{
+  background-color: #AFA;
+}
 .tarm-menu{
   display: inline-block;
   vertical-align: top;
@@ -68,6 +71,11 @@ _onload = function(e){
     const getInputFlg = ()=>toBool(dom.dataset.input_flag);
     const setInputFlg = f=>dom.dataset.input_flag=f;
     const dispatchCustomEvent = (dom, name, params)=>dom.dispatchEvent(new CustomEvent(name, {detail:params}));
+    const setCommit = (str=null)=>{
+      if(str) dom.value += str + "\n";
+      setCommitCursor( getCursor()+1 );
+      dom.value += prefix;
+    };
 
     dom.dataset.commit_cursor = 0; //確定文字数
     dom.dataset.input_flag = "true"; //入力可能フラグ
@@ -93,8 +101,7 @@ _onload = function(e){
       if(!getInputFlg()) setCancel(e);
 
       if(_input==KEY_CODE["ENTER"] && dom.value.slice(-1)=="\n"){
-        setCommitCursor( _current+1 );
-        dom.value += prefix;
+        setCommit();
         setInputFlg(true);
       }
     });
@@ -102,16 +109,29 @@ _onload = function(e){
       console.log(e.detail.command);
     });
     header.querySelector(".tarm-btn").addEventListener('click',function(e){
-      console.log("click!");
+      const _url = header.querySelector(".tarm-url").value;
+      if(false){
+        setCommit(`${_url} format error!`);
+      }else{
+        const server = new WebSocket(_url);
+        setCommit(`${_url} connection...`);
+        server.onopen = function(e){
+          setCommit(`${_url} connected!`);
+          header.querySelector(".tarm-btn").classList.add("open");
+          setInputFlg(true);
+        };
+      }
     });
 
     (init=()=>{
       dom.value += prefix;
       setCommitCursor( getCursor() );
+      setInputFlg(false);
     })();
   };
 
   const tarminal = document.querySelector(".tarminal");
+  tarminal.querySelector(".tarm-url").value = "ws://localhost:2222/exec";
   setTerminalUI(tarminal);
 };
 window.onload = _onload;
