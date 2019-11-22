@@ -105,13 +105,15 @@ _onload = function(e){
         setInputFlg(true);
       }
     });
-    dom.addEventListener('tarminal-commit',function(e){
+    dom.addEventListener('tarminal-commit', async function(e){
       console.log(e.detail.command);
+      /*コマンド送信*/
+      //setInputFlg(false);
     });
     header.querySelector(".tarm-btn").addEventListener('click',function(e){
       const _url = header.querySelector(".tarm-url").value;
-      if(false){
-        setCommit(`${_url} format error!`);
+      if(false){ // URL構文のエラー未実装
+        setCommit(`${_url} invalid url format!`);
       }else{
         const server = new WebSocket(_url);
         setCommit(`${_url} connection...`);
@@ -119,6 +121,10 @@ _onload = function(e){
           setCommit(`${_url} connected!`);
           header.querySelector(".tarm-btn").classList.add("open");
           setInputFlg(true);
+        };
+        server.onmessage = function(e){
+          console.log(e.data);
+          /*結果受け取り*/
         };
       }
     });
