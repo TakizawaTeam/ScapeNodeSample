@@ -11,6 +11,7 @@
   height: 100%;
   border: none;
   outline: 0;
+  border-left: solid 5px #000;
 }
 .tarm-url{
   width:calc(80% - 17px);
@@ -67,18 +68,22 @@ _onload = function(e){
     const setCommitCursor = n=>dom.dataset.commit_cursor=n;
     const setCancel = e=>e.preventDefault();
     const isBefore = (curr,diff=0)=>curr<getCommitCursor()+diff;
-    const toBool = str=>str.toLowerCase() === 'true';
-    const getInputFlg = ()=>toBool(dom.dataset.input_flag);
+    const isString = str=>typeof str==="string";
+    const stringToBool = str=>isString(str)? str.toLowerCase()==='true' : console.error("stringToBool：文字列ではありません");
+    const getInputFlg = ()=>stringToBool(dom.dataset.input_flag);
     const setInputFlg = f=>dom.dataset.input_flag=f;
     const dispatchCustomEvent = (dom, name, params)=>dom.dispatchEvent(new CustomEvent(name, {detail:params}));
-    const setCommit = (str=null)=>{
-      if(str) dom.value += str + "\n";
+    const setCommit = (str=null, warp=true)=>{
+      if(str) dom.value += str + (warp? "\n" : "");
       setCommitCursor( getCursor()+1 );
       dom.value += prefix;
     };
+    const setCommitFlg = ()=>stringToBool(dom.dataset.commit_flag);
+    const getCommitFlg = f=>dom.dataset.commit_flag=f;
 
     dom.dataset.commit_cursor = 0; //確定文字数
     dom.dataset.input_flag = "true"; //入力可能フラグ
+    dom.dataset.commit_flag = "true"; //コミット可能フラグ
     dom.addEventListener('keydown',function(e){
       const _input = e.keyCode;
       const _current = getCursor();
@@ -90,9 +95,9 @@ _onload = function(e){
       if(_input==KEY_CODE["ENTER"]){
         const line_num = dom.value.lastIndexOf("$");
         const command = dom.value.slice(line_num+1, dom.value.length);
+        setCommitFlg(false);
         dispatchCustomEvent(dom, "tarminal-commit", {command: command});
         if(dom.value.length!=getCursor()) setCursor(dom.value.length);
-        setInputFlg(false);
       }
     });
     dom.addEventListener('keyup',function(e){
@@ -102,13 +107,15 @@ _onload = function(e){
 
       if(_input==KEY_CODE["ENTER"] && dom.value.slice(-1)=="\n"){
         setCommit();
+        setCommitFlg(true);
         setInputFlg(true);
       }
     });
     dom.addEventListener('tarminal-commit', async function(e){
-      console.log(e.detail.command);
-      /*コマンド送信*/
-      //setInputFlg(false);
+      if(tarminal.conf.connection){
+        tarminal.conf.server.send(e.detail.command);
+        setInputFlg(false);
+      }
     });
     header.querySelector(".tarm-btn").addEventListener('click',function(e){
       const _url = header.querySelector(".tarm-url").value;
@@ -116,20 +123,31 @@ _onload = function(e){
         setCommit(`${_url} invalid url format!`);
       }else{
         const server = new WebSocket(_url);
+        tarminal.conf.server = server;
+
         setCommit(`${_url} connection...`);
         server.onopen = function(e){
+          tarminal.conf.connection = true;
+          tarminal.conf.url = _url;
           setCommit(`${_url} connected!`);
           header.querySelector(".tarm-btn").classList.add("open");
           setInputFlg(true);
         };
         server.onmessage = function(e){
-          console.log(e.data);
-          /*結果受け取り*/
+          setCommit(e.data, false);
+          dom.scrollTop = dom.scrollHeight;
+          setInputFlg(true);
         };
+        server.onclose = function(e){
+          header.querySelector(".tarm-btn").classList.add("remove");
+          setCommit(`${tarminal.conf.url} dis connected!`);
+          setInputFlg(false);
+        }
       }
     });
 
     (init=()=>{
+      tarminal.conf = {connection: false, server: null};
       dom.value += prefix;
       setCommitCursor( getCursor() );
       setInputFlg(false);
@@ -154,7 +172,7 @@ window.onload = _onload;
   <div class="tarm-header"><!--
     --><div class="tarm-menu">1</div><!--
     --><input type="text" class="tarm-url"/><!--
-    --><input type="button" value="connect!" class="tarm-btn"/>
+    --><input type="button" value="connect" class="tarm-btn"/>
   </div>
   <textarea class="tarm-win"></textarea>
 </div>
