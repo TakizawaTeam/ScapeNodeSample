@@ -3,15 +3,21 @@
   background-color: white;
   width: 100%;
   height: 200px;
+  min-width: 80px;
+  min-height: 80px;
+  overflow: auto;
+  resize: both;
+
 }
 .tarm-win{
   background-color: black;
   color: white;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 30px);
   border: none;
   outline: 0;
   border-left: solid 5px #000;
+  resize: none;
 }
 .tarm-url{
   width:calc(80% - 17px);
@@ -26,11 +32,15 @@
   height:17px;
   padding:0px;
   outline:0;
-  background-color: #FAA;
+  background-color: #C88;
   cursor: pointer;
+  font-weight: bold;
+  color: white;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .tarm-btn.open{
-  background-color: #AFA;
+  background-color: #8C8;
 }
 .tarm-menu{
   display: inline-block;
@@ -47,6 +57,13 @@
   -ms-user-select: none;
 }
 .ditail{overflow-y: scroll;}
+.tarm-text{
+  height: 13px;
+  background-color: #CCC;
+  color: #333;
+  font-size: 10px;
+  padding-left: 5px;
+}
 </style>
 <script>
 _onload = function(e){
@@ -73,13 +90,18 @@ _onload = function(e){
     const getInputFlg = ()=>stringToBool(dom.dataset.input_flag);
     const setInputFlg = f=>dom.dataset.input_flag=f;
     const dispatchCustomEvent = (dom, name, params)=>dom.dispatchEvent(new CustomEvent(name, {detail:params}));
+    const getCommitFlg = ()=>stringToBool(dom.dataset.commit_flag);
+    const setCommitFlg = f=>dom.dataset.commit_flag=f;
     const setCommit = (str=null, warp=true)=>{
+      if(!getCommitFlg()) return false;
       if(str) dom.value += str + (warp? "\n" : "");
       setCommitCursor( getCursor()+1 );
       dom.value += prefix;
+      dom.scrollTop = dom.scrollHeight;
+      dom.focus();
     };
-    const setCommitFlg = ()=>stringToBool(dom.dataset.commit_flag);
-    const getCommitFlg = f=>dom.dataset.commit_flag=f;
+    const getDate = str=>(str? new Date(str) : new Date()).toLocaleDateString();
+    const getTime = str=>(str? new Date(str) : new Date()).toLocaleTimeString();
 
     dom.dataset.commit_cursor = 0; //確定文字数
     dom.dataset.input_flag = "true"; //入力可能フラグ
@@ -95,8 +117,8 @@ _onload = function(e){
       if(_input==KEY_CODE["ENTER"]){
         const line_num = dom.value.lastIndexOf("$");
         const command = dom.value.slice(line_num+1, dom.value.length);
-        setCommitFlg(false);
         dispatchCustomEvent(dom, "tarminal-commit", {command: command});
+        setCommitFlg(false);
         if(dom.value.length!=getCursor()) setCursor(dom.value.length);
       }
     });
@@ -107,7 +129,6 @@ _onload = function(e){
 
       if(_input==KEY_CODE["ENTER"] && dom.value.slice(-1)=="\n"){
         setCommit();
-        setCommitFlg(true);
         setInputFlg(true);
       }
     });
@@ -120,34 +141,35 @@ _onload = function(e){
     header.querySelector(".tarm-btn").addEventListener('click',function(e){
       const _url = header.querySelector(".tarm-url").value;
       if(false){ // URL構文のエラー未実装
-        setCommit(`${_url} invalid url format!`);
+        setCommit(`invalid url [${_url}] ${getDate()} ${getTime()}`);
       }else{
         const server = new WebSocket(_url);
+        tarminal.conf.url = _url;
         tarminal.conf.server = server;
 
-        setCommit(`${_url} connection...`);
+        setCommit(`connection... [${_url}] ${getDate()} ${getTime()}`);
         server.onopen = function(e){
           tarminal.conf.connection = true;
-          tarminal.conf.url = _url;
-          setCommit(`${_url} connected!`);
+          setCommit(`connected! [${_url}] ${getDate()} ${getTime()}`);
           header.querySelector(".tarm-btn").classList.add("open");
           setInputFlg(true);
         };
         server.onmessage = function(e){
-          setCommit(e.data, false);
-          dom.scrollTop = dom.scrollHeight;
+          setCommitFlg(true);
+          setCommit(e.data);
           setInputFlg(true);
         };
         server.onclose = function(e){
-          header.querySelector(".tarm-btn").classList.add("remove");
-          setCommit(`${tarminal.conf.url} dis connected!`);
+          setCommit(`disconnected! [${tarminal.conf.url}] ${getDate()} ${getTime()}`);
+          //tarminal.conf = {connection: false, server: null, url: ""};
+          header.querySelector(".tarm-btn").classList.remove("open");
           setInputFlg(false);
         }
       }
     });
 
     (init=()=>{
-      tarminal.conf = {connection: false, server: null};
+      tarminal.conf = {connection: false, server: null, url: ""};
       dom.value += prefix;
       setCommitCursor( getCursor() );
       setInputFlg(false);
@@ -172,9 +194,12 @@ window.onload = _onload;
   <div class="tarm-header"><!--
     --><div class="tarm-menu">1</div><!--
     --><input type="text" class="tarm-url"/><!--
-    --><input type="button" value="connect" class="tarm-btn"/>
+    --><input type="button" value="CONNECT" class="tarm-btn"/>
   </div>
   <textarea class="tarm-win"></textarea>
+  <div class="tarm-footer"><!--
+    --><div class="tarm-text">waiting...</div>
+  </div>
 </div>
 
 <hr>
@@ -185,6 +210,7 @@ v1バグ：<br>
 ・ドラッグやコピーができない<br>
 v2バグ：<br>
 ・確定カーソル位置以下でも、日本語だと入力出来てしまう<br>
+・出力内容の最初にprefixが出てしまう<br>
 </p>
 <p class="ditail">
 追加仕様：<br>
