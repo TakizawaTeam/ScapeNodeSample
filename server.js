@@ -14,11 +14,16 @@ const config = {
 // return: string for stdout or stderr
 const exec_func = async function(_command){
   return new Promise((res, rej) => {
-    const result = exec(_command, (err, stdout, stderr) => {
-      if(err){ res(stderr); }
-      else{ res(stdout); }
-    });
-  }).catch(err => res(`${err.name}: ${err.message}`));
+    try{
+      const result = exec(_command, (err, stdout, stderr) => {
+        if(err){ res(stderr); }
+        else{ res(stdout); }
+      });
+    }catch(err){
+      //res(`${err.name}: ${err.message}${"\n"}`);
+      res("");
+    }
+  });
 };
 // return: string for result
 const eval_func = async function(_code){
