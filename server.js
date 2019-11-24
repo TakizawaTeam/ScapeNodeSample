@@ -51,7 +51,7 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   console.log((new Date()) + ' Peer ' + req.connection.remoteAddress + ' connected.');
 
   let get_result = async function(m){return "404not found!"};
-  if(req.url == "/"){
+  if(req.url == "/echo"){
     get_result = async m=>m;
   }else if(req.url == "/exec"){
     get_result = async function(m){

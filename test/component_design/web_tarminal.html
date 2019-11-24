@@ -1,13 +1,15 @@
 <style>
 .tarminal{
+  position: relative;
+  left: 0px;
+  top: 0px;
   background-color: white;
-  width: 100%;
-  height: 200px;
+  width: 480px;
+  height: 320px;
   min-width: 80px;
   min-height: 80px;
   overflow: auto;
   resize: both;
-
 }
 .tarm-win{
   background-color: black;
@@ -151,6 +153,7 @@ _onload = function(e){
         server.onopen = function(e){
           tarminal.conf.connection = true;
           setCommit(`connected! [${_url}] ${getDate()} ${getTime()}`);
+          tarminal.querySelector(".tarm-text").innerText = `connected! [${_url}] ${getDate()} ${getTime()}`;
           header.querySelector(".tarm-btn").classList.add("open");
           setInputFlg(true);
         };
@@ -160,7 +163,7 @@ _onload = function(e){
           setInputFlg(true);
         };
         server.onclose = function(e){
-          setCommit(`disconnected! [${tarminal.conf.url}] ${getDate()} ${getTime()}`);
+          setCommit(`dis connected! [${tarminal.conf.url}] ${getDate()} ${getTime()}`);
           //tarminal.conf = {connection: false, server: null, url: ""};
           header.querySelector(".tarm-btn").classList.remove("open");
           setInputFlg(false);
@@ -198,7 +201,7 @@ window.onload = _onload;
   </div>
   <textarea class="tarm-win"></textarea>
   <div class="tarm-footer"><!--
-    --><div class="tarm-text">waiting...</div>
+    --><div class="tarm-text">please connect.</div>
   </div>
 </div>
 
