@@ -25,7 +25,7 @@
   width:calc(80% - 17px);
   outline:0;
   height:17px;
-  color:#888;
+  color:#555;
   border-size:1px;
 }
 .tarm-btn{
@@ -96,9 +96,9 @@ _onload = function(e){
     const setCommitFlg = f=>dom.dataset.commit_flag=f;
     const setCommit = (str=null, warp=true)=>{
       if(!getCommitFlg()) return false;
-      if(str) dom.value += str + (warp? "\n" : "");
+      if(str) dom.innerText += str + (warp? "\n" : "");
       setCommitCursor( getCursor()+1 );
-      dom.value += prefix;
+      dom.innerText += prefix;
       dom.scrollTop = dom.scrollHeight;
       dom.focus();
     };
@@ -117,11 +117,11 @@ _onload = function(e){
       if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
       if(isBefore(_current-1,-1)) setCancel(e);
       if(_input==KEY_CODE["ENTER"]){
-        const line_num = dom.value.lastIndexOf("$");
-        const command = dom.value.slice(line_num+1, dom.value.length);
+        const line_num = dom.innerText.lastIndexOf("$");
+        const command = dom.innerText.slice(line_num+1, dom.innerText.length);
         dispatchCustomEvent(dom, "tarminal-commit", {command: command});
         setCommitFlg(false);
-        if(dom.value.length!=getCursor()) setCursor(dom.value.length);
+        if(dom.innerText.length!=getCursor()) setCursor(dom.innerText.length);
       }
     });
     dom.addEventListener('keyup',function(e){
@@ -129,7 +129,7 @@ _onload = function(e){
       const _current = getCursor();
       if(!getInputFlg()) setCancel(e);
 
-      if(_input==KEY_CODE["ENTER"] && dom.value.slice(-1)=="\n"){
+      if(_input==KEY_CODE["ENTER"] && dom.innerText.slice(-1)=="\n"){
         setCommit();
         setInputFlg(true);
       }
@@ -173,7 +173,7 @@ _onload = function(e){
 
     (init=()=>{
       tarminal.conf = {connection: false, server: null, url: ""};
-      dom.value += prefix;
+      dom.innerText += prefix;
       setCommitCursor( getCursor() );
       setInputFlg(false);
     })();
@@ -199,7 +199,7 @@ window.onload = _onload;
     --><input type="text" class="tarm-url"/><!--
     --><input type="button" value="CONNECT" class="tarm-btn"/>
   </div>
-  <textarea class="tarm-win"></textarea>
+  <div class="tarm-win" contenteditable=true></div>
   <div class="tarm-footer"><!--
     --><div class="tarm-text">please connect.</div>
   </div>
