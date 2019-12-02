@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const ws = require('ws');
 const exec = require('child_process').exec;
+const Node = require('./Node.js');
 
 const config = {
   server: {
@@ -51,7 +52,13 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   console.log((new Date()) + ' Peer ' + req.connection.remoteAddress + ' connected.');
 
   let get_result = async function(m){return "404not found!"};
-  if(req.url == "/echo"){
+  if(req.url == "/"){
+    get_result = async m=>{
+      params = JSON.parse(m);
+      console.log(params);
+      return JSON.stringify(params);
+    };
+  }else if(req.url == "/echo"){
     get_result = async m=>m;
   }else if(req.url == "/exec"){
     get_result = async function(m){
@@ -62,6 +69,8 @@ new ws.Server({server: server}).on('connection', function(wso, req){
       const result = await eval_func(m);
       return result;
     };
+  }else if(req.url == "/session"){
+
   }else{}
 
   wso.on('message', async function(m){
