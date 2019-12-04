@@ -54,9 +54,9 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   let get_result = async function(m){return "404not found!"};
   if(req.url == "/"){
     get_result = async m=>{
-      params = JSON.parse(m);
-      console.log(params);
-      return JSON.stringify(params);
+      const req_data = JSON.parse(m);
+      const res_data = await Node.one[req_data.type].apply(null, [req_data.params]);
+      return JSON.stringify(res_data);
     };
   }else if(req.url == "/echo"){
     get_result = async m=>m;
