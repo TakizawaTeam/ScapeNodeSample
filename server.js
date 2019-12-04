@@ -54,8 +54,14 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   let get_result = async function(m){return "404not found!"};
   if(req.url == "/"){
     get_result = async m=>{
+      const res_data = null;
       const req_data = JSON.parse(m);
-      const res_data = await Node.one[req_data.type].apply(null, [req_data.params]);
+      if(false){}
+      else if(req_data.type=='create'){
+        res_data = await Node.one[req_data.type].apply(null, [req_data.params]); }
+      else if(req_data.type=='read'){}
+      else if(req_data.type=='update'){}
+      else if(req_data.type=='delete'){}
       return JSON.stringify(res_data);
     };
   }else if(req.url == "/echo"){
