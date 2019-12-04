@@ -11,22 +11,22 @@ exports = {
         return Node.insertOne(obj);
       });
     },
-    read: async _hash=>{
+    read: async hash=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        return Node.findOne({hash: _hash});
+        return Node.findOne({hash: hash});
       });
     },
-    update: async (hash, obj)=>{
+    update: async obj=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        return Node.updateOne({hash: _hash}, obj);
+        return Node.updateOne({hash: obj.hash}, {$set: obj});
       });
     },
-    delete: async _hash=>{
+    delete: async hash=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        return Node.deleteOne({hash: _hash});
+        return Node.deleteOne({hash: hash});
       });
     },
   },
@@ -37,7 +37,7 @@ exports = {
 
   },
   find: function(name, option){ /* 配下の検索 */
-    
+
   },
   make: function(path){},
   set: function(value){},
