@@ -1,7 +1,7 @@
 const APP = require("./Application");
 const DB = require("./Database");
 
-exports = {
+module.exports = {
   format: {},
   current: null,
   one: { /* HASHによる直接操作 */
@@ -30,19 +30,21 @@ exports = {
       });
     },
   },
-  lib: {
-    find_name: async (node, name)=>{},
+  parent: async function(){
+    return await this.one.read(this.current.parent);
   },
-  parent: async node=>{
-    // return await this.one.read(node.parent);
-  },
-  childs: async node=>{
-    // return await DB.connect(async connection=>{
-    //   const Node = await DB.get_collection(`${APP.name}/nodes`);
-    //   return Node.find({parent: node.hash});
-    // });
+  childs: async function(key=null){
+    return await DB.connect(async connection=>{
+      const Node = await DB.get_collection(`${APP.name}/nodes`);
+      let params = {parent: this.current.hash};
+      if(key) params["key"] = key;
+      return await Node.find(params).toArray();
+    });
   },
   cd:  function(path){ /* 根から絶対パスを辿り移動or相対パスで移動 */
+    // if(typeof path==="string"){
+    //   if(path.length==0) return this.one.read
+    // }
     // const path_names = path.split("/");
     // let node = await this.lib.find_name(this.current, path_names.shift());
     // for(let path_name in path_names){
@@ -61,4 +63,3 @@ exports = {
   delete: function(path){},
   cron: function(datetime=now){},
 };
-module.exports = exports;
