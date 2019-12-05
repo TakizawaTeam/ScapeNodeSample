@@ -30,8 +30,25 @@ exports = {
       });
     },
   },
+  lib: {
+    find_name: async (node, name)=>{},
+  },
+  parent: async node=>{
+    // return await this.one.read(node.parent);
+  },
+  childs: async node=>{
+    // return await DB.connect(async connection=>{
+    //   const Node = await DB.get_collection(`${APP.name}/nodes`);
+    //   return Node.find({parent: node.hash});
+    // });
+  },
   cd:  function(path){ /* 根から絶対パスを辿り移動or相対パスで移動 */
-
+    // const path_names = path.split("/");
+    // let node = await this.lib.find_name(this.current, path_names.shift());
+    // for(let path_name in path_names){
+    //   node = await this.lib.find_name(node, path_name);
+    //   this.current = node;
+    // }
   },
   path: ()=>{ /* 親を辿り現在のフルパスを生成 */
 
