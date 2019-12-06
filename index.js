@@ -15,10 +15,10 @@ const DB = require('./Database');
     for(k in NODE_DATAS) await Node.one.create(NODE_DATAS[k]);
   }
 
-  // console.log(Node.current);
-  // await Node.cd("");
-  // await Node.cd("NodeHash_B");
-  // console.log(Node.current);
+  console.log(Node.current);
+  await Node.cd("");
+  await Node.cd("NodeHash_B");
+  console.log(Node.current);
 })({
   name: 'scape_node',
 });
