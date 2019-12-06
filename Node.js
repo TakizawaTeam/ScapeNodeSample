@@ -41,16 +41,15 @@ module.exports = {
       return await Node.find(params).toArray();
     });
   },
-  cd:  function(path){ /* 根から絶対パスを辿り移動or相対パスで移動 */
-    // if(typeof path==="string"){
-    //   if(path.length==0) return this.one.read
-    // }
-    // const path_names = path.split("/");
-    // let node = await this.lib.find_name(this.current, path_names.shift());
-    // for(let path_name in path_names){
-    //   node = await this.lib.find_name(node, path_name);
-    //   this.current = node;
-    // }
+  cd: async function(path=""){ /* 根から絶対パスを辿り移動or相対パスで移動 */
+    if(typeof path==="string"){
+      if(path.length==0){
+        this.current = await this.one.read("NodeHash_ROOT"); }
+      else{
+        const node_keys = path.split("/");
+        for(k in node_keys) this.current = await this.childs(node_keys[k]); }
+      return this.current; }
+    else{ return {message: "ParamError!"}; }
   },
   path: ()=>{ /* 親を辿り現在のフルパスを生成 */
 
