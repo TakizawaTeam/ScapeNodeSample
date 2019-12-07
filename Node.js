@@ -51,13 +51,11 @@ module.exports = {
         const node_keys = path.split("/");
         let node = this.current;
         for(k in node_keys){
-          result = await this.childs(node_keys[k], node);
-          if(result.length>0){
-            node = result[0];
-          }else{
-            return {message: `NothingPath：${node_keys[k]}`};
-          }
+          const result = await this.childs(node_keys[k], node);
+          if(result.length>0){ node = result[0]; }
+          else{ return {message: `NothingPath：${node_keys[k]}`}; }
         }
+        this.current = node;
       }
       return this.current;
     }else{ return {message: "ParamError!"}; }

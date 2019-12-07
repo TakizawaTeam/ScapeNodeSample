@@ -14,10 +14,10 @@ const DB = require('./Database');
     ];
     for(k in NODE_DATAS) await Node.one.create(NODE_DATAS[k]);
   }
+  //await init_db();
 
-  console.log(Node.current);
   await Node.cd("");
-  await Node.cd("NodeHash_B");
+  await Node.cd("TestB");
   console.log(Node.current);
 })({
   name: 'scape_node',
