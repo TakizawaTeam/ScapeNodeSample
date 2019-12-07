@@ -2,6 +2,7 @@ const APP = require("./Application");
 const DB = require("./Database");
 
 module.exports = (async function(){
+  this.ROOT_HASH = 'NodeHash_ROOT';
   this.format = {hash:"", parent:"", key:"", value:""};
   this.one = { /* HASHによる直接操作 */
     create: async obj=>{
@@ -30,10 +31,11 @@ module.exports = (async function(){
     },
   };
 
-  this.ROOT = await this.one.read("NodeHash_ROOT");
+  this.ROOT = await this.one.read(this.ROOT_HASH);
   this.current = this.ROOT;
   this.parent = async function(node=null){
     if(!node)node = this.current;
+    if(!node.parent) return node;
     return await this.one.read(node.parent);
   };
   this.childs = async function(key=null, node=null){
@@ -53,14 +55,38 @@ module.exports = (async function(){
         const node_keys = path.split("/");
         let node = this.current;
         for(k in node_keys){
-          const result = await this.childs(node_keys[k], node);
-          if(result.length>0){ node = result[0]; }
-          else{ return {message: `NothingPath：${node_keys[k]}`}; }
+          if(node_keys[k]=='.'){}
+          else if(node_keys[k]=='..'){ node = this.parent(); }
+          else{
+            const result = await this.childs(node_keys[k], node);
+            if(result.length>0){ node = result[0]; }
+            else{ return {message: `MissingPath：${node_keys[k]}`}; }
+          }
         }
         this.current = node;
       }
       return this.current;
-    }else{ return {message: "ParamError!"}; }
+    }else{ return {message: "ParamTypeError!"}; }
+  };
+  this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key); };
+  this.pwd = async function(node=null){
+    if(!node)node = this.current;
+    let keys = [node.key];
+    while(true){
+      parent_node = await this.parent(node);
+      if(node==parent_node){ break; }
+      else{ keys.unshift((node=parent_node).key); }
+    }
+    return keys.join('/');
+  };
+  this.cat = function(node=null){
+    if(!node)node = this.current;
+    return node["value"];
+  };
+  this.set = async function(node_data, node=null){
+    if(!node)node = this.current;
+    await this.one.update(node_data);
+    return node_data;
   };
   // path, find, make, set, delete, cron
   return this;

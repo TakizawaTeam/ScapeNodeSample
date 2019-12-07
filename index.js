@@ -16,9 +16,13 @@ const DB = require('./Database');
   }
   //await init_db();
 
-  await Node.cd("");
   await Node.cd("TestB");
-  console.log(Node.current);
+  // console.log(Node.current);
+  // console.log(await Node.ls());
+  // console.log(await Node.pwd());
+  // console.log(Node.cat());
+  Node.current.value += "b";
+  Node.set(Node.current);
 })({
   name: 'scape_node',
 });
