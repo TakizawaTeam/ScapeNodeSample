@@ -1,7 +1,7 @@
 const DB = require('./Database');
 
 (async conf=>{
-  const Node = require('./Node.js');
+  const Node = await require('./Node.js');
 
   //初期ノード作成
   async function init_db(){
