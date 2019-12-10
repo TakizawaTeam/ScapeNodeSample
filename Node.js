@@ -3,7 +3,16 @@ const DB = require("./Database");
 
 module.exports = (async function(){
   this.ROOT_HASH = 'NodeHash_ROOT';
-  this.format = {hash:"", parent:"", key:"", value:""};
+  this.format = {
+    hash:"",
+    parent:"",
+    key:"",
+    value:"",
+    created_at: "",
+    updated_at: "",
+    deleted_at: "",
+  };
+  this.createNodeHash = ()=>APP.createHash('NodeHash_', 30);
   this.one = { /* HASHによる直接操作 */
     create: async obj=>{
       return await DB.connect(async connection=>{
@@ -83,11 +92,21 @@ module.exports = (async function(){
     if(!node)node = this.current;
     return node["value"];
   };
+  this.make = async function(key, node=null){
+    if(!node)node = this.current;
+
+    let node_data = Object.assign({}, this.format);
+    node_data.hash = this.createNodeHash();
+    node_data.key = key;
+    if(!APP.is.u(node)) node_data.parent = node.hash;
+    await this.one.create(node_data);
+  };
   this.set = async function(node_data, node=null){
     if(!node)node = this.current;
-    await this.one.update(node_data);
+    await this.one.create(node_data);
     return node_data;
   };
+  this.delete = async function(){};
   // path, find, make, set, delete, cron
   return this;
 })();
