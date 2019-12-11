@@ -12,7 +12,7 @@ module.exports = (async function(){
     }
   };
   this.is.init();
-  this.is_undefined = _var=>(typeof undefined==="undefined");
+  this.dup = obj=>Object.assign({},obj);
   this.createHash = (prefix, num)=>{
     var h = '';
     while( h.length<num ) h+="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[parseInt(Math.random()*62)];

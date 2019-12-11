@@ -13,6 +13,14 @@ module.exports = (async function(){
     deleted_at: "",
   };
   this.createNodeHash = ()=>APP.createHash('NodeHash_', 30);
+  this.createModel = (params=null)=>{
+    let node_data = APP.dup(this.format);
+    if(!APP.is.u(params["parent"])) params["parent"]="";
+    node_data = Object.assign(node_data, params);
+
+    node_data.hash = this.createNodeHash();
+    return node_data;
+  };
   this.one = { /* HASHによる直接操作 */
     create: async obj=>{
       return await DB.connect(async connection=>{
@@ -23,6 +31,7 @@ module.exports = (async function(){
     read: async hash=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
+        console.log( await Node.findOne({hash: hash}) );
         return Node.findOne({hash: hash});
       });
     },
@@ -95,11 +104,9 @@ module.exports = (async function(){
   this.make = async function(key, node=null){
     if(!node)node = this.current;
 
-    let node_data = Object.assign({}, this.format);
-    node_data.hash = this.createNodeHash();
-    node_data.key = key;
-    if(!APP.is.u(node)) node_data.parent = node.hash;
+    node_data = this.createModel({parent: node?node.hash:node, key: key});
     await this.one.create(node_data);
+    return this.cd(`${this.pwd(node)}/${key}`);
   };
   this.set = async function(node_data, node=null){
     if(!node)node = this.current;
