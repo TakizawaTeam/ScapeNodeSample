@@ -1,6 +1,8 @@
 const APP = require("./Application");
 const DB = require("./Database");
 
+console.log(APP.name);
+
 module.exports = (async function(){
   this.ROOT_HASH = 'NodeHash_ROOT';
   this.format = {
@@ -31,7 +33,6 @@ module.exports = (async function(){
     read: async hash=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        console.log( await Node.findOne({hash: hash}) );
         return Node.findOne({hash: hash});
       });
     },
