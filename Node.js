@@ -51,6 +51,7 @@ module.exports = (async function(){
   this.ROOT = await this.one.read(this.ROOT_HASH);
   if(this.ROOT){
     this.current = this.ROOT;
+    // [TBI] snap serialize history undo redo
     this.log = (node=null)=>console.log(node?node:this.current);
     this.parent = async function(node=null){
       if(!node)node = this.current;
@@ -113,7 +114,7 @@ module.exports = (async function(){
     };
     this.set = async function(node_data, node=null){
       if(!node)node = this.current;
-      await this.one.create(node_data);
+      await this.one.update(node_data);
       return node_data;
     };
     this.delete = async function(){};
