@@ -12,10 +12,10 @@ module.exports = (async function(){
     updated_at: "",
     deleted_at: "",
   };
-  this.createNodeHash = ()=>APP.createHash('NodeHash_', 30);
+  this.createNodeHash = ()=>APP.createHash('NodeHash_', 30); //createHashにすると落ちる
   this.createModel = (params=null)=>{
     let node_data = APP.dup(this.format);
-    if(!APP.is.u(params["parent"])) params["parent"]="";
+    if(APP.is.u(params["parent"])) params["parent"]="";
     node_data = Object.assign(node_data, params);
 
     node_data.hash = this.createNodeHash();
@@ -51,6 +51,7 @@ module.exports = (async function(){
   this.ROOT = await this.one.read(this.ROOT_HASH);
   if(this.ROOT){
     this.current = this.ROOT;
+    this.log = (node=null)=>console.log(node?node:this.current);
     this.parent = async function(node=null){
       if(!node)node = this.current;
       if(!node.parent) return node;
@@ -77,6 +78,7 @@ module.exports = (async function(){
             else if(node_keys[k]=='..'){ node = this.parent(); }
             else{
               const result = await this.childs(node_keys[k], node);
+              console.log(node, node_keys[k], result);
               if(result.length>0){ node = result[0]; }
               else{ return {message: `MissingPath：${node_keys[k]}`}; }
             }
@@ -106,7 +108,7 @@ module.exports = (async function(){
 
       node_data = this.createModel({parent: node?node.hash:node, key: key});
       await this.one.create(node_data);
-      return this.cd(`${this.pwd(node)}/${key}`);
+      return await this.cd(`${await this.pwd(node)}/${key}`);
     };
     this.set = async function(node_data, node=null){
       if(!node)node = this.current;
