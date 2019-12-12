@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-  
+
 exports = exports={
   connection: null,
   settings: {
