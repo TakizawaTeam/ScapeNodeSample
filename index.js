@@ -18,8 +18,9 @@
       //await init_db();
 
       await cd("TestE");
-      // log();
-      await make("TestF");
+      await cd("TestA/TestE/TestF");
+      log();
+      // await make("TestF");
       // log();
       // console.log(await ls());
       // console.log(await pwd());

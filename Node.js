@@ -72,13 +72,14 @@ module.exports = (async function(){
           this.current = this.ROOT;
         }else{
           const node_keys = path.split("/");
-          let node = this.current;
+          let node = this.ROOT;
+
           for(k in node_keys){
-            if(node_keys[k]=='.'){}
+            if(k==0 && node_keys[k]==this.ROOT.key){}
+            else if(node_keys[k]=='.'){}
             else if(node_keys[k]=='..'){ node = this.parent(); }
             else{
               const result = await this.childs(node_keys[k], node);
-              console.log(node, node_keys[k], result);
               if(result.length>0){ node = result[0]; }
               else{ return {message: `MissingPath：${node_keys[k]}`}; }
             }
