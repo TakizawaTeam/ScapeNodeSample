@@ -17,6 +17,8 @@ module.exports = (async function(){
     let node_data = APP.dup(this.format);
     node_data = Object.assign(node_data, params);
     node_data.hash = this.createNodeHash();
+    node_data.created_at = APP.s_date();
+    node_data.updated_at = APP.s_date();
     return node_data;
   };
   this.one = { /* HASHによる直接操作 */
