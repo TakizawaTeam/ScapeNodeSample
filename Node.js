@@ -61,7 +61,7 @@ module.exports = (async function(){
         for(k in node_keys){
           if(node_keys[k]==this.ROOT.key){}
           else if(node_keys[k]=='.'){}
-          else if(node_keys[k]=='..'){ node = this.parent(); }
+          else if(node_keys[k]=='..'){ node = await this.parent(); }
           else{
             const result = await this.childs(node_keys[k], node);
             if(result.length>0){ node = result[0]; }
@@ -88,7 +88,7 @@ module.exports = (async function(){
       });
     };
     this.cd = async function(path=""){ /* 根から絶対パスを辿り移動or相対パスで移動 */
-      if(typeof path==="string"){
+      if(typeof path==="string" && path.length>0){
         this.current = path.length==0? this.ROOT : await this.find(path);
         return this.current;
       }else{return `cd$path type error [${typeof path}]`;}
