@@ -20,7 +20,11 @@
       // await cd("TestA/TestE/TestF");
       // log();
 
-      await make("NodeHash_ROOT2", true);
+      //await make("NodeHash_ROOT2", true);
+      log();
+      await checkout("NodeHash_ROOT2");
+      log();
+      //await make("TestG");
     }).bind(Node)();
   }
 })({

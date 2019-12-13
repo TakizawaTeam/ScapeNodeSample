@@ -55,6 +55,14 @@ module.exports = (async function(){
       if(key==this.ROOT.key)return this.ROOT;
       return this.current;
     };
+    this.checkout = async function(name=this.ROOT_HASH){
+      const root_node = await this.childs(name, {hash: ""});
+      if(root_node.length){
+        this.ROOT = root_node[0];
+        this.current = this.ROOT;
+        return this.current;
+      }else{ return null; }
+    };
     this.find = async function(path=""){
       if(typeof path==="string" && path.length>0){
         const node_keys = path.split("/");
@@ -114,7 +122,6 @@ module.exports = (async function(){
       const node_keys = path.split("/");
       let key="", parent_node=this.current;
       if(node_keys.length>0) key = node_keys.pop();
-      console.log(key, node_keys);
       if(node_keys.length>0) parent_node = await this.find( node_keys.join("/") );
 
       const parent_hash = root_flg ? "" : parent_node.hash;
