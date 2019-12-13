@@ -17,17 +17,10 @@
       }
       //await init_db();
 
-      await make("TestA/TestE/TestF");
-      await cd("TestA/TestE/TestF");
-      log();
-      await make("TestG");
-      await cd("TestG");
-      log();
+      // await cd("TestA/TestE/TestF");
       // log();
-      // console.log(await ls());
-      // console.log(await pwd());
-      // console.log(cat());
-      //console.log( make("TestF") );
+      await cd("TestA/../TestE");
+      log();
     }).bind(Node)();
   }
 })({

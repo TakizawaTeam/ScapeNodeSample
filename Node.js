@@ -61,7 +61,7 @@ module.exports = (async function(){
         for(k in node_keys){
           if(node_keys[k]==this.ROOT.key){}
           else if(node_keys[k]=='.'){}
-          else if(node_keys[k]=='..'){ node = await this.parent(); }
+          else if(node_keys[k]=='..'){ node = await this.parent(node); }
           else{
             const result = await this.childs(node_keys[k], node);
             if(result.length>0){ node = result[0]; }
@@ -69,7 +69,7 @@ module.exports = (async function(){
           }
         }
         return node;
-      }else{return `find$path type error [${typeof path}]`;}
+      }else{return `find() $path type error [${typeof path}]`;}
     };
     // [TBI] snap serialize history undo redo diff grep
     this.log = (node=null)=>console.log(node?node:this.current);
@@ -91,7 +91,7 @@ module.exports = (async function(){
       if(typeof path==="string" && path.length>0){
         this.current = path.length==0? this.ROOT : await this.find(path);
         return this.current;
-      }else{return `cd$path type error [${typeof path}]`;}
+      }else{return `cd() $path type error [${typeof path}]`;}
     };
     this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key); };
     this.pwd = async function(node=null){
