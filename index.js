@@ -19,8 +19,8 @@
 
       // await cd("TestA/TestE/TestF");
       // log();
-      await cd("TestA/../TestE");
-      log();
+
+      await make("NodeHash_ROOT2", true);
     }).bind(Node)();
   }
 })({

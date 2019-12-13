@@ -125,6 +125,7 @@ module.exports = (async function(){
     };
     this.set = async function(node_data, node=null){
       if(!node)node = this.current;
+      node_data.updated_at = APP.s_date();
       await this.one.update(node_data);
       return node_data;
     };
