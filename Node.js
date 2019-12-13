@@ -15,9 +15,7 @@ module.exports = (async function(){
   this.createNodeHash = ()=>APP.createHash('NodeHash_', 30); //createHashにすると落ちる
   this.createModel = (params=null)=>{
     let node_data = APP.dup(this.format);
-    if(APP.is.u(params["parent"])) params["parent"]="";
     node_data = Object.assign(node_data, params);
-
     node_data.hash = this.createNodeHash();
     return node_data;
   };
@@ -51,7 +49,25 @@ module.exports = (async function(){
   this.ROOT = await this.one.read(this.ROOT_HASH);
   if(this.ROOT){
     this.current = this.ROOT;
-    // [TBI] snap serialize history undo redo
+    this.find = async function(path=""){
+      if(typeof path==="string" && path.length>0){
+        const node_keys = path.split("/");
+        let node = this.ROOT;
+
+        for(k in node_keys){
+          if(node_keys[k]==this.ROOT.key){}
+          else if(node_keys[k]=='.'){}
+          else if(node_keys[k]=='..'){ node = this.parent(); }
+          else{
+            const result = await this.childs(node_keys[k], node);
+            if(result.length>0){ node = result[0]; }
+            else{ return null; }
+          }
+        }
+        return node;
+      }else{return `find$path type error [${typeof path}]`;}
+    };
+    // [TBI] snap serialize history undo redo diff grep
     this.log = (node=null)=>console.log(node?node:this.current);
     this.parent = async function(node=null){
       if(!node)node = this.current;
@@ -69,26 +85,9 @@ module.exports = (async function(){
     };
     this.cd = async function(path=""){ /* 根から絶対パスを辿り移動or相対パスで移動 */
       if(typeof path==="string"){
-        if(path.length==0){
-          this.current = this.ROOT;
-        }else{
-          const node_keys = path.split("/");
-          let node = this.ROOT;
-
-          for(k in node_keys){
-            if(k==0 && node_keys[k]==this.ROOT.key){}
-            else if(node_keys[k]=='.'){}
-            else if(node_keys[k]=='..'){ node = this.parent(); }
-            else{
-              const result = await this.childs(node_keys[k], node);
-              if(result.length>0){ node = result[0]; }
-              else{ return {message: `MissingPath：${node_keys[k]}`}; }
-            }
-          }
-          this.current = node;
-        }
+        this.current = path.length==0? this.ROOT : await this.find(path);
         return this.current;
-      }else{ return {message: "ParamTypeError!"}; }
+      }else{return `cd$path type error [${typeof path}]`;}
     };
     this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key); };
     this.pwd = async function(node=null){
@@ -105,19 +104,25 @@ module.exports = (async function(){
       if(!node)node = this.current;
       return node["value"];
     };
-    this.make = async function(key, node=null){
-      if(!node)node = this.current;
+    this.make = async function(path, root_flg=false){
+      const node_keys = path.split("/");
+      let key="", parent_node=this.current;
+      if(node_keys.length>0) key = node_keys.pop();
+      console.log(key, node_keys);
+      if(node_keys.length>0) parent_node = await this.find( node_keys.join("/") );
 
-      node_data = this.createModel({parent: node?node.hash:node, key: key});
-      await this.one.create(node_data);
-      return await this.cd(`${await this.pwd(node)}/${key}`);
+      const parent_hash = root_flg ? "" : parent_node.hash;
+      const node_data = this.createModel({parent: parent_hash, key: key});
+      const create_node = await this.one.create(node_data);
+      //return await this.cd(await this.pwd(create_node));
+      return create_node;
     };
     this.set = async function(node_data, node=null){
       if(!node)node = this.current;
       await this.one.update(node_data);
       return node_data;
     };
-    this.delete = async function(){};
+    this.rm = async function(){};
     return this;
   }else{
     return null; //error: missing root node

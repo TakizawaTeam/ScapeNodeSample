@@ -17,10 +17,12 @@
       }
       //await init_db();
 
-      await cd("TestE");
+      await make("TestA/TestE/TestF");
       await cd("TestA/TestE/TestF");
       log();
-      // await make("TestF");
+      await make("TestG");
+      await cd("TestG");
+      log();
       // log();
       // console.log(await ls());
       // console.log(await pwd());
