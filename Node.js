@@ -49,10 +49,14 @@ module.exports = (async function(){
   this.ROOT = await this.one.read(this.ROOT_HASH);
   if(this.ROOT){
     this.current = this.ROOT;
+    this.target = key=>{
+      if(key==this.ROOT.key)return this.ROOT;
+      return this.current;
+    };
     this.find = async function(path=""){
       if(typeof path==="string" && path.length>0){
         const node_keys = path.split("/");
-        let node = this.ROOT;
+        let node = this.target(node_keys[0]);
 
         for(k in node_keys){
           if(node_keys[k]==this.ROOT.key){}
