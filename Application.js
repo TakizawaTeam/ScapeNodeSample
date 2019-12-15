@@ -1,21 +1,17 @@
 module.exports = (async function(){
   this.name = "scape_node";
   this.is = {
-    types: {
-      u: "undefined",
-      s: "string",
-      n: "number"},
-    init: ()=>{
-      for(k in this.is.types){
-        this.is[k] = eval(`valid=>(typeof valid===${this.is.types[k]})`);
-      }
-    }
+    u: v=>(typeof v==="undefined"),
+    s: v=>(typeof v==="string"),
+    n: v=>(typeof v==="number"),
+    a: v=>Array.isArray(v),
+    f: v=>(typeof v==="function"),
+    o: v=>(!Array.isArray(v) && v!=null && (typeof obj==="object")),
   };
-  this.is.init();
   this.dup = obj=>Object.assign({},obj);
   this.s_date = (datetime=null)=>{
     if(!datetime) datetime = new Date();
-    return `${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}`;
+    return `${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}`;
   };
   this.createHash = (prefix, num)=>{
     var h = '';

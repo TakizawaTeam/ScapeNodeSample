@@ -55,6 +55,12 @@ module.exports = (async function(){
       if(key==this.ROOT.key)return this.ROOT;
       return this.current;
     };
+    this.dimension = async function(){}; //未実装：
+    this.cosmos = async function(){}; //未実装
+    this.universe = async function(){}; //未実装：
+    this.space = async function(){}; //未実装：
+    this.chunk = async function(){}; //未実装：
+    this.forest = async function(){}; //未実装：
     this.checkout = async function(name=this.ROOT_HASH){
       const root_node = await this.childs(name, {hash: ""});
       if(root_node.length){
@@ -63,9 +69,12 @@ module.exports = (async function(){
         return this.current;
       }else{ return null; }
     };
+    this.snapshot = async function(){}; //未実装：ツリーを圧縮保存
+    this.independent = async function(){}; //未実装：親が不在のノードを独立させる
     this.find = async function(path=""){
       if(typeof path==="string" && path.length>0){
         const node_keys = path.split("/");
+        let find_history = [];
         let node = this.target(node_keys[0]);
 
         for(k in node_keys){
@@ -75,8 +84,9 @@ module.exports = (async function(){
           else{
             const result = await this.childs(node_keys[k], node);
             if(result.length>0){ node = result[0]; }
-            else{ return null; }
+            else{ return find_history; }
           }
+          find_history.shift(node);
         }
         return node;
       }else{return `find() $path type error [${typeof path}]`;}
@@ -97,7 +107,17 @@ module.exports = (async function(){
         return await Node.find(params).toArray();
       });
     };
-    this.cd = async function(path=""){ /* 根から絶対パスを辿り移動or相対パスで移動 */
+    this.branch = async function(node=null){
+      if(!node)node = this.current;
+      let parents = [node];
+      while(true){
+        node = await this.parent(node);
+        parents.unshift(node);
+        if(node.parent=="") break;
+      }
+      return parents;
+    };
+    this.cd = async function(path=""){
       if(typeof path==="string" && path.length>0){
         this.current = path.length==0? this.ROOT : await this.find(path);
         return this.current;
@@ -123,6 +143,10 @@ module.exports = (async function(){
       let key="", parent_node=this.current;
       if(node_keys.length>0) key = node_keys.pop();
       if(node_keys.length>0) parent_node = await this.find( node_keys.join("/") );
+
+      // if(APP.is.a(parent_node)){ //親が存在しない場合は生成
+      //
+      // }
 
       const parent_hash = root_flg ? "" : parent_node.hash;
       const node_data = this.createModel({parent: parent_hash, key: key});

@@ -17,14 +17,8 @@
       }
       //await init_db();
 
-      // await cd("TestA/TestE/TestF");
-      // log();
-
-      //await make("NodeHash_ROOT2", true);
-      log();
-      await checkout("NodeHash_ROOT2");
-      log();
-      //await make("TestG");
+      await cd("TestA/TestB/TestC");
+      console.log(await branch());
     }).bind(Node)();
   }
 })({
