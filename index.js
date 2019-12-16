@@ -5,7 +5,8 @@
   if(Node){
     (async function(){
       //初期ノード作成
-      async function init_db(){
+      async function init(){
+        await initialize();
         const NODE_DATAS = [
           {hash: "NodeHash_ROOT", parent: "", key: "TestA", value: "AAA"},
           {hash: "NodeHash_B", parent: "NodeHash_ROOT", key: "TestB", value: "BBB"},
@@ -15,12 +16,12 @@
         ];
         for(k in NODE_DATAS) await one.create(NODE_DATAS[k]);
       }
-      //await init_db();
+      await init();
 
-      await make("TestA/TestB2/TestC2/TestD2");
-      leaf = await cd("TestA/TestB2/TestC2/TestD2");
-      //log();
-      await pwd(leaf);
+      // await make("TestA/TestB2/TestC2/TestD2");
+      // leaf = await cd("TestA/TestB2/TestC2/TestD2");
+      // //log();
+      // await pwd(leaf);
     }).bind(Node)();
   }
 })({

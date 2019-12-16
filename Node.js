@@ -21,6 +21,12 @@ module.exports = (async function(){
     node_data.updated_at = APP.s_date();
     return node_data;
   };
+  this.initialize = async function(){
+    return await DB.connect(async connection=>{
+      const Node = await DB.get_collection(`${APP.name}/nodes`);
+      return Node.remove();
+    });
+  };
   this.one = { /* HASHによる直接操作 */
     create: async obj=>{
       return await DB.connect(async connection=>{
@@ -170,8 +176,6 @@ module.exports = (async function(){
       return node_data;
     };
     this.rm = async function(){};
-    return this;
-  }else{
-    return null; //error: missing root node
   }
+  return this;
 })();
