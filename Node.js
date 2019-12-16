@@ -86,7 +86,7 @@ module.exports = (async function(){
             if(result.length>0){ node = result[0]; }
             else{ return find_history; }
           }
-          find_history.shift(node);
+          find_history.unshift(node);
         }
         return node;
       }else{return `find() $path type error [${typeof path}]`;}
@@ -138,14 +138,21 @@ module.exports = (async function(){
       if(!node)node = this.current;
       return node["value"];
     };
-    this.make = async function(path, root_flg=false){
+    this.make = async function(path, root_flg=false, option={p:true}){
       const node_keys = path.split("/");
       let key="", parent_node=this.current;
       if(node_keys.length>0) key = node_keys.pop();
       if(node_keys.length>0) parent_node = await this.find( node_keys.join("/") );
 
-      // if(APP.is.a(parent_node)){ //親が存在しない場合は生成
-      //
+      // if(APP.is.a(parent_node) && option["p"]){ //leafが存在しない場合
+      //   node_keys.forEach(async (v,k)=>{
+      //     if(!parent_node[k]){ // leafまでの各種nodeが存在しない場合
+      //       path = node_keys.slice(0,k+1).join("/");
+      //       parent_node[k] = await this.make(path, false, {p:false});
+      //     }
+      //   });
+      //   console.log(parent_node);
+      //   parent_node = parent_node.pop();
       // }
 
       const parent_hash = root_flg ? "" : parent_node.hash;

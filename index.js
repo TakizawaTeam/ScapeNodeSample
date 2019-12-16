@@ -17,8 +17,10 @@
       }
       //await init_db();
 
-      await cd("TestA/TestB/TestC");
-      console.log(await branch());
+      await make("TestA/TestB2/TestC2/TestD2");
+      leaf = await cd("TestA/TestB2/TestC2/TestD2");
+      //log();
+      await pwd(leaf);
     }).bind(Node)();
   }
 })({
