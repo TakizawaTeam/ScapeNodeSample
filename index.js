@@ -2,7 +2,7 @@
   const DB = require('./Database');
 
   const Node = await require('./Node.js');
-  if(Node){
+  if(Node.True()){
     (async function(){
       //初期ノード作成
       async function init(){
@@ -16,12 +16,20 @@
         ];
         for(k in NODE_DATAS) await one.create(NODE_DATAS[k]);
       }
-      await init();
 
-      // await make("TestA/TestB2/TestC2/TestD2");
-      // leaf = await cd("TestA/TestB2/TestC2/TestD2");
-      // //log();
-      // await pwd(leaf);
+      await init();
+      // const root_node = await make('root', true); await cd('root');
+      //
+      // const root = 'root',
+      // work = 'work',
+      // first = 'TestA/TestB/TestC/TestD',
+      // second = 'TestE/TestF',
+      // third = 'TestG';
+      //
+      // await make(`${root}/${work}/${first}`);
+      // await cd(`${root}/${work}/TestB`);
+      // await make(second);
+      // await make(third);
     }).bind(Node)();
   }
 })({

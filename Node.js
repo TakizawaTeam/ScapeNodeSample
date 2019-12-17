@@ -156,7 +156,7 @@ module.exports = (async function(){
       if(APP.is.a(parent_node) && option["p"]){ //leafが存在しない場合
         for([k,v] of Object.entries(node_keys)){
           if(!parent_node[k]){ // leafまでの各種nodeが存在しない場合
-            path = node_keys.slice(0,k+1).join("/");
+            path = node_keys.slice(0,parseInt(k)+1).join("/");
             parent_node[k] = await this.make(path, false, {p:false});
           }
         }
