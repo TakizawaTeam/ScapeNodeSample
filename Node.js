@@ -31,7 +31,8 @@ module.exports = (async function(){
     create: async obj=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        return Node.insertOne(obj);
+        Node.insertOne(obj);
+        return Node.findOne({hash: obj.hash});
       });
     },
     read: async hash=>{
@@ -55,6 +56,7 @@ module.exports = (async function(){
   };
 
   this.ROOT = await this.one.read(this.ROOT_HASH);
+  this.True = ()=>!!this.ROOT;
   if(this.ROOT){
     this.current = this.ROOT;
     this.target = key=>{
@@ -150,23 +152,21 @@ module.exports = (async function(){
       if(node_keys.length>0) key = node_keys.pop();
       if(node_keys.length>0) parent_node = await this.find( node_keys.join("/") );
 
+      //console.log(key, node_keys);
       if(APP.is.a(parent_node) && option["p"]){ //leafが存在しない場合
-        node_keys.forEach(async (v,k)=>{
-          console.log(k, parent_node[k], !parent_node[k]);
+        for([k,v] of Object.entries(node_keys)){
           if(!parent_node[k]){ // leafまでの各種nodeが存在しない場合
             path = node_keys.slice(0,k+1).join("/");
             parent_node[k] = await this.make(path, false, {p:false});
-            console.log(path, k, parent_node[k]);
           }
-        });
-        console.log(parent_node);
+        }
         parent_node = parent_node.pop();
       }
 
       const parent_hash = root_flg ? "" : parent_node.hash;
       const node_data = this.createModel({parent: parent_hash, key: key});
       const create_node = await this.one.create(node_data);
-      //return await this.cd(await this.pwd(create_node));
+      //return await this.cd(await this.pwd(create_node)); // make後にcd
       return create_node;
     };
     this.set = async function(node_data, node=null){
