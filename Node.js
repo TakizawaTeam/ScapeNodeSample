@@ -55,9 +55,20 @@ module.exports = (async function(){
     },
   };
 
-  this.ROOT = await this.one.read(this.ROOT_HASH);
+  this.woods = async function(){};
+  this.checkout = async function(name=this.ROOT_HASH){
+    return await DB.connect(async connection=>{
+      const Node = await DB.get_collection(`${APP.name}/nodes`);
+      const root await Node.findOne({param: "",key: name});
+      if(root.length){
+        this.ROOT = root;
+        this.current = this.ROOT;
+        return this.current;
+      }else{ return null; }
+    });
+  }; this.checkout();
   this.True = ()=>!!this.ROOT;
-  if(this.ROOT){
+  if(this.True()){
     this.current = this.ROOT;
     this.target = key=>{
       if(key==this.ROOT.key)return this.ROOT;

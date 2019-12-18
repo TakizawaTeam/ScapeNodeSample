@@ -27,6 +27,10 @@ exports = exports={
     let db = this.connection.db(db_name);
     let collection = db.collection(collection_name);
     return collection;
-  }
+  },
+  single_connect: async function(name, _collback){
+    const collection = await this.get_collection(name);
+    return await this.connect( (_collback).bind(collection) );
+  },
 }
 module.exports = exports;
