@@ -153,17 +153,12 @@ module.exports = (async function(){
     }
     return keys.join('/');
   };
-  this.cat = function(node=null){
-    if(!node)node = this.current;
-    return node["value"];
-  };
   this.make = async function(path, root_flg=false, option={p:true}){
     const node_keys = path.split("/");
     let key="", parent_node=this.current;
     if(node_keys.length>0) key = node_keys.pop();
     if(node_keys.length>0) parent_node = await this.find( node_keys.join("/") );
 
-    //console.log(key, node_keys);
     if(APP.is.a(parent_node) && option["p"]){ //leafが存在しない場合
       for([k,v] of Object.entries(node_keys)){
         if(!parent_node[k]){ // leafまでの各種nodeが存在しない場合
@@ -180,11 +175,18 @@ module.exports = (async function(){
     //return await this.cd(await this.pwd(create_node)); // make後にcd
     return create_node;
   };
-  this.set = async function(node_data, node=null){
+  this.set = async function(data, node=null){
     if(!node)node = this.current;
-    node_data.updated_at = APP.s_date();
-    await this.one.update(node_data);
-    return node_data;
+    let target_node = await this.one.read(node);
+    target_node.updated_at = APP.s_date();
+    target_node = Object.assign(target_node, data);
+    await this.one.update(target_node);
+    return target_node;
+  };
+  this.cat = async function(column="value", node=null){
+    if(!node)node = this.current;
+    let target_node = await this.one.read({hash: node.hash});
+    return !!target_node[column]? target_node[column] : null;
   };
   this.rm = async function(){};
   return this;
