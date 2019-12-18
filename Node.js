@@ -171,14 +171,23 @@ module.exports = (async function(){
     let target_node = await this.one.read({hash: node.hash});
     return !!target_node[column]? target_node[column] : null;
   };
-  this.rm = async function(node=null, option={r:true}){
+  this.rm = async function(node=null, logical=true,option={r:true}){
     if(!node)node = this.current;
-    await
+    let target_node = await this.one.read(node);
+    if(option["r"]){
+      //再帰削除
+    }
+    if(logical){
+      target_node.deleted_at = APP.s_date();
+      await this.one.update(target_node);
+    }else{
+      await this.one.delete(target_node);
+    }
   };
   this.cp = async function(){};
   this.mv = async function(){};
   /* [future]
-  * dimension, cosmos, cosmos, space, chunk, forest: 群衆管理
+  * cosmos, dimension, universe, chunk, forest: 群衆管理
   * snapshot: ツリーを圧縮保存
   * independent: 親が不在のノードを独立させる
   */
