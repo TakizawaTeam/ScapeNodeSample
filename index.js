@@ -16,7 +16,6 @@
 
       // 各種NodeModuleテスト
       console.log(`current: ${await pwd()}`);
-      log();
     }).bind(Node)();
   }
 })({

@@ -31,26 +31,28 @@ module.exports = (async function(){
     create: async obj=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        Node.insertOne(obj);
+        const res = Node.insertOne(obj);
         return Node.findOne({hash: obj.hash});
       });
     },
-    read: async hash=>{
+    read: async obj=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        return Node.findOne({hash: hash});
+        return Node.findOne(obj);
       });
     },
     update: async obj=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        return Node.updateOne({hash: obj.hash}, {$set: obj});
+        const res = Node.updateOne({hash: obj.hash}, {$set: obj});
+        return Node.findOne({hash: obj.hash});
       });
     },
-    delete: async hash=>{
+    delete: async obj=>{
       return await DB.connect(async connection=>{
         const Node = await DB.get_collection(`${APP.name}/nodes`);
-        return Node.deleteOne({hash: hash});
+        const res = Node.deleteOne({hash: obj.hash});
+        return Node.findOne({hash: obj.hash});
       });
     },
   };
@@ -59,16 +61,14 @@ module.exports = (async function(){
   this.current = null;
   this.woods = async function(){};
   this.checkout = async function(name=this.ROOT_HASH){
-    const root = await DB.connect(async connection=>{
-      const Node = await DB.get_collection(`${APP.name}/nodes`);
-      return await Node.findOne({parent: "",key: name});
-    });
+    const root = await this.one.read({key: name});
     if(root){
       this.ROOT = root;
       this.current = this.ROOT;
       return this.current;
     }else{ return null; }
-  }; await this.checkout();
+  };
+  await this.checkout();
   this.target = key=>{
     if(key==this.ROOT.key)return this.ROOT;
     return this.current;
@@ -115,7 +115,7 @@ module.exports = (async function(){
   this.parent = async function(node=null){
     if(!node)node = this.current;
     if(!node.parent) return node;
-    return await this.one.read(node.parent);
+    return await this.one.read({hash: node.parent});
   };
   this.childs = async function(key=null, node=null){
     if(!node)node = this.current;
