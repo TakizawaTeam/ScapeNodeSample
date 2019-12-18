@@ -73,23 +73,6 @@ module.exports = (async function(){
     if(key==this.ROOT.key)return this.ROOT;
     return this.current;
   };
-
-  this.dimension = async function(){}; //未実装：
-  this.cosmos = async function(){}; //未実装
-  this.universe = async function(){}; //未実装：
-  this.space = async function(){}; //未実装：
-  this.chunk = async function(){}; //未実装：
-  this.forest = async function(){}; //未実装：
-  // this.checkout = async function(name=this.ROOT_HASH){
-  //   const root_node = await this.childs(name, {hash: ""});
-  //   if(root_node.length){
-  //     this.ROOT = root_node[0];
-  //     this.current = this.ROOT;
-  //     return this.current;
-  //   }else{ return null; }
-  // };
-  this.snapshot = async function(){}; //未実装：ツリーを圧縮保存
-  this.independent = async function(){}; //未実装：親が不在のノードを独立させる
   this.find = async function(path=""){
     if(typeof path==="string" && path.length>0){
       const node_keys = path.split("/");
@@ -188,6 +171,16 @@ module.exports = (async function(){
     let target_node = await this.one.read({hash: node.hash});
     return !!target_node[column]? target_node[column] : null;
   };
-  this.rm = async function(){};
+  this.rm = async function(node=null, option={r:true}){
+    if(!node)node = this.current;
+    await
+  };
+  this.cp = async function(){};
+  this.mv = async function(){};
+  /* [future]
+  * dimension, cosmos, cosmos, space, chunk, forest: 群衆管理
+  * snapshot: ツリーを圧縮保存
+  * independent: 親が不在のノードを独立させる
+  */
   return this;
 })();
