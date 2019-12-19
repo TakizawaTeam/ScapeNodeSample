@@ -7,17 +7,23 @@ _output(){ pbcopy < $1; }
 _input(){ pbpaste > $1; }
 _date(){ echo `date "+%Y%m%d-%H%M%S"`; }
 
+_prev_next_name(){
+  echo `ls -l ./clips|grep -1 -n 20191219-173019.txt`;
+}
+
 _init(){
   touch session.txt;
-  mkdir clips; 
+  mkdir clips;
   _alert "initialize!" "clip_controll";
 }
 _open(){ open "./clips"; }
 _save(){
-  file_path="./clips/`_date`.txt";
+  file_name="`_date`.txt";
+  file_path="./clips/${file_name}";
+  echo $file_name > session.txt;
   _input $file_path;
   first_str=`head -n 1 $file_path`;
-  _alert $first_str "clip_controll:save";
+  _alert "save: ${first_str}" "clip_controll";
 }
 _prev(){ echo "prev[TBI]"; }
 _next(){ echo "open[TBI]"; }
@@ -29,4 +35,3 @@ case $1 in
   "prev") _prev;;
   "next") _next;;
 esac
-
