@@ -14,7 +14,7 @@ _prev_next_name(){
 _init(){
   touch session.txt;
   mkdir clips;
-  _alert "initialize!" "clip_controll";
+  _alert "Initialized" "clip_controll";
 }
 _open(){ open "./clips"; }
 _save(){
@@ -23,7 +23,7 @@ _save(){
   echo $file_name > session.txt;
   _input $file_path;
   first_str=`head -n 1 $file_path`;
-  _alert "save: ${first_str}" "clip_controll";
+  _alert "Saved: ${first_str}" "clip_controll";
 }
 _prev(){ echo "prev[TBI]"; }
 _next(){ echo "open[TBI]"; }

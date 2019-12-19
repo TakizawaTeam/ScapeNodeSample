@@ -93,14 +93,13 @@ module.exports = (async function(){
       return node;
     }else{return `find() $path type error [${typeof path}]`;}
   };
-  // [TBI] snap serialize history undo redo diff grep
   this.log = (node=null)=>console.log(node?node:this.current);
   this.parent = async function(node=null){
     if(!node)node = this.current;
     if(!node.parent) return node;
     return await this.one.read({hash: node.parent});
   };
-  this.childs = async function(key=null, node=null){
+  this.childs = async function(key=null, node=null, option={r:false}){
     if(!node)node = this.current;
     return await DB.connect(async connection=>{
       const Node = await DB.get_collection(`${APP.name}/nodes`);
@@ -119,6 +118,8 @@ module.exports = (async function(){
     }
     return parents;
   };
+  this.explor = async function(node=null){};
+  this.collect = async function(node=null){};
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
@@ -190,6 +191,7 @@ module.exports = (async function(){
   * cosmos, dimension, universe, chunk, forest: 群衆管理
   * snapshot: ツリーを圧縮保存
   * independent: 親が不在のノードを独立させる
+  * serialize history undo redo diff grep
   */
   return this;
 })();
