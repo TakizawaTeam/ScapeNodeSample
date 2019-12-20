@@ -7,10 +7,6 @@ _output(){ pbcopy < $1; }
 _input(){ pbpaste > $1; }
 _date(){ echo `date "+%Y%m%d-%H%M%S"`; }
 
-_prev_next_name(){
-  echo `ls -l ./clips|grep -1 -n 20191219-173019.txt`;
-}
-
 _init(){
   touch session.txt;
   mkdir clips;
@@ -25,8 +21,22 @@ _save(){
   first_str=`head -n 1 $file_path`;
   _alert "Saved: ${first_str}" "clip_controll";
 }
-_prev(){ echo "prev[TBI]"; }
-_next(){ echo "open[TBI]"; }
+_prev(){
+  current=`cat session.txt`;
+  file_name=`ls ./clips|grep -1 $current|tail -1`;
+  echo $file_name > session.txt;
+  _output=`cat "./clips/${file_name}"`;
+}
+_current(){
+  current=`cat session.txt`;
+  _output=`cat "./clips/${current}"`;
+}
+_next(){
+  current=`cat session.txt`;
+  file_name=`ls ./clips|grep -1 $current|head -1`;
+  echo $file_name > session.txt;
+  _output=`cat "./clips/${file_name}"`;
+}
 
 case $1 in
   "init") _init;;
