@@ -1,6 +1,7 @@
 #README
 #run this shell automater shortcut.
 
+cd `dirname $0`;
 #methods
 _alert(){ osascript -e "display notification \"$1\" with title \"$2\""; }
 _output(){ pbcopy < $1; }
@@ -25,17 +26,20 @@ _prev(){
   current=`cat session.txt`;
   file_name=`ls ./clips|grep -1 $current|tail -1`;
   echo $file_name > session.txt;
-  _output=`cat "./clips/${file_name}"`;
+  _output "./clips/${file_name}";
+  _alert "Prev: `cat ./clips/${file_name}|head -1`" "clip_controll";
 }
-#_current(){
-#  current=`cat session.txt`;
-#  _output=`cat "./clips/${current}"`;
-#}
+_current(){
+  current=`cat session.txt`;
+  _output "./clips/${current}";
+  _alert "Current: `cat ./clips/${file_name}`" "clip_controll";
+}
 _next(){
   current=`cat session.txt`;
   file_name=`ls ./clips|grep -1 $current|head -1`;
   echo $file_name > session.txt;
-  _output=`cat "./clips/${file_name}"`;
+  _output "./clips/${file_name}";
+  _alert "Next: `cat ./clips/${file_name}|head -1`" "clip_controll";
 }
 
 case $1 in
@@ -43,6 +47,6 @@ case $1 in
   "open") _open;;
   "save") _save;;
   "prev") _prev;;
-#  "current") _current;;
+  "current") _current;;
   "next") _next;;
 esac
