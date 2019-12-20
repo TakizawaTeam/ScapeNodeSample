@@ -27,10 +27,10 @@ _prev(){
   echo $file_name > session.txt;
   _output=`cat "./clips/${file_name}"`;
 }
-_current(){
-  current=`cat session.txt`;
-  _output=`cat "./clips/${current}"`;
-}
+#_current(){
+#  current=`cat session.txt`;
+#  _output=`cat "./clips/${current}"`;
+#}
 _next(){
   current=`cat session.txt`;
   file_name=`ls ./clips|grep -1 $current|head -1`;
@@ -43,5 +43,6 @@ case $1 in
   "open") _open;;
   "save") _save;;
   "prev") _prev;;
+#  "current") _current;;
   "next") _next;;
 esac
