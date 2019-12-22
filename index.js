@@ -1,5 +1,4 @@
 (async conf=>{
-  const DB = require('./Database');
   const Node = await require('./Node.js');
   if(Node){
     (async function(){
@@ -13,7 +12,7 @@
         await make("TestE/TestF"); //branch2
         await make("TestG"); //branch3
 
-        console.log(`[generate NodeModule TestTree.]`);
+        console.log(`\n[generate NodeModule TestTree.]`);
         console.log(`current: ${await pwd()}`);
 
         const main_path = 'root/work/TestA/TestB';
@@ -33,7 +32,7 @@
       // 各種NodeModuleテスト
       await init();
 
-      await rm();
+      //await rm();
     }).bind(Node)();
   }
 })({

@@ -118,8 +118,18 @@ module.exports = (async function(){
     }
     return parents;
   };
-  this.explor = async function(node=null){};
-  this.collect = async function(node=null){};
+  // return false: stop explor;
+  // return null:
+  // return undefined:
+  // this.explor = async function(_callback, obj={current=null, list=[], chest=[]}){
+  //   const current = _callback(obj);
+  //   if(current==false){ return false; }
+  //   else{
+  //     obj.current = await one.read(node.hash);
+  //     obj.list = this.childs(null, obj.current);
+  //   }
+  //   this.explor(_callback, obj);
+  // };
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
