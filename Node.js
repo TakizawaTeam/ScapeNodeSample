@@ -122,16 +122,19 @@ module.exports = (async function(){
   ** return null:
   ** return undefined:
   */
-  // this.explor = async function(_callback, _start=null, obj={current=null, list=[], history=[], chest=[]}){
-  //   if(obj.current==null) obj.current = !!_start ? _start : this.current;
-  //
-  //   const current = _callback(obj);
-  //   if(!current)return chest;
-  //   history.push(current);
-  //   obj.current = await one.read(current.hash);
-  //   obj.list = this.childs(null, obj.current);
-  //   this.explor(_callback, obj);
-  // };
+  this.explor = async function(_callback, _start=null, obj={current=null, list=[], history=[], depth=25, chest=[]}){
+    if(obj.current==null) obj.current = !!_start ? _start : this.current;
+
+    const current = _callback(obj);
+    if(obj.depth<=0)return "探査震度を超過しました。";
+    if(!current)return chest;
+
+    history.push(current);
+    obj.current = await one.read(current.hash);
+    obj.list = this.childs(null, obj.current);
+    obj.depth -= 1;
+    this.explor(_callback, obj);
+  };
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
