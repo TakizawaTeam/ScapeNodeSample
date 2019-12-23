@@ -118,19 +118,20 @@ module.exports = (async function(){
     }
     return parents;
   };
-  // return false: stop explor;
-  // return null:
-  // return undefined:
-  this.explor = async function(_callback, _start=null, obj={current=null, list=[], history=[], chest=[]}){
-    if(obj.current==null) obj.current = !!_start ? _start : this.current;
-
-    const current = _callback(obj);
-    if(!current)return chest;
-    history.push(current);
-    obj.current = await one.read(current.hash);
-    obj.list = this.childs(null, obj.current);
-    this.explor(_callback, obj);
-  };
+  /* return false: stop explor;
+  ** return null:
+  ** return undefined:
+  */
+  // this.explor = async function(_callback, _start=null, obj={current=null, list=[], history=[], chest=[]}){
+  //   if(obj.current==null) obj.current = !!_start ? _start : this.current;
+  //
+  //   const current = _callback(obj);
+  //   if(!current)return chest;
+  //   history.push(current);
+  //   obj.current = await one.read(current.hash);
+  //   obj.list = this.childs(null, obj.current);
+  //   this.explor(_callback, obj);
+  // };
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
