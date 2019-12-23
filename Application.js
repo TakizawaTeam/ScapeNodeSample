@@ -18,5 +18,16 @@ module.exports = (async function(){
     while( h.length<num ) h+="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[parseInt(Math.random()*62)];
     return `${prefix}${h}`;
   };
+  this.animals = {
+    dog: '🐶', cat: '🐱', rat: '🐭', hamster: '🐹', rabbit: '🐰', fox: '🦊', bear: '🐻',
+    panda: '🐼', koala: '🐨', tiger: '🐯', lion: '🦁', cow: '🐮', pig: '🐷',
+  };
+  this.getAnimalIcons = num=>{
+    const sort = [
+      "dog", "cat", "rat", "hamster", "rabbit", "fox", "bear", "panda",
+      "koala", "tiger", "lion", "cow", "pig",
+    ];
+    return num<sort.length ? sort.map(k=>this.animals[k])[num] : null;
+  };
   return this;
 })();
