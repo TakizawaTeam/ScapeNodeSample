@@ -122,18 +122,33 @@ module.exports = (async function(){
   ** return null:
   ** return undefined:
   */
-  this.explor = async function(_callback, _start=null, obj={current=null, list=[], history=[], depth=25, chest=[]}){
-    if(obj.current==null) obj.current = !!_start ? _start : this.current;
+  this.explor_asset = {
+    current: null,
+    list: [],
+    history: [],
+    depth: 0,
+    MAX_DEPTH: 10,
+    chest: [],
+  };
+  this.explor = async function(_callback, asset=this.explor_asset, _start=null){
+    if(asset.current==null) asset.current = !!_start ? _start : this.current;
 
-    const current = _callback(obj);
-    if(obj.depth<=0)return "探査震度を超過しました。";
-    if(!current)return chest;
+    const current = await _callback(asset);
+    if(!current || asset.MAX_DEPTH<=asset.depth)return asset.chest;
 
-    history.push(current);
-    obj.current = await one.read(current.hash);
-    obj.list = this.childs(null, obj.current);
-    obj.depth -= 1;
-    this.explor(_callback, obj);
+    asset.current = await one.read(current);
+    asset.depth += 1;
+    return await this.explor(_callback, asset);
+
+    // const current = _callback(obj);
+    // if(obj.depth<=0)return "探査震度を超過しました。";
+    // if(!current)return chest;
+    //
+    // history.push(current);
+    // obj.current = await one.read(current.hash);
+    // obj.list = this.childs(null, obj.current);
+    // obj.depth -= 1;
+    // this.explor(_callback, obj);
   };
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){

@@ -31,8 +31,17 @@
 
       // 各種NodeModuleテスト
       await init();
+      console.log(`${"\n"}---${"\n"}`);
 
       //await rm();
+      const explor_nodes = await explor(async function(asset){
+        console.log(`current[${asset.depth}]:`, asset.current);
+
+        const parent_node = await parent(asset.current);
+        if(!asset.current.parent) return false;
+        return parent_node;
+      });
+      console.log('result:', explor_nodes);
     }).bind(Node)();
   }
 })({
