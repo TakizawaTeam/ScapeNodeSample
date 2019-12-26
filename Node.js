@@ -144,11 +144,22 @@ module.exports = (async function(){
     asset.depth += 1;
     return await this.explor(_callback, asset);
   };
-  this.survey = async function(){
-    // return await this.explor(async function(){
-    //
-    // });
-  };
+  // this.survey_option = {
+  //   explorer_num: 0,
+  //   max_explorer: 30,
+  // };
+  // this.survey = async function(_callback, node=null, option=){
+  //   if(!node)node = this.current;
+  //
+  //   return await this.explor(async function(asset){
+  //     const child_nodes = await this.childs(null, asset.current);
+  //     const keep_explorer = child_nodes.shift();
+  //     for([k,n] of Object.entries(child_nodes)){
+  //       asset.chest.concat( await this.explor(asset.callback, n) );
+  //     }
+  //     return keep_explorer;
+  //   }, node);
+  // };
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
