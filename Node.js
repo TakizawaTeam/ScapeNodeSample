@@ -144,22 +144,23 @@ module.exports = (async function(){
     asset.depth += 1;
     return await this.explor(_callback, asset);
   };
-  // this.survey_option = {
-  //   explorer_num: 0,
-  //   max_explorer: 30,
-  // };
-  // this.survey = async function(_callback, node=null, option=){
-  //   if(!node)node = this.current;
-  //
-  //   return await this.explor(async function(asset){
-  //     const child_nodes = await this.childs(null, asset.current);
-  //     const keep_explorer = child_nodes.shift();
-  //     for([k,n] of Object.entries(child_nodes)){
-  //       asset.chest.concat( await this.explor(asset.callback, n) );
-  //     }
-  //     return keep_explorer;
-  //   }, node);
-  // };
+  this.survey_option = {
+    explorer_num: 0,
+    max_explorer: 30,
+  };
+  this.survey = async function(_callback, node=null, option=this.survey_option){
+    if(!node)node = this.current;
+
+    return await this.explor(async function(asset){
+      APP.debag_log(1, "surver running explorers.");
+      const child_nodes = await this.childs(null, asset.current);
+      const keep_explorer = child_nodes.shift();
+      for([k,n] of Object.entries(child_nodes)){
+        asset.chest.concat( await this.explor(asset.callback, n) );
+      }
+      return keep_explorer;
+    }, node);
+  };
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
@@ -213,7 +214,7 @@ module.exports = (async function(){
     return !!target_node[column]? target_node[column] : null;
   };
   this.rm = async function(node=null, logical=true,option={r:true}){
-    console.log("\n"+APP.getAnimalIcons(1));
+    console.log(APP.getAnimalIcons(1), await this.survey(null));
     // if(!node)node = this.current;
     // let target_node = await this.one.read(node);
     // if(option["r"]){

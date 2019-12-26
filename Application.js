@@ -29,5 +29,10 @@ module.exports = (async function(){
     ];
     return num<sort.length ? sort.map(k=>this.animals[k])[num] : null;
   };
+  this.log_counter = 0;
+  this.debag_log = (n,msg)=>{
+    const animal_icon = this.getAnimalIcons(n%Object.keys(this.animals).length);
+    console.log(`${animal_icon}${this.log_counter++}`, msg);
+  };
   return this;
 })();
