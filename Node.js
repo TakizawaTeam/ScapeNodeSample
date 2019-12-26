@@ -129,26 +129,25 @@ module.exports = (async function(){
     depth: 0,
     MAX_DEPTH: 10,
     chest: [],
+    callback: null,
   };
-  this.explor = async function(_callback, asset=this.explor_asset, _start=null){
-    if(asset.current==null) asset.current = !!_start ? _start : this.current;
+  this.explor = async function(_callback, _start=null, asset=this.explor_asset){
+    if(asset.current==null){
+      asset.current = !!_start ? _start : this.current;
+      asset.callback = _callback;
+    }
 
     const current = await _callback(asset);
     if(!current || asset.MAX_DEPTH<=asset.depth)return asset.chest;
-
     asset.current = await one.read(current);
+    asset.list = await this.childs(null, asset.current);
     asset.depth += 1;
     return await this.explor(_callback, asset);
-
-    // const current = _callback(obj);
-    // if(obj.depth<=0)return "探査震度を超過しました。";
-    // if(!current)return chest;
+  };
+  this.survey = async function(){
+    // return await this.explor(async function(){
     //
-    // history.push(current);
-    // obj.current = await one.read(current.hash);
-    // obj.list = this.childs(null, obj.current);
-    // obj.depth -= 1;
-    // this.explor(_callback, obj);
+    // });
   };
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
@@ -207,7 +206,9 @@ module.exports = (async function(){
     // if(!node)node = this.current;
     // let target_node = await this.one.read(node);
     // if(option["r"]){
-    //   //再帰削除
+    //   // await this.explor(async function(asset){
+    //   //
+    //   // }, target_node);
     // }
     // if(logical){
     //   target_node.deleted_at = APP.s_date();

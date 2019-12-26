@@ -1,4 +1,5 @@
 (async conf=>{
+  const APP = await require("./Application.js");
   const Node = await require('./Node.js');
   if(Node){
     (async function(){
@@ -33,15 +34,17 @@
       await init();
       console.log(`${"\n"}---${"\n"}`);
 
-      //await rm();
-      const explor_nodes = await explor(async function(asset){
-        console.log(`current[${asset.depth}]:`, asset.current);
+      // const explor_nodes = await explor(async function(asset){
+      //   //console.log(`current[${asset.depth}]:`, asset.current);
+      //   console.log(APP.getAnimalIcons(0), asset.list);
+      //
+      //   const parent_node = await parent(asset.current);
+      //   if(!asset.current.parent) return false;
+      //   return parent_node;
+      // });
+      // //console.log('result:', explor_nodes);
 
-        const parent_node = await parent(asset.current);
-        if(!asset.current.parent) return false;
-        return parent_node;
-      });
-      console.log('result:', explor_nodes);
+      await rm();
     }).bind(Node)();
   }
 })({
