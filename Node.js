@@ -216,14 +216,15 @@ module.exports = (async function(){
     let target_node = await this.one.read({hash: node.hash});
     return !!target_node[column]? target_node[column] : null;
   };
-  this.rm = async function(node=null, logical=true,option={r:true}){
-    console.log(this.animals.fox, await this.survey(null));
-
+  this.rm_option = {r: true};
+  this.rm = async function(node=null, logical=true, option=this.rm_option){
     if(!node)node = this.current;
     let target_node = await this.one.read(node);
     if(option["r"]){
-      const remove_childs = this.survey(async ()=>{});
-      //remove
+      const remove_childs = await this.survey(APP.ASYNC_FUNCTION, node);
+      let new_option = Object.assign(this.rm_option);
+      new_option.r = false;
+      for([k,n] of Object.entries(remove_childs)) await this.rm(n, true, new_option);
     }
     if(logical){
       target_node.deleted_at = APP.s_date();
