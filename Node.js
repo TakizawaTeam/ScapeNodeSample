@@ -123,7 +123,6 @@ module.exports = (async function(){
   ** return undefined:
   */
   this.explor_asset = {
-    prev: null,
     current: null,
     list: [],
     history: [],
@@ -143,7 +142,7 @@ module.exports = (async function(){
     asset.current = await one.read(current);
     asset.list = await this.childs(null, asset.current);
     asset.depth += 1;
-    return await this.explor(_callback, asset);
+    return await this.explor(_callback, null, asset);
   };
   this.survey_option = {
     explorer_num: 0,
@@ -153,12 +152,13 @@ module.exports = (async function(){
     if(!node)node = this.current;
 
     return await this.explor(async function(asset){
+      asset.chest.push(asset.current);
       const child_nodes = await this.childs(null, asset.current);
       if(!!child_nodes.length){
         const keep_explorer = child_nodes.shift();
         for([k,n] of Object.entries(child_nodes)){
-          APP.debag_log(0, n.key);
-          asset.chest.concat( await this.explor(asset.callback, n) );
+          const collection = await this.explor(asset.callback, n);
+          asset.chest.concat( collection );
         }
         return keep_explorer;
       }else{return false;}
