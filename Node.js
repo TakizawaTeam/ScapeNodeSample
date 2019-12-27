@@ -144,21 +144,21 @@ module.exports = (async function(){
     asset.depth += 1;
     return await this.explor(_callback, null, asset);
   };
-  this.survey_option = {
+  this.survey_asset = {
     explorer_num: 0,
     max_explorer: 30,
   };
-  this.survey = async function(_callback, node=null, option=this.survey_option){
+  this.survey = async function(_callback, node=null, _asset=this.survey_option){
     if(!node)node = this.current;
 
     return await this.explor(async function(asset){
       asset.chest.push(asset.current);
       const child_nodes = await this.childs(null, asset.current);
+      await _callback(asset);
       if(!!child_nodes.length){
         const keep_explorer = child_nodes.shift();
         for([k,n] of Object.entries(child_nodes)){
-          const collection = await this.explor(asset.callback, n);
-          asset.chest.concat( collection );
+          asset.chest.concat( await this.explor(asset.callback, n) );
         }
         return keep_explorer;
       }else{return false;}
@@ -218,19 +218,19 @@ module.exports = (async function(){
   };
   this.rm = async function(node=null, logical=true,option={r:true}){
     console.log(this.animals.fox, await this.survey(null));
-    // if(!node)node = this.current;
-    // let target_node = await this.one.read(node);
-    // if(option["r"]){
-    //   // await this.explor(async function(asset){
-    //   //
-    //   // }, target_node);
-    // }
-    // if(logical){
-    //   target_node.deleted_at = APP.s_date();
-    //   await this.one.update(target_node);
-    // }else{
-    //   await this.one.delete(target_node);
-    // }
+
+    if(!node)node = this.current;
+    let target_node = await this.one.read(node);
+    if(option["r"]){
+      const remove_childs = this.survey(async ()=>{});
+      //remove
+    }
+    if(logical){
+      target_node.deleted_at = APP.s_date();
+      await this.one.update(target_node);
+    }else{
+      await this.one.delete(target_node);
+    }
   };
   this.cp = async function(){};
   this.mv = async function(){};

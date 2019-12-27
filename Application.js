@@ -34,5 +34,7 @@ module.exports = (async function(){
     const animal_icon = this.getAnimalIcons(n%Object.keys(this.animals).length);
     console.log(`${animal_icon}${this.log_counter++}`, msg);
   };
+  this.EMPTY_FUNCTION = async function(){};
+  this.empty_function = ()=>();
   return this;
 })();
