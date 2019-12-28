@@ -44,7 +44,10 @@
       // });
       // //console.log('result:', explor_nodes);
 
-      await rm();
+      //await rm();
+      let create_node = await make('root/work/TestH');
+      create_node = await set({value: 'cp test.'}, create_node);
+      await cp(create_node, 'root/work/TestA/TestB/TestG/TestH');
     }).bind(Node)();
   }
 })({
