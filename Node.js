@@ -205,9 +205,9 @@ module.exports = (async function(){
   };
   this.set = async function(data, node=null){
     if(!node)node = this.current;
+    let target_node = await this.one.read({hash: node.hash});
     delete data._id;
     delete data.hash;
-    let target_node = await this.one.read(node);
     target_node = Object.assign(target_node, data);
     target_node.updated_at = APP.s_date();
     await this.one.update(target_node);
@@ -238,17 +238,18 @@ module.exports = (async function(){
   this.cp = async function(node=null, path){
     if(!node)node = this.current;
     delete node.parent;
-    const create_node = await this.make(path, !path);
-    return await this.set(node, create_node);
+    const create_node = await this.make(`${path}/${node.key}`);
+    if(create_node){
+      return await this.set(node, create_node);
+    }else{return null;}
   };
   this.mv = async function(node=null, path){
-    // if(!node)node = this.current;
-    // const parent_node = await this.find(path);
-    // APP.debag_log(0, parent_node);
-    // if(parent_node){
-    //   node.parent = parent_node.hash;
-    //   await this.set(node, node);
-    // }
+    if(!node)node = this.current;
+    const parent_node = await this.find(path);
+    if(parent_node){
+      node.parent = parent_node.hash;
+      return await this.set(node, node);
+    }else{return null;}
   };
   /* [future]
   * cosmos, dimension, universe, chunk, forest: 群衆管理
