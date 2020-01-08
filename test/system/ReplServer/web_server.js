@@ -1,11 +1,9 @@
-/* repl(tcp) server connect */
 const net = require('net');
-client = net.connect(5001, 'localhost', function(){});
-
-/* http(websocket) server create */
 const http = require('http');
 const fs = require('fs');
 const ws = require('ws');
+
+/* http(websocket) server create */
 const server = http.createServer(function(req, res){});
 server.listen(5002, function(){});
 new ws.Server({server: server}).on('connection', function(wso, req){
@@ -19,6 +17,8 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   });
 
   /* repl(tcp) events */
+  /* repl(tcp) server connect */
+  client = net.connect(5001, 'localhost', function(){});
   client.on('data', function (data) {
     wso.send(''+data);
   });
