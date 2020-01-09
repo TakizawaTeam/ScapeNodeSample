@@ -1,7 +1,12 @@
 const net = require('net');
+const repl = require('repl');
 const http = require('http');
-const fs = require('fs');
 const ws = require('ws');
+
+/* repl(tcp) server create */
+net.createServer(function (socket) {
+  repl.start("node via TCP socket> ", socket);
+}).listen(5001, "localhost");
 
 /* http(websocket) server create */
 const server = http.createServer(function(req, res){});
