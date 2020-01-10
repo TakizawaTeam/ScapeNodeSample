@@ -20,6 +20,7 @@
   outline: 0;
   border-left: solid 5px #000;
   resize: none;
+  font-size: 10px;
 }
 .tarm-url{
   width:calc(80% - 17px);
@@ -159,7 +160,7 @@ _onload = function(e){
         };
         server.onmessage = function(e){
           setCommitFlg(true);
-          setCommit(e.data);
+          if(e.data!="") setCommit(e.data);
           setInputFlg(true);
         };
         server.onclose = function(e){
@@ -180,7 +181,7 @@ _onload = function(e){
   };
 
   const tarminal = document.querySelector(".tarminal");
-  tarminal.querySelector(".tarm-url").value = "ws://localhost:2222/exec";
+  tarminal.querySelector(".tarm-url").value = "ws://localhost:5002/";
   setTerminalUI(tarminal);
 };
 window.onload = _onload;
