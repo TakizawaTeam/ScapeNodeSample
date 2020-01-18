@@ -19,3 +19,27 @@
 2. cursor位置を取得
 3. cursor位置を設定
 </pre>
+
+<script>
+window.onload = function(){
+  const target = document.querySelector("#target");
+
+  function getPos(dom){
+    dom.focus();
+    let _range = document.getSelection().getRangeAt(0);
+    let range = _range.cloneRange();
+    range.selectNodeContents(dom);
+    range.setEnd(_range.endContainer, _range.endOffset);
+    return range.toString().length;
+  };
+  function setPos(dom, pos){
+    dom.focus();
+    document.getSelection().collapse(dom, pos); return;
+  };
+
+  document.addEventListener('keyup', function(){
+    console.log( getPos(target) );
+    setPos(target, 0);
+  });
+};
+</script>
