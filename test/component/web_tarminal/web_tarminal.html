@@ -82,22 +82,8 @@ _onload = function(e){
       DOWN: 40,
     };
     const prefix = "$";
-    const getPos = ()=>{
-      dom.focus();
-      let _range = document.getSelection().getRangeAt(0);
-      let range = _range.cloneRange();
-      range.selectNodeContents(dom);
-      range.setEnd(_range.endContainer, _range.endOffset);
-      return range.toString().length;
-    };
-    const setPos = pos=>{
-      dom.focus();
-      selection = document.getSelection();
-      console.log(selection.collapse);
-      selection.collapse(dom, pos); return;
-    };
-    const getCursor = ()=>dom.selectionStart;
     const setCursor = v=>dom.setSelectionRange(v, v);
+    const getCursor = ()=>dom.selectionStart;
     const getCommitCursor = ()=>parseInt(dom.dataset.commit_cursor);
     const setCommitCursor = n=>dom.dataset.commit_cursor=n;
     const setCancel = e=>e.preventDefault();
@@ -112,7 +98,7 @@ _onload = function(e){
     const setCommit = (str=null, warp=true)=>{
       if(!getCommitFlg()) return false;
       if(str) dom.innerText += str + (warp? "\n" : "");
-      setCommitCursor( getPos()+1 );
+      setCommitCursor( getCursor()+1 );
       dom.innerText += prefix;
       dom.scrollTop = dom.scrollHeight;
       dom.focus();
@@ -125,7 +111,7 @@ _onload = function(e){
     dom.dataset.commit_flag = "true"; //コミット可能フラグ
     dom.addEventListener('keydown',function(e){
       const _input = e.keyCode;
-      const _current = getPos();
+      const _current = getCursor();
 
       if(!getInputFlg()) setCancel(e);
       if(_input==KEY_CODE["UP"] || _input==KEY_CODE["DOWN"]) setCancel(e);
@@ -136,12 +122,12 @@ _onload = function(e){
         const command = dom.innerText.slice(line_num+1, dom.innerText.length);
         dispatchCustomEvent(dom, "tarminal-commit", {command: command});
         setCommitFlg(false);
-        if(dom.innerText.length!=getPos()) setPos(dom.innerText.length);
+        if(dom.innerText.length!=getCursor()) setCursor(dom.innerText.length);
       }
     });
     dom.addEventListener('keyup',function(e){
       const _input = e.keyCode;
-      const _current = getPos();
+      const _current = getCursor();
       if(!getInputFlg()) setCancel(e);
 
       if(_input==KEY_CODE["ENTER"] && dom.innerText.slice(-1)=="\n"){
@@ -189,7 +175,7 @@ _onload = function(e){
     (init=()=>{
       tarminal.conf = {connection: false, server: null, url: ""};
       dom.innerText += prefix;
-      setCommitCursor( getPos() );
+      setCommitCursor( getCursor() );
       setInputFlg(false);
     })();
   };
