@@ -32,14 +32,41 @@ window.onload = function(){
     range.setEnd(_range.endContainer, _range.endOffset);
     return range.toString().length;
   };
-  function setPos(dom, pos){
+  function setPos(dom=null, pos=0){
+    // 要素とフォーカス
+    if(!dom) return;
     dom.focus();
-    document.getSelection().collapse(dom, pos); return;
+
+    // 指定文字数が異常値
+    if(typeof pos != "number") pos = 0; //数値化
+    if(pos < 0) pos *= -1; //正負反転
+    if(pos > dom.innerText.length) pos = dom.innerText.length; // 最大値
+
+    // 指定文字数のノードと文字数を求める
+    let parent = null;
+    let offset = null;
+
+    let length = 0;
+    for(k in dom.childNodes){
+      if(dom.childNodes[k].nodeType == Node.TEXT_NODE){
+        length += dom.childNodes[k].length;
+        if(length >= pos){
+          parent = dom.childNodes[k];
+          offset = dom.childNodes[k].length - (length - pos);
+          break;
+        }
+      }
+    }
+
+    // caret位置を指定する
+    document.getSelection().collapse(parent, offset);
+    return {parent: parent, offset: offset};
   };
 
   document.addEventListener('keyup', function(){
-    console.log( getPos(target) );
-    setPos(target, 0);
+    L = getPos(target);
+    result = setPos(target, L);
+    console.log(L, result);
   });
 };
 </script>
