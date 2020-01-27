@@ -1,0 +1,38 @@
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js"></script>
+</head>
+<body>
+  <canvas id="myCanvas"></canvas>
+
+  <script>
+  window.addEventListener('load', init);
+  function init(){
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.querySelector('#myCanvas')
+    });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(960, 540);
+
+    const scene = new THREE.Scene();
+    // new THREE.PerspectiveCamera(画角, アスペクト比
+    const camera = new THREE.PerspectiveCamera(45, 960 / 540);
+    camera.position.set(0, 0, +1000);
+
+    // new THREE.BoxGeometry(幅, 高さ, 奥行き)
+    const geometry = new THREE.BoxGeometry(500, 500, 500);
+    const material = new THREE.MeshNormalMaterial();
+    // new THREE.Mesh(ジオメトリ,マテリアル)
+    const box = new THREE.Mesh(geometry, material);
+    // シーンに追加
+    scene.add(box);
+
+    drawframe();
+    function drawframe(){
+      renderer.render(scene, camera); //描画
+      box.rotation.y += 0.01;
+      //camera.rotation.y += 0.01;
+      requestAnimationFrame(drawframe); //アニメーション処理実行
+    }
+  };
+  </script>
+</body>
