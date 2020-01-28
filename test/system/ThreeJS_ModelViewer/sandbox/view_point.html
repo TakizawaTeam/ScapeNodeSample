@@ -42,6 +42,8 @@
     //box.rotation.y += 0.01;
     camera.rotation.y += (moveX>5 ? 5 : moveX) / (100 + 0);
     camera.rotation.x += (moveY>5 ? 5 : moveY) / (100 + 0);
+    moveX = 0;
+    moveY = 0;
 
     render.render(scene, camera); //描画
   }
