@@ -6,8 +6,12 @@
 
   <script>
   const canvas = document.querySelector('#myCanvas');
+
+  let moveX=0, moveY=0;
   canvas.addEventListener("click",function(e){ canvas.requestPointerLock(); });
   canvas.addEventListener("mousemove",function(e){
+    moveX = e.movementX;
+    moveY = e.movementY;
     console.log(`x: ${e.movementX}, y: ${e.movementX}`);
   });
 
@@ -30,8 +34,9 @@
     scene.add(box);
   }
   function drawframe(render){
-    box.rotation.y += 0.01;
-    //camera.rotation.y += 0.01;
+    //box.rotation.y += 0.01;
+    camera.rotation.y += (moveX>5 ? 5 : moveX) / (100 + 0);
+    camera.rotation.x += (moveY>5 ? 5 : moveY) / (100 + 0);
 
     render.render(scene, camera); //描画
   }
