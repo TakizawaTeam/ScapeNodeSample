@@ -10,33 +10,43 @@
   canvas.addEventListener("mousemove",function(e){
     console.log(`x: ${e.movementX}, y: ${e.movementX}`);
   });
-  window.addEventListener('load', init);
-  function init(){
-    const renderer = new THREE.WebGLRenderer({
-      canvas: document.querySelector('#myCanvas')
-    });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(960, 540);
 
-    const scene = new THREE.Scene();
-    // new THREE.PerspectiveCamera(画角, アスペクト比
-    const camera = new THREE.PerspectiveCamera(45, 960 / 540);
+  const config = {
+    screen: {
+      size: {width: 480, height: 320},
+    },
+  };
+  let scene = null;
+  let camera = null;
+  let box = null;
+  function initialize(){
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(45, config.screen.size.width / config.screen.size.height);
     camera.position.set(0, 0, +1000);
 
-    // new THREE.BoxGeometry(幅, 高さ, 奥行き)
     const geometry = new THREE.BoxGeometry(500, 500, 500);
     const material = new THREE.MeshNormalMaterial();
-    // new THREE.Mesh(ジオメトリ,マテリアル)
-    const box = new THREE.Mesh(geometry, material);
-    // シーンに追加
+    box = new THREE.Mesh(geometry, material);
     scene.add(box);
+  }
+  function drawframe(render){
+    box.rotation.y += 0.01;
+    //camera.rotation.y += 0.01;
 
-    drawframe();
-    function drawframe(){
-      renderer.render(scene, camera); //描画
-      box.rotation.y += 0.01;
-      //camera.rotation.y += 0.01;
-      requestAnimationFrame(drawframe); //アニメーション処理実行
+    render.render(scene, camera); //描画
+  }
+
+  window.addEventListener('load', init);
+  function init(){
+    const render = new THREE.WebGLRenderer({canvas: canvas});
+    render.setPixelRatio(window.devicePixelRatio);
+    render.setSize(config.screen.size.width, config.screen.size.height);
+
+    initialize();
+    frame();
+    function frame(){
+      drawframe(render);
+      requestAnimationFrame(frame); //アニメーション処理実行
     }
   };
   </script>
