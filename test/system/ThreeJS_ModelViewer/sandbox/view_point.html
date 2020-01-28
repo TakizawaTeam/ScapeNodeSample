@@ -10,9 +10,14 @@
   let moveX=0, moveY=0;
   canvas.addEventListener("click",function(e){ canvas.requestPointerLock(); });
   canvas.addEventListener("mousemove",function(e){
-    moveX = e.movementX;
-    moveY = e.movementY;
-    console.log(`x: ${e.movementX}, y: ${e.movementX}`);
+    if(document.pointerLockElement === canvas){
+      moveX = e.movementX;
+      moveY = e.movementY;
+      console.log(`x: ${e.movementX}, y: ${e.movementX}`);
+    }else{
+      moveX = 0;
+      moveY = 0;
+    }
   });
 
   const config = {
