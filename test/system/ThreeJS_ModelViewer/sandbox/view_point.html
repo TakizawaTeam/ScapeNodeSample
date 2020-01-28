@@ -5,6 +5,25 @@
   <canvas id="myCanvas"></canvas>
 
   <script>
+  function Point(x,y){ //座標(set/get, sum)
+      this.x = x; this.y = y;
+      this.setPoint=function(x,y){this.x = x;this.y = y;}
+      this.getPoint=function(){return this;}
+      this.sumPoint=function(point1){this.x+=point1.x; this.y+=point1.y;}
+  }
+  //2点の距離
+  function disPoint(point1,point2){var distance=0;var distance=Math.sqrt(Math.pow(point2.x-point1.x,2)+Math.pow(point2.y-point1.y,2));return distance;}
+  //2点の角度
+  function radPoint(point1,point2){var rad;rad=Math.atan2(point1.y-point2.y,point1.x-point2.x);return rad;}
+  //角度と距離から円周上の座標
+  function disRotPoint(point1,distance,rotate){var rot_point=new Point(0,0);rot_point.x=point1.x+distance*Math.cos(rotate*Math.PI/180);rot_point.y=point1.y+distance*Math.sin(rotate*Math.PI/180);return rot_point;}
+  //描画用のcanvas.context回転
+  function drawRotate(_context,rad,point){_context.setTransform(Math.cos(rad),Math.sin(rad),-Math.sin(rad),Math.cos(rad),point.x,point.y);_context.translate(-1*point.x,-1*point.y);}
+  //弧度法/度数法 変換
+  function rad_enc(rot){return (rot*Math.PI/180);}
+  function rot_enc(rad){return (rad*180/Math.PI);}
+  
+
   const canvas = document.querySelector('#myCanvas');
 
   let moveX=0, moveY=0;
@@ -13,12 +32,14 @@
     if(document.pointerLockElement === canvas){
       moveX = e.movementX;
       moveY = e.movementY;
-      console.log(`x: ${e.movementX}, y: ${e.movementX}`);
     }else{
       moveX = 0;
       moveY = 0;
     }
   });
+  let keyflg = {};
+  document.addEventListener("keydown",function(e){keyflg[e.keyCode]=true;});
+  document.addEventListener("keyup",function(e){keyflg[e.keyCode]=false;});
 
   const config = {
     screen: {
@@ -28,22 +49,41 @@
   let scene = null;
   let camera = null;
   let box = null;
+  let ground = null;
   function initialize(){
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, config.screen.size.width / config.screen.size.height);
-    camera.position.set(0, 0, +1000);
+    camera.position.set(0, 0, 300);
 
-    const geometry = new THREE.BoxGeometry(500, 500, 500);
-    const material = new THREE.MeshNormalMaterial();
+    let geometry = new THREE.BoxGeometry(100, 100, 100);
+    let material = new THREE.MeshNormalMaterial();
     box = new THREE.Mesh(geometry, material);
+    box.position.set(0, 75, 0);
+    box.rotation.set(0, 0, 0);
     scene.add(box);
+
+    geometry = new THREE.PlaneGeometry( 1000, 1000, 1000 );
+    material = new THREE.MeshBasicMaterial( {color: 0xaaffaa, side: THREE.DoubleSide} );
+    ground = new THREE.Mesh(geometry, material);
+    ground.position.set(0, 0, 0);
+    ground.rotation.set(90, 0, 0);
+    scene.add(ground);
   }
   function drawframe(render){
-    //box.rotation.y += 0.01;
-    camera.rotation.y += (moveX>5 ? 5 : moveX) / (100 + 0);
-    camera.rotation.x += (moveY>5 ? 5 : moveY) / (100 + 0);
+    box.rotation.y += 0.01;
+    box.rotation.x += 0.01;
+
+    if(moveX>10)moveX=10;
+    if(moveY>10)moveY=10;
+    camera.rotation.y += moveX/100*-1;
+    camera.rotation.x += moveY/100*-1;
     moveX = 0;
     moveY = 0;
+
+    if(keyflg[65]) camera.position.x += 1;
+    if(keyflg[68]) camera.position.x -= 1;
+    if(keyflg[87]) camera.position.y += 1;
+    if(keyflg[83]) camera.position.y -= 1;
 
     render.render(scene, camera); //描画
   }
