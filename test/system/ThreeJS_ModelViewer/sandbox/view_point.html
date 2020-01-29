@@ -82,11 +82,12 @@
     moveX = 0;
     moveY = 0;
 
-    camera_speed = 5;
+    camera_speed = 1;
     camera_pos = new Point(camera.position.x, camera.position.z);
     camera_rot = rad(camera.rotation.x, camera.rotation.z);
     camera_movepos = disRotPoint(camera_pos, camera_speed, camera_rot);
-    //camera.position.set(camera_movepos.x, 0, camera_movepos.z);
+    console.log(camera_movepos);
+    camera.position.set(camera_movepos.x, 0, camera_movepos.y);
 
     /*
     if(keyflg[65] && !keyflg[68]) camera.position.x += 1;
