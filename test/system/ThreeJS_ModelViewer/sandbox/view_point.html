@@ -11,6 +11,8 @@
       this.getPoint=function(){return this;}
       this.sumPoint=function(point1){this.x+=point1.x; this.y+=point1.y;}
   }
+  //1点の角度
+  function rad(x,y){return rot_enc(Math.atan2(x,y)); };
   //2点の距離
   function disPoint(point1,point2){var distance=0;var distance=Math.sqrt(Math.pow(point2.x-point1.x,2)+Math.pow(point2.y-point1.y,2));return distance;}
   //2点の角度
@@ -22,7 +24,7 @@
   //弧度法/度数法 変換
   function rad_enc(rot){return (rot*Math.PI/180);}
   function rot_enc(rad){return (rad*180/Math.PI);}
-  
+
 
   const canvas = document.querySelector('#myCanvas');
 
@@ -73,17 +75,25 @@
     box.rotation.y += 0.01;
     box.rotation.x += 0.01;
 
-    if(moveX>10)moveX=10;
-    if(moveY>10)moveY=10;
+    if(moveX>10) moveX=10;
+    if(moveY>10) moveY=10;
     camera.rotation.y += moveX/100*-1;
     camera.rotation.x += moveY/100*-1;
     moveX = 0;
     moveY = 0;
 
-    if(keyflg[65]) camera.position.x += 1;
-    if(keyflg[68]) camera.position.x -= 1;
-    if(keyflg[87]) camera.position.y += 1;
-    if(keyflg[83]) camera.position.y -= 1;
+    camera_speed = 5;
+    camera_pos = new Point(camera.position.x, camera.position.z);
+    camera_rot = rad(camera.rotation.x, camera.rotation.z);
+    camera_movepos = disRotPoint(camera_pos, camera_speed, camera_rot);
+    //camera.position.set(camera_movepos.x, 0, camera_movepos.z);
+
+    /*
+    if(keyflg[65] && !keyflg[68]) camera.position.x += 1;
+    if(keyflg[68] && !keyflg[65]) camera.position.x -= 1;
+    if(keyflg[83] && !keyflg[87]) camera.position.z += 1;
+    if(keyflg[87] && !keyflg[83]) camera.position.z -= 1;
+    */
 
     render.render(scene, camera); //描画
   }
