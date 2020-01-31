@@ -55,16 +55,14 @@ window.onload = function(){
       let offset = null;
 
       let length = 0;
-      let text_flg = false;
       for(k in dom.childNodes){
-        text_flg = dom.childNodes[k].nodeType == Node.TEXT_NODE;
-
-        length += (text_flg? dom.childNodes[k].length : 0) + (parseInt(k)>0?1:0);
-        console.log(length, pos);
-        if(length >= pos){
-          parent = dom.childNodes[k];
-          offset = text_flg? dom.childNodes[k].length - (length - pos) : 0;
-          break;
+        if(dom.childNodes[k].nodeType == Node.TEXT_NODE){
+          length += dom.childNodes[k].length + (k>0?1:0);
+          if(length >= pos){
+            parent = dom.childNodes[k];
+            offset = dom.childNodes[k].length - (length - pos);
+            break;
+          }
         }
       }
 
