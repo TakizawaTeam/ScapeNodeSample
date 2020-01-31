@@ -37,8 +37,7 @@ window.onload = function(){
       let range = _range.cloneRange();
       range.selectNodeContents(dom);
       range.setEnd(_range.endContainer, _range.endOffset);
-      str = range.toString();
-      return str.length + (dom.childNodes.length-1);
+      return range.toString().length;
     },
     setPos: (dom=null, pos=0)=>{
       // 要素とフォーカス
@@ -57,7 +56,7 @@ window.onload = function(){
       let length = 0;
       for(k in dom.childNodes){
         if(dom.childNodes[k].nodeType == Node.TEXT_NODE){
-          length += dom.childNodes[k].length + (k>0?1:0);
+          length += dom.childNodes[k].length;
           if(length >= pos){
             parent = dom.childNodes[k];
             offset = dom.childNodes[k].length - (length - pos);
