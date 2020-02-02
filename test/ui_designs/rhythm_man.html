@@ -1,0 +1,85 @@
+<style>
+@keyframes rotate{
+  0% { transform:rotate(-90deg); }
+  50% { transform:rotate(90deg); }
+  100% { transform:rotate(-90deg); }
+}
+@keyframes up_down_slide{
+  0% { transform:translateY(0px); }
+  50% { transform:translateY(-15px); }
+  75% { transform:translateY(0px); }
+  75% { transform:translateY(0px); }
+}
+.rhythm_man .object{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background-color: #000;
+}
+.rhythm_man{
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  width: 20px;
+  height: 90px;
+}
+.rhythm_man .head{
+  left: 1px;
+  top: 1px;
+  width: calc(20px - 2px);
+  height: calc(20px - 2px);
+  border-radius:100%;
+}
+.rhythm_man .body{
+  border-top-left-radius: 20%;
+  border-top-right-radius: 20%;
+  left: 0px;
+  top: 20px;
+  width: 20px;
+  height: 40px;
+}
+.rhythm_man .left_hand{
+  left: 0px;
+  top: -5px;
+  width: calc(10px - 2px);
+  height: 35px;
+  border-radius: 30%;
+  transform-origin: 50% 90%;
+  animation: rotate 1s infinite;
+}
+.rhythm_man .right_hand{
+  left: calc(10px + 2px);
+  top: -5px;
+  width: calc(10px - 2px);
+  height: 35px;
+  border-radius: 30%;
+  transform-origin: 50% 90%;
+  animation: rotate 1s infinite;
+}
+.rhythm_man .left_foot{
+  left: 0px;
+  top: 50px;
+  width: calc(10px - 1px);
+  height: 40px;
+  border-radius: 30%;
+  animation: up_down_slide 1s infinite;
+}
+.rhythm_man .right_foot{
+  left: calc(10px + 1px);
+  top: 50px;
+  width: calc(10px - 1px);
+  height: 40px;
+  border-radius: 30%;
+  animation: up_down_slide 1s infinite;
+  animation-delay: 0.5s;
+}
+</style>
+
+<div class="rhythm_man">
+  <div class="object head"></div>
+  <div class="object body"></div>
+  <div class="object left_hand"></div>
+  <div class="object right_hand"></div>
+  <div class="object left_foot"></div>
+  <div class="object right_foot"></div>
+</div>
