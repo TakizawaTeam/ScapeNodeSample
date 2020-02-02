@@ -21,6 +21,9 @@
 
 修正
 1. 改行が含まれていない[TBI]
+
+CURRENT：空の改行がカーソル位置として指定出来ないのを修正中
+LATEST：https://github.com/TakizawaTeam/ScapeNodeSample/commit/bc8abc19b4470316ccd07006d0d7924d7d9bb6d4
 </pre>
 
 <script>
@@ -65,7 +68,9 @@ window.onload = function(){
         }
       }
 
-      // caret位置を指定する
+      console.log("---");
+
+      // caret位置を指定する
       document.getSelection().collapse(parent, offset);
       return {parent: parent, offset: offset};
     },
@@ -74,7 +79,7 @@ window.onload = function(){
   document.addEventListener('keyup', function(){
     L = ContentEditable.getPos(target);
     result = ContentEditable.setPos(target, L);
-    console.log(L, result);
+    //console.log(L, result);
   });
 };
 </script>

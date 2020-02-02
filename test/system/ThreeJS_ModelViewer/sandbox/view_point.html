@@ -45,7 +45,8 @@
 
   const config = {
     screen: {
-      size: {width: 480, height: 320},
+      //size: {width: 480, height: 320},
+      size: {width: 240, height: 160},
     },
   };
   let scene = null;
@@ -84,10 +85,11 @@
 
     camera_speed = 1;
     camera_pos = new Point(camera.position.x, camera.position.z);
-    camera_rot = rad(camera.rotation.x, camera.rotation.z);
+    camera_rot = rot_enc(camera.rotation.y);
+    console.log(camera_rot);
     camera_movepos = disRotPoint(camera_pos, camera_speed, camera_rot);
-    console.log(camera_movepos);
     camera.position.set(camera_movepos.x, 0, camera_movepos.y);
+    console.log(camera_movepos);
 
     /*
     if(keyflg[65] && !keyflg[68]) camera.position.x += 1;
