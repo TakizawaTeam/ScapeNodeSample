@@ -56,8 +56,9 @@ window.onload = function(){
       const before_text_list = before_text.split("\n");
       const br_count = before_text_list.length-1;
       const surplus = before_text_list[br_count].length;
+      const node = dom.childNodes[br_count];
 
-      const parent = dom.childNodes[br_count];
+      const parent = !!node.childNodes.length ? node.childNodes[0] : node;
       const offset = surplus;
 
       // 選択位置を移動させる
