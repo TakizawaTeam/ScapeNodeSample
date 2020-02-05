@@ -30,7 +30,7 @@ CURRENT：空の改行がカーソル位置として指定出来ないのを修
 window.onload = function(){
   const target = document.querySelector("#target");
 
-  function selectAll(dom){
+  function getText(dom){
     const selection = document.getSelection();
     const bk_range = selection.getRangeAt(0).cloneRange();
     selection.selectAllChildren(dom);
@@ -40,10 +40,6 @@ window.onload = function(){
     selection.removeAllRanges();
     selection.addRange(bk_range);
     return result;
-  }
-  function getText(dom){
-    console.log(dom);
-    return dom.innerText;
   }
   function getPos(dom=null){
     dom.focus();
@@ -83,9 +79,9 @@ window.onload = function(){
   }
 
   document.addEventListener('keyup', function(){
-    //L = getPos(target);
-    //result = setPos(target, 100);
-    console.log(selectAll(target));
+    L = getPos(target);
+    result = setPos(target, 100);
+    //console.log(getText(target));
   });
 };
 </script>
