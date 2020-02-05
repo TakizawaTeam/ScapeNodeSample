@@ -30,49 +30,49 @@ CURRENT：空の改行がカーソル位置として指定出来ないのを修
 window.onload = function(){
   const target = document.querySelector("#target");
 
-  ContentEditable = {
-    getPos: dom=>{
-      dom.focus();
-      let _range = document.getSelection().getRangeAt(0);
-      let range = _range.cloneRange();
-      range.selectNodeContents(dom);
-      range.setEnd(_range.endContainer, _range.endOffset);
-      return range.toString().length + (dom.childNodes.length-1);
-    },
-    setPos: (dom=null, pos=0)=>{
-      if(!dom) return;
-      dom.focus();
+  function getText(dom){
+    return dom.innerText;
+  }
+  function getPos(dom=null){
+    dom.focus();
+    let _range = document.getSelection().getRangeAt(0);
+    let range = _range.cloneRange();
+    range.selectNodeContents(dom);
+    range.setEnd(_range.endContainer, _range.endOffset);
+    return range.toString().length + (dom.childNodes.length-1);
+  }
+  function setPos(dom=null, pos=0){
+    if(!dom) return;
+    dom.focus();
 
-      const text = dom.innerText;
-      const text_list = dom.innerText.split("\n");
+    const text = getText(dom);
+    const text_list = dom.innerText.split("\n");
 
-      // 指定文字数が異常値
-      if(typeof pos != "number") pos = 0; //数値化
-      if(pos < 0) pos *= -1; //正負反転
-      if(pos > text.length) pos = text.length; // 最大値
+    // 指定文字数が異常値
+    if(typeof pos != "number") pos = 0; //数値化
+    if(pos < 0) pos *= -1; //正負反転
+    if(pos > text.length) pos = text.length; // 最大値
 
-      // 指定文字数のノードと文字数を求める
-      const before_text = text.substr(0, pos);
-      const before_text_list = before_text.split("\n");
-      const br_count = before_text_list.length-1;
-      const surplus = before_text_list[br_count].length;
-      const node = dom.childNodes[br_count];
+    // 指定文字数のノードと文字数を求める
+    const before_text = text.substr(0, pos);
+    const before_text_list = before_text.split("\n");
+    const br_count = before_text_list.length-1;
+    const surplus = before_text_list[br_count].length;
+    const node = dom.childNodes[br_count];
 
-      const parent = !!node.childNodes.length ? node.childNodes[0] : node;
-      const offset = surplus;
+    const parent = !!node.childNodes.length ? node.childNodes[0] : node;
+    const offset = surplus;
 
-      // 選択位置を移動させる
-      // https://javascript.info/selection-range
-      console.log(parent, offset);
-      document.getSelection().collapse(parent, offset);
-      return {parent: parent, offset: offset};
-    },
-  };
+    // 選択位置を移動させる
+    // https://javascript.info/selection-range
+    console.log(parent, offset);
+    document.getSelection().collapse(parent, offset);
+    return {parent: parent, offset: offset};
+  }
 
-  const ce = ContentEditable;
   document.addEventListener('keyup', function(){
-    L = ce.getPos(target);
-    result = ce.setPos(target, L);
+    L = getPos(target);
+    result = setPos(target, 100);
   });
 };
 </script>
