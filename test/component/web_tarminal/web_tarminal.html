@@ -70,12 +70,62 @@
 </style>
 <script>
 _onload = function(e){
-  const ContentEditableControll = CEC = {
-    resetSelect: function(dom, _callback){},
-    getText: function(dom){},
-    getPos: function(dom){},
-    setPos: function(dom, pos){},
+  const ContentEditableControll = {
+    resetSelect: function(dom, _callback){
+      dom.focus();
+      const selection = document.getSelection();
+      const bk_range = selection.getRangeAt(0).cloneRange();
+      console.log(bk_range);
+      const result = _callback(selection);
+      selection.removeAllRanges();
+      selection.addRange(bk_range);
+      return result;
+    },
+    getText: function(dom){
+      dom.focus();
+      return this.resetSelect(dom, function(selection){
+        selection.selectAllChildren(dom);
+        return selection.toString();
+      });
+    },
+    getPos: function(dom=null){
+      dom.focus();
+      const before_text = this.resetSelect(dom, function(selection){
+        selection.getRangeAt(0).setStart(dom.childNodes[0], 0);
+        return selection.toString();
+      });
+      return before_text.length;
+    },
+    setPos: function(dom=null, pos=0){
+      if(!dom) return;
+      dom.focus();
+
+      const text = this.getText(dom);
+      const text_list = dom.innerText.split("\n");
+
+      // 指定文字数が異常値
+      if(typeof pos != "number") pos = 0; //数値化
+      if(pos < 0) pos *= -1; //正負反転
+      if(pos > text.length) pos = text.length; // 最大値
+
+      // 指定文字数のノードと文字数を求める
+      const before_text = text.substr(0, pos);
+      const before_text_list = before_text.split("\n");
+      const br_count = before_text_list.length-1;
+      const surplus = before_text_list[br_count].length;
+      const node = dom.childNodes[br_count];
+
+      const parent = !!node.childNodes.length ? node.childNodes[0] : node;
+      const offset = surplus;
+
+      // 選択位置を移動させる
+      // https://javascript.info/selection-range
+      //console.log(parent, offset);
+      document.getSelection().collapse(parent, offset);
+      return {parent: parent, offset: offset};
+    },
   };
+  const CEC = ContentEditableControll;
 
   const setTerminalUI = tarminal=>{ // set textarea
     const dom = tarminal.querySelector(".tarm-win");
@@ -89,8 +139,10 @@ _onload = function(e){
       DOWN: 40,
     };
     const prefix = "$";
-    const setCursor = v=>dom.setSelectionRange(v, v);
-    const getCursor = ()=>dom.selectionStart;
+    // const setCursor = v=>dom.setSelectionRange(v, v);
+    // const getCursor = ()=>dom.selectionStart;
+    const setCursor = pos=>CEC.setPos(dom, pos);
+    const getCursor = ()=>CEC.getPos(dom);
     const getCommitCursor = ()=>parseInt(dom.dataset.commit_cursor);
     const setCommitCursor = n=>dom.dataset.commit_cursor=n;
     const setCancel = e=>e.preventDefault();
