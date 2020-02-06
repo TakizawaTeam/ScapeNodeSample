@@ -70,6 +70,13 @@
 </style>
 <script>
 _onload = function(e){
+  const ContentEditableControll = CEC = {
+    resetSelect: function(dom, _callback){},
+    getText: function(dom){},
+    getPos: function(dom){},
+    setPos: function(dom, pos){},
+  };
+
   const setTerminalUI = tarminal=>{ // set textarea
     const dom = tarminal.querySelector(".tarm-win");
     const header = tarminal.querySelector(".tarm-header");
