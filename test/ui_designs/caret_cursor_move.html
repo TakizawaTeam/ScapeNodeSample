@@ -30,24 +30,30 @@ CURRENT：空の改行がカーソル位置として指定出来ないのを修
 window.onload = function(){
   const target = document.querySelector("#target");
 
-  function getText(dom){
+  // selectionを操作後に戻すコールバック関数
+  // rangeでは改行が取れないので、selection.toString()を使いたい
+  function resetSelect(dom, _callback){
+    dom.focus();
     const selection = document.getSelection();
     const bk_range = selection.getRangeAt(0).cloneRange();
-    selection.selectAllChildren(dom);
-    const result = selection.toString();
-
-    // 選択状態を元に戻す
+    const result = _callback(selection);
     selection.removeAllRanges();
     selection.addRange(bk_range);
     return result;
   }
+  function getText(dom){
+    return resetSelect(dom, function(selection){
+      selection.selectAllChildren(dom);
+      return selection.toString();
+    });
+  }
   function getPos(dom=null){
     dom.focus();
-    let _range = document.getSelection().getRangeAt(0);
-    let range = _range.cloneRange();
-    range.selectNodeContents(dom);
-    range.setEnd(_range.endContainer, _range.endOffset);
-    return range.toString().length + (dom.childNodes.length-1);
+    const before_text = resetSelect(dom, function(selection){
+      selection.getRangeAt(0).setStart(dom.childNodes[0], 0);
+      return selection.toString();
+    });
+    return before_text.length;
   }
   function setPos(dom=null, pos=0){
     if(!dom) return;
@@ -73,14 +79,14 @@ window.onload = function(){
 
     // 選択位置を移動させる
     // https://javascript.info/selection-range
-    console.log(parent, offset);
+    //console.log(parent, offset);
     document.getSelection().collapse(parent, offset);
     return {parent: parent, offset: offset};
   }
 
   document.addEventListener('keyup', function(){
     L = getPos(target);
-    result = setPos(target, 100);
+    result = setPos(target, L);
     //console.log(getText(target));
   });
 };
