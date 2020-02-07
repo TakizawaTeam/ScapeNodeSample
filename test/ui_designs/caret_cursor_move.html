@@ -10,7 +10,11 @@
 }
 </style>
 
-<div id="target" contentEditable="true"></div>
+<div>
+  <div></div>
+  <div id="target" contentEditable="true"></div>
+  <div></div>
+</div>
 
 <hr>
 <pre>
@@ -46,6 +50,9 @@ window.onload = function(){
       selection.selectAllChildren(dom);
       return selection.toString();
     });
+  }
+  function addText(dom, text=""){
+    dom.innerText += text;
   }
   function getPos(dom=null){
     dom.focus();
@@ -85,8 +92,10 @@ window.onload = function(){
   }
 
   document.addEventListener('keyup', function(){
-    L = getPos(target);
-    result = setPos(target, L);
+    addText(target, "insertTextTest");
+    //L = getPos(target);
+    //console.log(L);
+    //result = setPos(target, L);
     //console.log(getText(target));
   });
 };
