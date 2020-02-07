@@ -20,7 +20,7 @@
   outline: 0;
   border-left: solid 5px #000;
   resize: none;
-  font-size: 10px;
+  font-size: 12px;
   overflow-y: scroll;
 }
 .tarm-url{
@@ -143,7 +143,6 @@ _onload = function(e){
       RIGHT: 39,
       DOWN: 40,
     };
-    const prefix = "$";
     const getText = ()=>CEC.getText(dom);
     const addText = text=>CEC.addText(dom, text);
     const setCursor = pos=>CEC.setPos(dom, pos);
@@ -159,17 +158,22 @@ _onload = function(e){
     const dispatchCustomEvent = (dom, name, params)=>dom.dispatchEvent(new CustomEvent(name, {detail:params}));
     const getCommitFlg = ()=>stringToBool(dom.dataset.commit_flag);
     const setCommitFlg = f=>dom.dataset.commit_flag=f;
-    const setCommit = (str=null, warp=true)=>{
+    const setCommit = (str=null, option={})=>{
+      option = Object.assign({warp: true, next_prefix: getPrefix()}, option);
+
       if(!getCommitFlg()) return false;
-      if(str) addText( str + (warp? "\n" : "") );
+      if(str) addText( str + (option.warp? "\n" : "") );
       setCommitCursor( getCursor()+1 );
-      addText(prefix);
+      addText(option.next_prefix);
       dom.scrollTop = dom.scrollHeight;
       dom.focus();
     };
     const getDate = str=>(str? new Date(str) : new Date()).toLocaleDateString();
     const getTime = str=>(str? new Date(str) : new Date()).toLocaleTimeString();
+    const getPrefix = ()=>dom.dataset.prefix;
+    const setPrefix = pre=>dom.dataset.prefix=pre;
 
+    dom.dataset.prefix = '$';
     dom.dataset.commit_cursor = 0; //確定文字数
     dom.dataset.input_flag = "true"; //入力可能フラグ
     dom.dataset.commit_flag = "true"; //コミット可能フラグ
@@ -214,9 +218,10 @@ _onload = function(e){
         tarminal.conf.url = _url;
         tarminal.conf.server = server;
 
-        setCommit(`connection... [${_url}] ${getDate()} ${getTime()}`);
+        setCommit(`connection...... [${_url}] ${getDate()} ${getTime()}`);
         server.onopen = function(e){
           tarminal.conf.connection = true;
+          setPrefix('');
           setCommit(`connected! [${_url}] ${getDate()} ${getTime()}`);
           tarminal.querySelector(".tarm-text").innerText = `connected! [${_url}] ${getDate()} ${getTime()}`;
           header.querySelector(".tarm-btn").classList.add("open");
@@ -228,6 +233,7 @@ _onload = function(e){
           setInputFlg(true);
         };
         server.onclose = function(e){
+          setPrefix('$');
           setCommit(`dis connected! [${tarminal.conf.url}] ${getDate()} ${getTime()}`);
           //tarminal.conf = {connection: false, server: null, url: ""};
           header.querySelector(".tarm-btn").classList.remove("open");
@@ -239,7 +245,7 @@ _onload = function(e){
 
     (init=()=>{
       tarminal.conf = {connection: false, server: null, url: ""};
-      getText(prefix);
+      addText(getPrefix());
       setCommitCursor( getCursor() );
       setInputFlg(false);
     })();

@@ -5,8 +5,7 @@ const ws = require('ws');
 
 /* repl(tcp) server create */
 net.createServer(function (socket) {
-  repl.start("", socket);
-  //repl.start("> ", socket);
+  repl.start("> ", socket);
 }).listen(5001, "localhost");
 
 /* http(websocket) server create */
