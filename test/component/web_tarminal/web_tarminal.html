@@ -21,6 +21,7 @@
   border-left: solid 5px #000;
   resize: none;
   font-size: 10px;
+  overflow-y: scroll;
 }
 .tarm-url{
   width:calc(80% - 17px);
@@ -59,7 +60,7 @@
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-.ditail{overflow-y: scroll;}
+.ditail{}
 .tarm-text{
   height: 13px;
   background-color: #CCC;
@@ -75,7 +76,6 @@ _onload = function(e){
       dom.focus();
       const selection = document.getSelection();
       const bk_range = selection.getRangeAt(0).cloneRange();
-      console.log(bk_range);
       const result = _callback(selection);
       selection.removeAllRanges();
       selection.addRange(bk_range);
