@@ -52,7 +52,8 @@ window.onload = function(){
     });
   }
   function addText(dom, text=""){
-    dom.innerText += text;
+    dom.focus();
+    document.execCommand('inserttext', false, text);
   }
   function getPos(dom=null){
     dom.focus();

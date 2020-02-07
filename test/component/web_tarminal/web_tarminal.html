@@ -88,9 +88,14 @@ _onload = function(e){
         return selection.toString();
       });
     },
+    addText: function(dom, text){
+      dom.focus();
+      document.execCommand('inserttext', false, text);
+    },
     getPos: function(dom=null){
       dom.focus();
       const before_text = this.resetSelect(dom, function(selection){
+        if(!dom.childNodes.length) return "";
         selection.getRangeAt(0).setStart(dom.childNodes[0], 0);
         return selection.toString();
       });
@@ -101,7 +106,7 @@ _onload = function(e){
       dom.focus();
 
       const text = this.getText(dom);
-      const text_list = dom.innerText.split("\n");
+      const text_list = getText().split("\n");
 
       // 指定文字数が異常値
       if(typeof pos != "number") pos = 0; //数値化
@@ -139,8 +144,8 @@ _onload = function(e){
       DOWN: 40,
     };
     const prefix = "$";
-    // const setCursor = v=>dom.setSelectionRange(v, v);
-    // const getCursor = ()=>dom.selectionStart;
+    const getText = ()=>CEC.getText(dom);
+    const addText = text=>CEC.addText(dom, text);
     const setCursor = pos=>CEC.setPos(dom, pos);
     const getCursor = ()=>CEC.getPos(dom);
     const getCommitCursor = ()=>parseInt(dom.dataset.commit_cursor);
@@ -156,9 +161,9 @@ _onload = function(e){
     const setCommitFlg = f=>dom.dataset.commit_flag=f;
     const setCommit = (str=null, warp=true)=>{
       if(!getCommitFlg()) return false;
-      if(str) dom.innerText += str + (warp? "\n" : "");
+      if(str) addText( str + (warp? "\n" : "") );
       setCommitCursor( getCursor()+1 );
-      dom.innerText += prefix;
+      addText(prefix);
       dom.scrollTop = dom.scrollHeight;
       dom.focus();
     };
@@ -177,11 +182,11 @@ _onload = function(e){
       if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
       if(isBefore(_current-1,-1)) setCancel(e);
       if(_input==KEY_CODE["ENTER"]){
-        const line_num = dom.innerText.lastIndexOf("$");
-        const command = dom.innerText.slice(line_num+1, dom.innerText.length);
+        const line_num = getText().lastIndexOf("$");
+        const command = getText().slice(line_num+1, getText().length);
         dispatchCustomEvent(dom, "tarminal-commit", {command: command});
         setCommitFlg(false);
-        if(dom.innerText.length!=getCursor()) setCursor(dom.innerText.length);
+        if(getText().length!=getCursor()) setCursor(getText().length);
       }
     });
     dom.addEventListener('keyup',function(e){
@@ -189,7 +194,7 @@ _onload = function(e){
       const _current = getCursor();
       if(!getInputFlg()) setCancel(e);
 
-      if(_input==KEY_CODE["ENTER"] && dom.innerText.slice(-1)=="\n"){
+      if(_input==KEY_CODE["ENTER"] && getText().slice(-1)=="\n"){
         setCommit();
         setInputFlg(true);
       }
@@ -227,13 +232,14 @@ _onload = function(e){
           //tarminal.conf = {connection: false, server: null, url: ""};
           header.querySelector(".tarm-btn").classList.remove("open");
           setInputFlg(false);
+          alert(`${tarminal.conf.url} dis connected!`);
         }
       }
     });
 
     (init=()=>{
       tarminal.conf = {connection: false, server: null, url: ""};
-      dom.innerText += prefix;
+      getText(prefix);
       setCommitCursor( getCursor() );
       setInputFlg(false);
     })();
