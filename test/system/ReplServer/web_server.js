@@ -5,13 +5,17 @@ const ws = require('ws');
 
 /* repl(tcp) server create */
 net.createServer(function (socket) {
-  repl.start("node via TCP socket> ", socket);
+  repl.start("", socket);
+  //repl.start("> ", socket);
 }).listen(5001, "localhost");
 
 /* http(websocket) server create */
 const server = http.createServer(function(req, res){});
 server.listen(5002, function(){});
 new ws.Server({server: server}).on('connection', function(wso, req){
+
+  /* repl(tcp) server connect */
+  client = net.connect(5001, 'localhost', function(){});
 
   /* websocket events */
   wso.on('message', async function(m){
@@ -22,17 +26,15 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   });
 
   /* repl(tcp) events */
-  /* repl(tcp) server connect */
-  client = net.connect(5001, 'localhost', function(){});
   client.on('data', function (data) {
     wso.send(''+data);
   });
 
-  client.on('close', function () {
-    console.log('connection is closed');
-  });
-
-  client.on('error', function () {
-    console.log('made error');
-  });
+  // client.on('close', function () {
+  //   console.log('connection is closed');
+  // });
+  //
+  // client.on('error', function () {
+  //   console.log('made error');
+  // });
 });
