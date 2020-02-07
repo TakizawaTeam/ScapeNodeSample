@@ -184,10 +184,9 @@ _onload = function(e){
       if(!getInputFlg()) setCancel(e);
       if(_input==KEY_CODE["UP"] || _input==KEY_CODE["DOWN"]) setCancel(e);
       if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
-      if(isBefore(_current-1,-1)) setCancel(e);
+      //if(isBefore(_current-1,-1)) setCancel(e);
       if(_input==KEY_CODE["ENTER"]){
-        const line_num = getText().lastIndexOf("$");
-        const command = getText().slice(line_num+1, getText().length);
+        const command = getText().split("\n").pop().slice(1);
         dispatchCustomEvent(dom, "tarminal-commit", {command: command});
         setCommitFlg(false);
         if(getText().length!=getCursor()) setCursor(getText().length);
@@ -229,7 +228,7 @@ _onload = function(e){
         };
         server.onmessage = function(e){
           setCommitFlg(true);
-          if(e.data!="") setCommit(e.data);
+          if(e.data!="") setCommit(e.data, {warp: false});
           setInputFlg(true);
         };
         server.onclose = function(e){
