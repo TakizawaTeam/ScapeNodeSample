@@ -20,6 +20,7 @@
   outline: 0;
   border-left: solid 5px #000;
   resize: none;
+  letter-spacing: 1px;
   font-size: 12px;
   overflow-y: scroll;
 }
@@ -170,10 +171,11 @@ _onload = function(e){
     };
     const getDate = str=>(str? new Date(str) : new Date()).toLocaleDateString();
     const getTime = str=>(str? new Date(str) : new Date()).toLocaleTimeString();
+    const tarminal_preset = '$ ';
     const getPrefix = ()=>dom.dataset.prefix;
     const setPrefix = pre=>dom.dataset.prefix=pre;
 
-    dom.dataset.prefix = '$';
+    dom.dataset.prefix = tarminal_preset;
     dom.dataset.commit_cursor = 0; //確定文字数
     dom.dataset.input_flag = "true"; //入力可能フラグ
     dom.dataset.commit_flag = "true"; //コミット可能フラグ
@@ -183,10 +185,11 @@ _onload = function(e){
 
       if(!getInputFlg()) setCancel(e);
       if(_input==KEY_CODE["UP"] || _input==KEY_CODE["DOWN"]) setCancel(e);
-      if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current-1)) setCancel(e);
-      //if(isBefore(_current-1,-1)) setCancel(e);
+      if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current)) setCancel(e);
+      //if(isBefore(_current-1,-1)) setCancel(e); //←2020/03/01以降にまだコメントアウトされてたら削除
       if(_input==KEY_CODE["ENTER"]){
-        const command = getText().split("\n").pop().slice(1);
+        const line = getText().split("\n").pop();
+        const command = line.split(" ").slice(1).join(" ");
         dispatchCustomEvent(dom, "tarminal-commit", {command: command});
         setCommitFlg(false);
         if(getText().length!=getCursor()) setCursor(getText().length);
@@ -232,7 +235,7 @@ _onload = function(e){
           setInputFlg(true);
         };
         server.onclose = function(e){
-          setPrefix('$');
+          setPrefix(tarminal_preset);
           setCommit(`dis connected! [${tarminal.conf.url}] ${getDate()} ${getTime()}`);
           //tarminal.conf = {connection: false, server: null, url: ""};
           header.querySelector(".tarm-btn").classList.remove("open");
