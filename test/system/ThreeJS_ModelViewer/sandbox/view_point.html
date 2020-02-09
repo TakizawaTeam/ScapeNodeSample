@@ -46,57 +46,89 @@
   const config = {
     screen: {
       //size: {width: 480, height: 320},
-      size: {width: 240, height: 160},
+      size: {width: 480, height: 320},
     },
   };
   let scene = null;
   let camera = null;
   let box = null;
+  let sphere = null;
   let ground = null;
+  let frame_counter = 0;
+  const frame_log = (log, f=1)=>{
+    if(frame_counter%f==0) console.log(log);
+  };
+  const FLAT = Math.sqrt(100);
+
+  const object_move = (obj, target, dis)=>{
+
+  };
+
+  /* INIT */
   function initialize(){
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, config.screen.size.width / config.screen.size.height);
-    camera.position.set(0, 0, 300);
+    camera.position.set(0, FLAT, 100);
 
-    let geometry = new THREE.BoxGeometry(100, 100, 100);
+    let geometry = new THREE.BoxGeometry(10, 10, 10);
     let material = new THREE.MeshNormalMaterial();
     box = new THREE.Mesh(geometry, material);
-    box.position.set(0, 75, 0);
+    box.position.set(0, FLAT, 0);
     box.rotation.set(0, 0, 0);
     scene.add(box);
+
+    geometry = new THREE.SphereGeometry(1, 1, 1);
+    material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+    sphere = new THREE.Mesh( geometry, material );
+    sphere.position.set(0, FLAT, 0);
+    sphere.rotation.set(0, 0, 0);
+    scene.add(sphere);
 
     geometry = new THREE.PlaneGeometry( 1000, 1000, 1000 );
     material = new THREE.MeshBasicMaterial( {color: 0xaaffaa, side: THREE.DoubleSide} );
     ground = new THREE.Mesh(geometry, material);
     ground.position.set(0, 0, 0);
-    ground.rotation.set(90, 0, 0);
+    ground.rotation.set(rad_enc(90), 0, 0);
     scene.add(ground);
+
+    var grid = new THREE.GridHelper(1000, 100, 0xff0000);
+    scene.add(grid);
   }
+
+  /* FRAME */
   function drawframe(render){
+    frame_counter += 1;
     box.rotation.y += 0.01;
     box.rotation.x += 0.01;
 
+    // カメラの角度
     if(moveX>10) moveX=10;
     if(moveY>10) moveY=10;
     camera.rotation.y += moveX/100*-1;
-    camera.rotation.x += moveY/100*-1;
+    camera.rotation.x += moveY/100* (Math.abs(rot_enc(camera.rotation.y))>90? 1:-1); //xは上が0なので角度が反転する
+    // カメラの縦の限界値(90,-90)
+    if(rot_enc(camera.rotation.x) > 90) camera.rotation.x = rad_enc(90);
+    if(rot_enc(camera.rotation.x) < -90) camera.rotation.x = rad_enc(-90);
+    // カメラの縦の限界値(90,-90)
+    //if(rot_enc(camera.rotation.y) > 360) camera.rotation.x = rad_enc(360);
+    //if(rot_enc(camera.rotation.y) < -360) camera.rotation.x = rad_enc(-360);
     moveX = 0;
     moveY = 0;
 
-    camera_speed = 1;
+    // カメラのカーソル及び移動処理
+    camera_speed = 50;
     camera_pos = new Point(camera.position.x, camera.position.z);
-    camera_rot = rot_enc(camera.rotation.y);
-    console.log(camera_rot);
-    camera_movepos = disRotPoint(camera_pos, camera_speed, camera_rot);
-    camera.position.set(camera_movepos.x, 0, camera_movepos.y);
-    console.log(camera_movepos);
+    camera_rot = 360-rot_enc(camera.rotation.y)%360;
+    camera_movepos = disRotPoint(camera_pos, camera_speed, camera_rot-90);
+    sphere.position.x = camera_movepos.x;
+    sphere.position.z = camera_movepos.y;
+    //camera.position.set(camera_movepos.x, 0, camera_movepos.y);
 
-    /*
-    if(keyflg[65] && !keyflg[68]) camera.position.x += 1;
-    if(keyflg[68] && !keyflg[65]) camera.position.x -= 1;
+    frame_log(keyflg, 10);
+    if(keyflg[65] && !keyflg[68]) camera.position.x -= 1;
+    if(keyflg[68] && !keyflg[65]) camera.position.x += 1;
     if(keyflg[83] && !keyflg[87]) camera.position.z += 1;
     if(keyflg[87] && !keyflg[83]) camera.position.z -= 1;
-    */
 
     render.render(scene, camera); //描画
   }
@@ -106,6 +138,7 @@
     const render = new THREE.WebGLRenderer({canvas: canvas});
     render.setPixelRatio(window.devicePixelRatio);
     render.setSize(config.screen.size.width, config.screen.size.height);
+    render.setClearColor(0xaaaaff, 1.0);
 
     initialize();
     frame();
