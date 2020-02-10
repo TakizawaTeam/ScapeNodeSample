@@ -60,11 +60,11 @@
   };
   const FLAT = Math.sqrt(100);
 
-  const object_move = (obj, target, dis)=>{
+  const object_move = (obj, target, dis, rot=0)=>{
     p1 = new Point(obj.position.x, obj.position.z);
     p2 = new Point(target.position.x, target.position.z);
     rotate = rot_enc(radPoint(p2, p1));
-    move_point = disRotPoint(p1, dis, rotate);
+    move_point = disRotPoint(p1, dis, rotate+rot);
     obj.position.x = move_point.x;
     obj.position.z = move_point.y;
   };
@@ -123,25 +123,16 @@
     // カメラのカーソル及び移動処理
     cursor_distance = 50;
     camera_pos = new Point(camera.position.x, camera.position.z);
-    camera_rot = 360-rot_enc(camera.rotation.y)%360;
-    camera_movepos = disRotPoint(camera_pos, cursor_distance, camera_rot-90);
-    sphere.position.x = camera_movepos.x;
-    sphere.position.z = camera_movepos.y;
-    //camera.position.set(camera_movepos.x, 0, camera_movepos.y);
+    cursor_rot = (360-rot_enc(camera.rotation.y)%360) - 90;
+    cursor_movepos = disRotPoint(camera_pos, cursor_distance, cursor_rot);
+    sphere.position.x = cursor_movepos.x;
+    sphere.position.z = cursor_movepos.y;
 
-    // camera_rotate = null;
-    // arrow = {};
-    // if(keyflg[65] && !keyflg[68]) arrow['left'] = true;
-    // if(keyflg[68] && !keyflg[65]) arrow['right'] = true;
-    // if(keyflg[83] && !keyflg[87]) arrow['up'] = true;
-    // if(keyflg[87] && !keyflg[83]) arrow['down'] = true;
-
-    if(keyflg[83] && !keyflg[87]) object_move(camera, sphere, -1);
-    if(keyflg[87] && !keyflg[83]) object_move(camera, sphere, 1);
-    //camera.position.set(camera_movepos.x, 0, camera_movepos.y);
-
-
-
+    camera_speed = 1;
+    if(keyflg[87] && !keyflg[83]) object_move(camera, sphere, camera_speed);
+    if(keyflg[83] && !keyflg[87]) object_move(camera, sphere, camera_speed, 180);
+    if(keyflg[65] && !keyflg[68]) object_move(camera, sphere, camera_speed, 90);
+    if(keyflg[68] && !keyflg[65]) object_move(camera, sphere, camera_speed, -90);
 
     render.render(scene, camera); //描画
   }
