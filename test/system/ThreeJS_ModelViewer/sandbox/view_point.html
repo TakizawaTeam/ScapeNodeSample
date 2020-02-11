@@ -49,10 +49,12 @@
       size: {width: 480, height: 320},
     },
   };
+
   let scene = null;
   let player = null;
   let camera = null;
   let box = null;
+  let debag_text = null;
   let sphere = null;
   let ground = null;
   let frame_counter = 0;
@@ -82,41 +84,68 @@
     obj.rotation.y += 0.01;
     obj.rotation.x += 0.01;
   };
+  // テクスチャ描画
+  const draw_texture = (_callback, w, h)=>{
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    _callback( canvas.getContext('2d') );
+    const texture = new THREE.Texture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  };
+  const create_label = (text, size, reso=256)=>{
+    const material = new THREE.MeshBasicMaterial({
+      map: draw_texture(ctx=>{
+        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillRect(0,0,reso*(text.length*2),reso);
+        //ctx.font = "bold 30px 'Hiragino Kaku Gothic ProN' ,'メイリオ', sans-serif";
+        //ctx.textAlign = 'left';
+        ctx.fillStyle = "rgb(0,0,0)";
+        ctx.font = `${reso}px 'ＭＳ ゴシック'`;
+        ctx.fillText(text,reso*0.2,reso*0.8);
+      }, reso*(text.length*2), reso),
+      side: THREE.DoubleSide,
+      transparent: true
+    });
+    const geometry = new THREE.PlaneGeometry(text.length*size, size);
+    return new THREE.Mesh(geometry, material);
+  };
 
   /* INIT */
   function initialize(){
     scene = new THREE.Scene();
 
     player = new THREE.Group();
-    scene.add(player);
-
     camera = new THREE.PerspectiveCamera(45, config.screen.size.width / config.screen.size.height);
-    camera.position.set(0, FLAT, 100);
-    //player.add(camera);
 
     let geometry = new THREE.BoxGeometry(10, 10, 10);
     let material = new THREE.MeshNormalMaterial();
     box = new THREE.Mesh(geometry, material);
-    box.position.set(0, FLAT, 0);
-    box.rotation.set(0, 0, 0);
-    scene.add(box);
 
     geometry = new THREE.SphereGeometry(1, 1, 1);
     material = new THREE.MeshBasicMaterial( {color: 0x000000} );
     sphere = new THREE.Mesh( geometry, material );
-    sphere.position.set(0, FLAT, 0);
-    sphere.rotation.set(0, 0, 0);
-    scene.add(sphere);
 
     geometry = new THREE.PlaneGeometry( 1000, 1000, 1000 );
     material = new THREE.MeshBasicMaterial( {color: 0xaaffaa, side: THREE.DoubleSide} );
     ground = new THREE.Mesh(geometry, material);
-    ground.position.set(0, 0, 0);
-    ground.rotation.set(rad_enc(90), 0, 0);
-    scene.add(ground);
 
-    var grid = new THREE.GridHelper(1000, 100, 0xff0000);
+    const grid = new THREE.GridHelper(1000, 100, 0xff0000);
+    const debag_text = create_label("TEST", 10);
+    debag_text.position.y = 30;
+
+    // default world position.
+    scene.add(box);
+    box.position.set(0, FLAT, 0);
     scene.add(grid);
+    scene.add(ground);
+    ground.rotation.set(rad_enc(90), 0, 0);
+    player.add(camera);
+    scene.add(sphere);
+    player.position.set(0, FLAT, 100);
+    scene.add(player);
+    scene.add(debag_text);
   }
 
   /* FRAME */
@@ -128,24 +157,24 @@
     if(moveX>10) moveX=10;
     if(moveY>10) moveY=10;
     //camera.rotation.y += moveX/100*-1;
-    object_rotate(camera, new THREE.Vector3(0,1,0), rad_enc(-moveX));
-    object_rotate(camera, new THREE.Vector3(1,0,0), rad_enc(-moveY));
+    object_rotate(player, new THREE.Vector3(0,1,0), rad_enc(-moveX));
+    object_rotate(player, new THREE.Vector3(1,0,0), rad_enc(-moveY));
     moveX = 0;
     moveY = 0;
 
     // カメラのカーソル及び移動処理
     cursor_distance = 50;
-    camera_pos = new Point(camera.position.x, camera.position.z);
-    cursor_rot = (360-rot_enc(camera.rotation.y)%360) - 90;
+    camera_pos = new Point(player.position.x, player.position.z);
+    cursor_rot = (360-rot_enc(player.rotation.y)%360) - 90;
     cursor_movepos = disRotPoint(camera_pos, cursor_distance, cursor_rot);
     sphere.position.x = cursor_movepos.x;
     sphere.position.z = cursor_movepos.y;
 
     camera_speed = 1;
-    if(keyflg[87] && !keyflg[83]) object_move(camera, sphere, camera_speed);
-    if(keyflg[83] && !keyflg[87]) object_move(camera, sphere, camera_speed, 180);
-    if(keyflg[65] && !keyflg[68]) object_move(camera, sphere, camera_speed, -90);
-    if(keyflg[68] && !keyflg[65]) object_move(camera, sphere, camera_speed, 90);
+    if(keyflg[87] && !keyflg[83]) object_move(player, sphere, camera_speed);
+    if(keyflg[83] && !keyflg[87]) object_move(player, sphere, camera_speed, 180);
+    if(keyflg[65] && !keyflg[68]) object_move(player, sphere, camera_speed, -90);
+    if(keyflg[68] && !keyflg[65]) object_move(player, sphere, camera_speed, 90);
 
     render.render(scene, camera); //描画
   }
