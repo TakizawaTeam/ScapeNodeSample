@@ -4,9 +4,9 @@
 3. `node index.js`
 
 
-#### Getting Started [注意：未実装・TBI]
+#### Getting Started [注意：未実装・TBI]
 1. `https://www.mongodb.com`からmongodbをインストール
 2. `git clone git@github.com:TakizawaTeam/ScapeNodeSample.git`
 3. `cd ScapeNodeSample; npm install;`
 4. `node server.js`
-5. ブラウザから`http://localhost:8000/workbench`に接続
+5. ブラウザから`http://localhost:8000/workbench`に接続
