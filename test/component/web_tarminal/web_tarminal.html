@@ -186,7 +186,7 @@ _onload = function(e){
       if(!getInputFlg()) setCancel(e);
       if(_input==KEY_CODE["UP"] || _input==KEY_CODE["DOWN"]) setCancel(e);
       if((_input==KEY_CODE["BACKSPACE"] || _input==KEY_CODE["LEFT"]) && isBefore(_current)) setCancel(e);
-      //if(isBefore(_current-1,-1)) setCancel(e); //←2020/03/01以降にまだコメントアウトされてたら削除
+      if(isBefore(_current+1)) setCancel(e); // currentより上では入力出来ないよう
       if(_input==KEY_CODE["ENTER"]){
         const line = getText().split("\n").pop();
         const command = line.split(" ").slice(1).join(" ");
