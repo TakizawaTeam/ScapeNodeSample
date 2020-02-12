@@ -94,7 +94,11 @@
     texture.needsUpdate = true;
     return texture;
   };
-  const set_label = (label, text, reso=256)=>{
+  /* TODO: テクスチャサイズが正しくないとエラー
+  * 『256x256, 512x512, 1024x1024』の2の累乗が適切
+  *  最大サイズで作成して、sprite処理描画範囲と位置で調整する
+  */ 
+  const set_label = (label, text, reso=6)=>{
     const texture = draw_texture(ctx=>{
       ctx.fillStyle = "rgb(255,255,255)";
       ctx.fillRect(0,0,reso*(text.length*2),reso);
@@ -103,7 +107,7 @@
       ctx.fillStyle = "rgb(0,0,0)";
       ctx.font = `${reso}px 'ＭＳ ゴシック'`;
       ctx.fillText(text,reso*0.2,reso*0.8);
-    }, reso*2, reso);
+    }, Math.pow(2,6*text.length), Math.pow(2,6));
     label.material.map = texture;
     label.material.map.needsUpdate = true;
     return texture;
