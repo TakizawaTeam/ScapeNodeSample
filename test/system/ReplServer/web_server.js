@@ -3,9 +3,12 @@ const repl = require('repl');
 const http = require('http');
 const ws = require('ws');
 
+
+const prefix = "> ";
+
 /* repl(tcp) server create */
 net.createServer(function (socket) {
-  repl.start("> ", socket);
+  repl.start(prefix, socket);
 }).listen(5001, "localhost");
 
 /* http(websocket) server create */
@@ -26,7 +29,10 @@ new ws.Server({server: server}).on('connection', function(wso, req){
 
   /* repl(tcp) events */
   client.on('data', function (data) {
-    wso.send(''+data);
+    let res = (''+data).split("\n");
+    res.pop();
+    res.push(prefix);
+    wso.send(res.join("\n"));
   });
 
   // client.on('close', function () {
