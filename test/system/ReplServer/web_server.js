@@ -30,8 +30,9 @@ new ws.Server({server: server}).on('connection', function(wso, req){
   /* repl(tcp) events */
   client.on('data', function (data) {
     let res = (''+data).split("\n");
-    res.pop();
-    res.push(prefix);
+    let output_prefix = res.pop(); // prefixがおかしいので一時修正
+    console.log(output_prefix, output_prefix=='> > ');
+    output_prefix=='> > ' ? res.push(prefix) : res.push(output_prefix);
     wso.send(res.join("\n"));
   });
 
