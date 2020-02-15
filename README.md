@@ -3,17 +3,20 @@
 2. `npm install`
 3. `node index.js`
 
+<br>
+<br>
+
 ---
 
-#### ① 事前準備 [TBI]
+#### №1 事前準備 [TBI]
 1. `https://www.mongodb.com`からmongodbをインストール
 
-#### ② Getting Started [TBI]
+#### №2 Getting Started [TBI]
 1. `git clone git@github.com:TakizawaTeam/ScapeNodeSample.git`
 2. `cd ScapeNodeSample; npm install;`
 3. `node server.js`
 
-#### ③ This Way [TBI]
+#### №3 This Way [TBI]
 1. ブラウザから`http://localhost:8000/workbench`に接続
 2. コマンドパレッド[Shift+Command+P]から`tarminal`でweb_tarminalを起動
 3. web_tarminalでconnectしてからrootノードを生成する
@@ -22,7 +25,10 @@ const root_node = await make('root', true);
 await checkout('root');
 ```
 
+<br>
+<br>
 
+---
 
 #### Runner [TBI]
 1. 実行用のノードを作成
