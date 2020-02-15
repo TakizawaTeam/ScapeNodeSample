@@ -11,12 +11,12 @@
 #### №1 事前準備 [TBI]
 1. `https://www.mongodb.com`からmongodbをインストール
 
-#### №2 Getting Started [TBI]
+#### №2 サーバー起動 [TBI]
 1. `git clone git@github.com:TakizawaTeam/ScapeNodeSample.git`
 2. `cd ScapeNodeSample; npm install;`
 3. `node server.js`
 
-#### №3 This Way [TBI]
+#### №3 開発環境準備 [TBI]
 1. ブラウザから`http://localhost:8000/workbench`に接続
 2. コマンドパレッド[Shift+Command+P]から`tarminal`でweb_tarminalを起動
 3. web_tarminalでconnectしてからrootノードを生成する
