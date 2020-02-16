@@ -1,5 +1,6 @@
 module.exports = (async function(){
-  this.name = "scape_node";
+  this.configs = require('./Configs');
+  this.name = this.configs.name;
   this.is = {
     u: v=>(typeof v==="undefined"),
     s: v=>(typeof v==="string"),

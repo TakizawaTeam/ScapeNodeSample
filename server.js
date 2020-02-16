@@ -1,91 +1,65 @@
 const http = require('http');
-const fs = require('fs');
 const ws = require('ws');
-const exec = require('child_process').exec;
-const Node = require('./Node.js');
+const net = require('net');
+const repl = require('repl');
+const APP = await require("./Application.js");
+const Node = await require('./Node.js');
 
-const config = {
-  server: {
-    ip: '',
-    port: 2222,
-    index: 'server.html',
-  },
-};
+/*
+* REPL Server
+*/
+const repl_config = APP.configs.repl_server;
+net.createServer(function (socket) {
+  const repl_server = repl.start(repl_config['prefix'], socket);
+  repl_server.context.node = Node;
+}).listen(repl_config['port'], repl_config['server']);
 
-// return: string for stdout or stderr
-const exec_func = async function(_command){
-  return new Promise((res, rej) => {
-    try{
-      const result = exec(_command, (err, stdout, stderr) => {
-        if(err){ res(stderr); }
-        else{ res(stdout); }
-      });
-    }catch(err){
-      //res(`${err.name}: ${err.message}${"\n"}`);
-      res("");
-    }
-  });
-};
-// return: string for result
-const eval_func = async function(_code){
-  return new Promise((res, rej) => {
-    try{ res( eval(_code) ); }
-    catch(err){ res(`${err.name}: ${err.message}`); }
-  });
-};
-
-// create http server
-const sc = config.server;
+/* `http://localhost:${http_config['port']}/`
+* HTTP Server
+*/
+const http_config = APP.configs.http_server;
 const server = http.createServer(function(req, res) {
-  fs.readFile(`./${sc.index}`, 'utf-8', function(err, data) {
-    res.writeHead(200, {'content-type': 'text/html'});
-    res.write(data);
+
+  let set_result = async function(m){
+    res.writeHead(200, http_config['page404']['content-type']);
+    res.write(`${m} ${http_config['page404']['message']}`);
     res.end();
-  });
+  };
+  if(req.url=='/'){}
+  else if(req.url=='/test'){}
+  else if(req.url=='/workbench'){
+    fs.readFile(http_config['pageWorkbench']['index'], 'utf-8', function(err, data) {
+      res.writeHead(200, {'content-type': 'text/html'});
+      res.write(data);
+      res.end();
+    });
+  }
 });
-server.listen(sc.port, function() {
-  console.log(`Listening on ${sc.port}`);
-});
+server.listen(http_config['port'], function(){});
 
-// create websocket server
-new ws.Server({server: server}).on('connection', function(wso, req){
-  console.log((new Date()) + ' Peer ' + req.connection.remoteAddress + ' connected.');
+/* `ws://localhost:${http_config['port']}/`
+* WebSocket server
+*/
+const ws_config = APP.configs.ws_server;
+const ws_server = new ws.Server({server: server});
+ws_server.on('connection', function(wso, req){
 
-  let get_result = async function(m){return "404not found!"};
-  if(req.url == "/"){
-    get_result = async m=>{
-      let res_data = null;
-      const req_data = JSON.parse(m);
-      if(false){}
-      else if(req_data.type=='create'){
-        res_data = await Node.one[req_data.type].apply(null, [req_data.params]); }
-      else if(req_data.type=='read'){
-        res_data = await Node.one[req_data.type].apply(null, [req_data.params.hash]); }
-      else if(req_data.type=='update'){
-        res_data = await Node.one[req_data.type].apply(null, [req_data.params]); }
-      else if(req_data.type=='delete'){
-        res_data = await Node.one[req_data.type].apply(null, [req_data.params.hash]); }
-      return JSON.stringify(res_data);
-    };
-  }else if(req.url == "/echo"){
-    get_result = async m=>m;
-  }else if(req.url == "/exec"){
-    get_result = async function(m){
-      return await exec_func(m);
-    };
-  }else if(req.url == "/eval"){
-    get_result = async function(m){
-      const result = await eval_func(m);
-      return result;
-    };
-  }else if(req.url == "/session"){
+  let set_result = async function(m){ wso.send(`${m} 404not found!`); };
+  let set_close = async function(m){ wso.send(`${m} connection closed!`); };
+  if(req.url=='/'){}
+  else if(req.url=='/test'){}
+  else if(req.url=='/repl'){
+    const client = net.connect(repl_config['port'], repl_config['server'], function(){});
+    client.on('data', function (data) {
+      let res = (''+data).split("\n");
+      let output_prefix = res.pop(); // '>'を渡した時prefixがおかしいので一時修正
+      output_prefix=='> > ' ? res.push(prefix) : res.push(output_prefix);
+      wso.send(res.join("\n"));
+    });
+    set_result = async function(m){ client.write(m+"\n"); };
+    set_close = async function(){};
+  }
 
-  }else{}
-
-  wso.on('message', async function(m){
-    wso.send(await get_result(m));
-  });
-  wso.on('close', async function(){
-    console.log('I lost a client');
-  });
+  wso.on('message', async function(m){ await set_result(m); });
+  wso.on('close', async function(){ await set_close(); });
 });
