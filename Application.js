@@ -1,5 +1,5 @@
 module.exports = (async function(){
-  this.configs = require('./Configs');
+  this.configs = require('./Configs.js');
   this.name = this.configs.name;
   this.is = {
     u: v=>(typeof v==="undefined"),

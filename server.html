@@ -1,47 +1,9 @@
-<script>
-var server = new WebSocket("ws:localhost:2222/");
-server.onmessage = function(e) { console.log(e.data); }
-
-var exec_server = new WebSocket("ws:localhost:2222/exec");
-exec_server.onmessage = function(e) { console.log(e.data); }
-
-var eval_server = new WebSocket("ws:localhost:2222/eval");
-eval_server.onmessage = function(e) { console.log(e.data); }
-//ws.onopen = function(conn){ console.log("open websocket!"); }
-
-const s = function(_data){
-  return new Promise(function(res,rej){
-    server.send( JSON.stringify(_data) );
-    server.onmessage = function(e) {
-      res( JSON.parse(e.data) );
-    }
-  });
-};
-const s_exec = function(_command){
-  return new Promise(function(res,rej){
-    exec_server.send(_command);
-    exec_server.onmessage = function(e) {
-      res(e.data);
-    }
-  });
-};
-const s_eval = function(_code){
-  return new Promise(function(res,rej){
-    eval_server.send(_code);
-    eval_server.onmessage = function(e) {
-      res(e.data);
-    }
-  });
-};
-(async function(){
-  // send_data = JSON.stringify({type: "create", params: {name: "TEST-Node", content: "Aa1Bb2Cc3"}});
-  // result_data = JSON.parse(await s(send_data));
-  // console.log(result_data.type);
-
-  // let result = null;
-  // result = await s_exec('ls');
-  // console.log(result.split("\n"));
-  // result = await s_eval('1+1');
-  // console.log(parseInt(result)+2);
-})();
-</script>
+<HEAD>
+  <TITLE> ScapeNode - Workbench </TITLE>
+  <meta charset="UTF-8"/>
+</HEAD>
+<BODY style="margin:0px;">
+  <div id="main">
+    Hello!
+  </div>
+</BODY>
