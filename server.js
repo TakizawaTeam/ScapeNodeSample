@@ -14,7 +14,7 @@ const repl = require('repl');
   const repl_config = APP.configs.repl_server;
   net.createServer(function (socket) {
     const repl_server = repl.start(repl_config['prefix'], socket);
-    repl_server.context.node = Node;
+    repl_server.context.Node = Node;
   }).listen(repl_config['port'], repl_config['server']);
 
 
@@ -58,13 +58,13 @@ const repl = require('repl');
     let set_result = async function(m){ wso.send(`${m} 404not found!`); };
     let set_close = async function(m){ wso.send(`${m} connection closed!`); };
     if(req.url=='/'){}
-    else if(req.url=='/test'){}
+    else if(req.url=='/echo'){ set_result = async function(m){ wso.send(m); }; }
     else if(req.url=='/repl'){
       const client = net.connect(repl_config['port'], repl_config['server'], function(){});
       client.on('data', function (data) {
         let res = (''+data).split("\n");
         let output_prefix = res.pop(); // '>'を渡した時prefixがおかしいので一時修正
-        output_prefix=='> > ' ? res.push(prefix) : res.push(output_prefix);
+        output_prefix=='> > ' ? res.push(repl_config['prefix']) : res.push(output_prefix);
         wso.send(res.join("\n"));
       });
       set_result = async function(m){ client.write(m+"\n"); };
