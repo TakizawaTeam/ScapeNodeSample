@@ -12,8 +12,16 @@ const repl = require('repl');
   * REPL Server
   */
   const repl_config = APP.configs.repl_server;
+  const repl_eval = function(cmd, context, filename, callback){
+    callback(null, eval(cmd));
+  };
   net.createServer(function (socket) {
-    const repl_server = repl.start(repl_config['prefix'], socket);
+    const repl_server = repl.start({
+      prompt: repl_config['prefix'],
+      input: socket,
+      output: socket,
+      eval: repl_eval
+    });
     repl_server.context.Node = Node;
   }).listen(repl_config['port'], repl_config['server']);
 
