@@ -21,10 +21,10 @@ const { processTopLevelAwait } = require("node-repl-await");
     return false;
   }
   const repl_eval = async function(cmd, context, filename, callback){
-    code = processTopLevelAwait(code) || code;
+    cmd = processTopLevelAwait(cmd) || cmd;
 
     try {
-        let result = await vm.runInNewContext(code, context);
+        let result = await vm.runInNewContext(cmd, context);
         callback(null, result);
     } catch (e) {
         if (isRecoverableError(e)) {
