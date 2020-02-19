@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^3.3.2"
+    "mongodb": "^3.3.2",
+    "node-repl-await": "^0.1.1",
+    "ws": "^7.2.1"
   }
 }

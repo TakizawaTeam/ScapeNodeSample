@@ -1,8 +1,10 @@
+const vm = require('vm');
 const fs = require('fs');
 const http = require('http');
 const ws = require('ws');
 const net = require('net');
 const repl = require('repl');
+const { processTopLevelAwait } = require("node-repl-await");
 
 (async function(conf){
   const APP = await require("./Application.js");
@@ -12,8 +14,33 @@ const repl = require('repl');
   * REPL Server
   */
   const repl_config = APP.configs.repl_server;
+  const isRecoverableError = function(error) {
+    if (error.name === 'SyntaxError') {
+        return /^(Unexpected end of input|Unexpected token)/.test(error.message);
+    }
+    return false;
+  }
+  const repl_eval = async function(cmd, context, filename, callback){
+    cmd = processTopLevelAwait(cmd) || cmd;
+
+    try {
+        let result = await vm.runInNewContext(cmd, context);
+        callback(null, result);
+    } catch (e) {
+        if (isRecoverableError(e)) {
+            callback(new repl.Recoverable(e));
+        } else {
+            console.log(e);
+        }
+    }
+  };
   net.createServer(function (socket) {
-    const repl_server = repl.start(repl_config['prefix'], socket);
+    const repl_server = repl.start({
+      prompt: repl_config['prefix'],
+      input: socket,
+      output: socket,
+      eval: repl_eval,
+    });
     repl_server.context.Node = Node;
   }).listen(repl_config['port'], repl_config['server']);
 
