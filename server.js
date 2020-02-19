@@ -1,3 +1,4 @@
+const vm = require('vm');
 const fs = require('fs');
 const http = require('http');
 const ws = require('ws');
@@ -12,8 +13,22 @@ const repl = require('repl');
   * REPL Server
   */
   const repl_config = APP.configs.repl_server;
-  const repl_eval = function(cmd, context, filename, callback){
-    callback(null, eval(cmd));
+  let buff_cmd = '';
+  const repl_eval = async function(cmd, context, filename, callback){
+    const script = new vm.Script(cmd);
+    const is_raw = process.stdin.isRaw;
+    process.stdin.setRawMode(false);
+    try{
+      const res = await Promise.resolve( script.runInContext(context, {
+          displayErrors: false,
+          breakOnSigint: true,
+      }) );
+      callback(null, res);
+    }catch(error){
+      callback(error);
+    }finally{
+      process.stdin.setRawMode(is_raw);
+    }
   };
   net.createServer(function (socket) {
     const repl_server = repl.start({
