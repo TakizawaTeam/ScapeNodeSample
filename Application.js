@@ -1,3 +1,5 @@
+const { promisify } = require('util');
+
 module.exports = (async function(){
   this.configs = require('./Configs.js');
   this.name = this.configs.name;
@@ -36,5 +38,15 @@ module.exports = (async function(){
     console.log(`${animal_icon}${this.log_counter++}`, msg);
   };
   this.ASYNC_FUNCTION = async function(){};
+  this.html_static = async (res, data)=>{
+    res.writeHead(200, {'content-type': 'text/html'});
+    res.write(data);
+    res.end();
+    return true;
+  };
+  this.read_file = async (path, char_set='utf-8')=>{
+    const data = await promisify(require('fs').readFile)(path, char_set);
+    return data ? data : null;
+  };
   return this;
 })();

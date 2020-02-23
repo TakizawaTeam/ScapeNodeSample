@@ -2,8 +2,12 @@ module.exports = {
   name: 'scape_node',
   http_server: {
     port: 8000,
-    page404: {'content-type': 'text/html', message: '404not found!'},
-    pageWorkbench: {index: './server.html'}
+    static: {
+      page404: {message: '404not found!'},
+      workspace: {index: './server.html'},
+    },
+    page404: {},
+    pageWorkbench: {}
   },
   ws_server: { },
   repl_server: {

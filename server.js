@@ -50,27 +50,20 @@ const { processTopLevelAwait } = require("node-repl-await");
   * HTTP Server
   */
   const http_config = APP.configs.http_server;
+  const http_static = http_config['static'];
   const server = http.createServer(async function(req, res) {
 
-    const base_result = async function(m){
-      res.writeHead(200, http_config['page404']['content-type']);
-      res.write(`${m} ${http_config['page404']['message']}`);
-      res.end();
-    };
-
+    const base_result = async (m='')=>await APP.html_static(res, `${m} ${http_static['page404']['message']}`);
     let set_result = base_result;
+
     if(req.url=='/'){}
     else if(req.url=='/test'){}
-    else if(req.url=='/workbench'){
+    else if(req.url=='/workspace'){
       set_result = async function(){
-        fs.readFile(http_config['pageWorkbench']['index'], 'utf-8', function(err, data) {
-          res.writeHead(200, {'content-type': 'text/html'});
-          res.write(data);
-          res.end();
-        });
+        const data = await APP.read_file( http_static['workspace']['index'] );
+        await APP.html_static(res, data);
       };
     }
-
     await set_result();
   });
   server.listen(http_config['port'], function(){});
