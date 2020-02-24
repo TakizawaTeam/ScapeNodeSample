@@ -5,10 +5,9 @@
 <BODY style="margin:0px;">
   <script>
   const protocpl = 'ws';
-  const ip = 'localhost';
-  const port = 8000;
+  const host = this.location.host;
   const page = 'repl';
-  const url = `${protocpl}://${ip}:${port}/${page}`;
+  const url = `${protocpl}://${host}/${page}`;
 
   let server = null;
   let opened = false;
