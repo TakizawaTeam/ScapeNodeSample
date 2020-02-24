@@ -17,7 +17,11 @@
   const ask = q=>(opened&&!!server? server.send(q) : null);
   window.onload = function(){
     server = new WebSocket(url);
-    server.onmessage = function(e){console.log(e.data); history.push(e.data); history=history.slice(-history_size);};
+    server.onmessage = function(e){
+      m=e.data.split("\n"); m.pop(); m=m.join("\n"); //prompt削除
+      history.push(m); console.log(m); //保存及び出力
+      history=history.slice(-history_size); //最大件数
+    };
     server.onopen = function(e){opened=true; console.log(`${url} connected!`);};
     server.onclose = function(e){opened=false; console.log(`${url} disconnected!`);};
   };
