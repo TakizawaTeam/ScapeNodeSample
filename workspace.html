@@ -1,0 +1,29 @@
+<HEAD>
+  <TITLE>WorkSpace / ScapeNode</TITLE>
+  <meta charset="UTF-8"/>
+</HEAD>
+<BODY style="margin:0px;">
+  <script>
+  const protocpl = 'ws';
+  const ip = 'localhost';
+  const port = 8000;
+  const page = 'repl';
+  const url = `${protocpl}://${ip}:${port}/${page}`;
+
+  let server = null;
+  let opened = false;
+  let history = [];
+  let history_size = 50;
+  const ask = q=>(opened&&!!server? server.send(q) : null);
+  window.onload = function(){
+    server = new WebSocket(url);
+    server.onmessage = function(e){console.log(e.data); history.push(e.data); history=history.slice(-history_size);};
+    server.onopen = function(e){opened=true; console.log(`${url} connected!`);};
+    server.onclose = function(e){opened=false; console.log(`${url} disconnected!`);};
+  };
+  </script>
+
+  <div id="main">
+    Hello!
+  </div>
+</BODY>

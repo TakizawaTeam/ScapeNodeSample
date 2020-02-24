@@ -34,8 +34,9 @@ const { processTopLevelAwait } = require("node-repl-await");
         }
     }
   };
+  let repl_server = null;
   net.createServer(function (socket) {
-    const repl_server = repl.start({
+    repl_server = repl.start({
       prompt: repl_config['prefix'],
       input: socket,
       output: socket,
