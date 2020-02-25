@@ -253,11 +253,30 @@ _onload = function(e){
     })();
   };
 
-  const tarminals = document.querySelectorAll(".tarminal");
-  for(tarminal of tarminals){
+  const createTarminal = (dom, pos='beforeend')=>{
+    const tarminal_str = `<div class="tarminal">
+      <div class="tarm-header"><!--
+        --><div class="tarm-menu">1</div><!--
+        --><input type="text" class="tarm-url"/><!--
+        --><input type="button" value="CONNECT" class="tarm-btn"/>
+      </div>
+      <div class="tarm-win" contenteditable=true></div>
+      <div class="tarm-footer"><!--
+        --><div class="tarm-text">please connect.</div>
+      </div>
+    </div>`;
+    dom.insertAdjacentHTML(pos, tarminal_str);
+    const tarminal = dom.lastElementChild;
     tarminal.querySelector(".tarm-url").value = "ws://localhost:8000/repl";
     setTerminalUI(tarminal);
-  }
+    return tarminal;
+  };
+
+  const work_dom = document.querySelector("#main");
+  const TarminalA = createTarminal(work_dom);
+  // console.log(TarminalA);
+  // const TarminalB = createTarminal(work_dom);
+  // console.log(TarminalB);
 };
 window.onload = _onload;
 </script>
@@ -267,35 +286,13 @@ window.onload = _onload;
 2. 確定カーソル位置以下なら入力キャンセル<br>
 3. Backspaceやカーソル移動後、確定カーソル位置以下でも入力キャンセル<br>
 </p>
-<hr>
-
-<div class="tarminal">
-  <div class="tarm-header"><!--
-    --><div class="tarm-menu">1</div><!--
-    --><input type="text" class="tarm-url"/><!--
-    --><input type="button" value="CONNECT" class="tarm-btn"/>
-  </div>
-  <div class="tarm-win" contenteditable=true></div>
-  <div class="tarm-footer"><!--
-    --><div class="tarm-text">please connect.</div>
-  </div>
-</div>
 
 <hr>
 
-<div class="tarminal">
-  <div class="tarm-header"><!--
-    --><div class="tarm-menu">1</div><!--
-    --><input type="text" class="tarm-url"/><!--
-    --><input type="button" value="CONNECT" class="tarm-btn"/>
-  </div>
-  <div class="tarm-win" contenteditable=true></div>
-  <div class="tarm-footer"><!--
-    --><div class="tarm-text">please connect.</div>
-  </div>
-</div>
+<div id="main"></div>
 
 <hr>
+
 <p class="ditail">
 v1バグ：<br>
 ・コミットされた後に、prefixが追加されている<br>
