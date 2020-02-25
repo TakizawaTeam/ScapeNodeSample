@@ -253,9 +253,11 @@ _onload = function(e){
     })();
   };
 
-  const tarminal = document.querySelector(".tarminal");
-  tarminal.querySelector(".tarm-url").value = "ws://localhost:8000/repl";
-  setTerminalUI(tarminal);
+  const tarminals = document.querySelectorAll(".tarminal");
+  for(tarminal of tarminals){
+    tarminal.querySelector(".tarm-url").value = "ws://localhost:8000/repl";
+    setTerminalUI(tarminal);
+  }
 };
 window.onload = _onload;
 </script>
@@ -278,6 +280,8 @@ window.onload = _onload;
     --><div class="tarm-text">please connect.</div>
   </div>
 </div>
+
+<hr>
 
 <div class="tarminal">
   <div class="tarm-header"><!--
