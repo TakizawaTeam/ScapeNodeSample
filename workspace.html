@@ -50,20 +50,25 @@
     border: none;
     width: 100%;
     margin-bottom: 10px;
-    height: 20px;
+    padding-left: 5px;
+    font-size: 14px;
+    height: 25px;
   }
   #CommandPalette .predict{
     background-color: #303440;
     height: calc(100% - 35px);
+    border: solid 1px #303440;
     overflow-y: scroll;
   }
   #CommandPalette .predict .box{
-    color: #DDE;
+    color: #CCD;
     background-color: #404550;
-    border: solid 1px #303440;
+    border-bottom: solid 1px #303440;
     height: 30px;
+    padding-left: 10px;
+    line-height: 30px;
   }
-  #CommandPalette .predict .box.select{
+  #CommandPalette .predict .box:hover{
     background-color: #505660;
   }
   </style>
