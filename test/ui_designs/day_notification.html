@@ -9,9 +9,9 @@
     min-width: 300px;
     margin: 5px;
   }
-  .list{
-
-  }
+  .header{padding-bottom: 5px;}
+  .content_title{font-weight:bold;display:inline-block;}
+  .content_subtitle{font-weight:bold;display:inline-block;}
   .box{
     padding-bottom: 5px;
   }
@@ -43,42 +43,61 @@
     setTimeout(n.close.bind(n), 5000);
   }
 
+  const date = (dt=null)=>{
+    if(!dt) dt = new Date();
+    return dt.toLocaleDateString();
+  };
+  const time = (dt=null)=>{
+    if(!dt) dt = new Date();
+    return dt.toLocaleTimeString();
+  };
+  const second = (dt, dt2)=>Math.floor( (dt.getTime()-dt2.getTime()) /(1000));
+
   // CreateTimer
-  const createAlert = (time, text)=>{
-    return setTimeout(function(){
-      notificate(text);
-      beep();
-      alert(text);
-    }, 1000);
+  const createAlerm = (dt, text)=>{
+    const s = second(dt, new Date());
+    if(s > 0){
+      return setTimeout(function(){
+        notificate(text);
+        beep();
+      }, s*1000);
+    }else{return null;}
   };
   let timer_ids = {};
-  for([k, input] of document.querySelectorAll(`input[type="time"]`).entries()){
-    input.addEventListener('change', function(){
+  window.onload = function(){
+    document.querySelector(".content_subtitle").innerText = date();
+    for([k, input] of document.querySelectorAll(`input[type="time"]`).entries()){
+      input.addEventListener('change', function(e){
+        const t = new Date(`${date()} ${e.target.value}:00`);
+        const txt = document.querySelectorAll(`input[type="text"]`)[k].value;
+        if(!!timer_ids[k]) clearTimeout(timer_ids[k]);
+        timer_ids[k] = createAlerm(t, txt);
+      });
+    }
+    for([k, input] of document.querySelectorAll(`input[type="text"]`).entries()){
+      input.addEventListener('change', function(e){
 
-    });
-  }
-  for([k, input] of document.querySelectorAll(`input[type="text"]`).entries()){
-    input.addEventListener('change', function(){
-
-    });
-  }
+      });
+    }
+  };
   </script>
 </HEAD>
 <BODY style="margin:0px;">
   <div class="content">
     <div class="header">
-      <h4>指定時間にブラウザ通知</h4>
+      <div class="content_title">指定時間にブラウザ通知</div>
+      <div class="content_subtitle">----/--/--</div>
     </div>
 
     <div class="list timers">
       <div class="box timer">
-        <input type="time" value="00:00"/><input type="text"/>
+        <input type="time" value="00:00"/><input type="text" value="TestA"/>
       </div>
       <div class="box">
-        <input type="time" value="00:00"/><input type="text"/>
+        <input type="time" value="00:00"/><input type="text" value="TestB"/>
       </div>
       <div class="box">
-        <input type="time" value="00:00"/><input type="text"/>
+        <input type="time" value="00:00"/><input type="text" value="TestC"/>
       </div>
     </div>
 
