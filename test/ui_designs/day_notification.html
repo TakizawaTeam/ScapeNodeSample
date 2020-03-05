@@ -20,7 +20,9 @@
     border: solid 1px #CCC;
     width: 100%;
     height: 25px;
+    cursor: pointer;
   }
+  .add_btn:hover{background-color: #DDD;}
   input[type="time"]{
     width: calc(30% - 5px);
     height: 25px;
@@ -55,21 +57,8 @@
   const second = (dt, dt2)=>Math.floor( (dt.getTime()-dt2.getTime()) /(1000));
 
 
-  // CreateDom
-  const alertDom = `
-    <div class="box timer">
-      <input type="time" value="00:00"/><input type="text" value="-"/>
-    </div>`;
-  const createAlertDom = dom=>{
-    dom.insertAdjacentHTML('beforeend', alertDom);
-    alert = dom.lastElementChild;
-    hm = time().split(":").slice(0,2).map(v=>('00'+v).slice(-2)); //何故か1桁がダメなのでゼロ埋め
-    alert.querySelector(`input[type="time"]`).value = hm.join(":");
-    alert.dataset.n = Array.from(document.querySelectorAll(".timer")).indexOf(alert);
-    return alert;
-  };
-
-  // CreateTimer
+  // CreateAlerm
+  let timer_ids = {};
   const createAlerm = (dt, text)=>{
     const s = second(dt, new Date());
     console.log(dt, s);
@@ -80,32 +69,47 @@
       }, s*1000);
     }else{return null;}
   };
+  const alertDom = `
+    <div class="box timer">
+      <input type="time" value="00:00"/><input type="text" value="-"/>
+    </div>`;
+  const createAlertDom = dom=>{
+    dom.insertAdjacentHTML('beforeend', alertDom);
+    alert = dom.lastElementChild;
+    _time = alert.querySelector(`input[type="time"]`);
+    _text = alert.querySelector(`input[type="text"]`);
+
+    hm = time().split(":").slice(0,2).map(v=>('00'+v).slice(-2)); //何故か1桁がダメなのでゼロ埋め
+    _time.value = hm.join(":");
+
+    alert.dataset.n = Array.from(document.querySelectorAll(".timer")).indexOf(alert);
+    _time.addEventListener('change', function(e){
+      const n = e.target.parentNode.dataset.n;
+      const t = new Date(`${date()} ${e.target.value}:00`);
+      const txt = document.querySelectorAll(`input[type="text"]`)[n].value;
+      if(!!timer_ids[n]) clearTimeout(timer_ids[n]);
+      timer_ids[n] = createAlerm(t, txt);
+    });
+    _text.addEventListener('change', function(e){
+      const n = e.target.parentNode.dataset.n;
+      const t = new Date(`${date()} ${document.querySelectorAll(`input[type="time"]`)[n].value}:00`);
+      if(!!timer_ids[n]) clearTimeout(timer_ids[n]);
+      timer_ids[n] = createAlerm(t, e.target.value);
+    });
+    return alert;
+  };
+
 
   const timer_num = 3;
-  let timer_ids = {};
   window.onload = function(){
     timers = document.querySelector(".timers");
     document.querySelector(".content_subtitle").innerText = date();
     for(i=0;i<timer_num;i++){
       createAlertDom(timers);
     }
-    for([k, input] of document.querySelectorAll(`input[type="time"]`).entries()){
-      input.addEventListener('change', function(e){
-        const n = e.target.parentNode.dataset.n;
-        const t = new Date(`${date()} ${e.target.value}:00`);
-        const txt = document.querySelectorAll(`input[type="text"]`)[n].value;
-        if(!!timer_ids[n]) clearTimeout(timer_ids[n]);
-        timer_ids[n] = createAlerm(t, txt);
-      });
-    }
-    for([k, input] of document.querySelectorAll(`input[type="text"]`).entries()){
-      input.addEventListener('change', function(e){
-        const n = e.target.parentNode.dataset.n;
-        const t = new Date(`${date()} ${document.querySelectorAll(`input[type="time"]`)[n].value}:00`);
-        if(!!timer_ids[n]) clearTimeout(timer_ids[n]);
-        timer_ids[n] = createAlerm(t, e.target.value);
-      });
-    }
+    document.querySelector(".add_btn").addEventListener('click', function(e){
+      createAlertDom(timers);
+    });
   };
   </script>
 </HEAD>
@@ -116,19 +120,7 @@
       <div class="content_subtitle">----/--/--</div>
     </div>
 
-
     <div class="list timers"></div>
-    <!--
-      <div class="box timer">
-        <input type="time" value="00:00"/><input type="text" value="-"/>
-      </div>
-      <div class="box timer">
-        <input type="time" value="00:00"/><input type="text" value="-"/>
-      </div>
-      <div class="box timer">
-        <input type="time" value="00:00"/><input type="text" value="-"/>
-      </div>
-    -->
 
     <div class="footer">
       <div class="add_btn">＋</div>
