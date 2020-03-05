@@ -61,7 +61,7 @@
   let timer_ids = {};
   const createAlerm = (dt, text)=>{
     const s = second(dt, new Date());
-    console.log(dt, s);
+    console.log(`タイマーセット： ${time(dt)}(${s}秒後)に『${text}』表示`);
     if(s > 0){
       return setTimeout(function(){
         notificate(text);
@@ -83,14 +83,14 @@
     _time.value = hm.join(":");
 
     alert.dataset.n = Array.from(document.querySelectorAll(".timer")).indexOf(alert);
-    _time.addEventListener('change', function(e){
+    _time.addEventListener('input', function(e){
       const n = e.target.parentNode.dataset.n;
       const t = new Date(`${date()} ${e.target.value}:00`);
       const txt = document.querySelectorAll(`input[type="text"]`)[n].value;
       if(!!timer_ids[n]) clearTimeout(timer_ids[n]);
       timer_ids[n] = createAlerm(t, txt);
     });
-    _text.addEventListener('change', function(e){
+    _text.addEventListener('input', function(e){
       const n = e.target.parentNode.dataset.n;
       const t = new Date(`${date()} ${document.querySelectorAll(`input[type="time"]`)[n].value}:00`);
       if(!!timer_ids[n]) clearTimeout(timer_ids[n]);
