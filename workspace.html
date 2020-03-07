@@ -14,23 +14,38 @@
   let history = [];
   let history_size = 50;
   let ask = null;
+
+  const command_log_flg = true;
+  let commandLists = [];
   window.onload = function(){
     server = new WebSocket(url);
     ask = async q=>{
       if(!opened || !server) return null;
       server.send(q);
+      if(command_log_flg) console.log(`%c${q}`, `color:#DDE;background-color:#335;`);
       return await new Promise((res,rej)=>{
         server.onmessage = function(e){
           m=e.data.split("\n"); m.pop(); m=m.join("\n"); //prompt削除
+          console.log(q, m);
           if(typeof m!=='undefined' && m!=null){
             history.push(m); history=history.slice(-history_size); //履歴保存と最大件数処理
+            if(command_log_flg) console.log(`%c${m}`, `color:#DDE;background-color:#335;`);
             res(history.slice(-1)[0]);
           }else{ res(null); }
         };
       });
     };
-    server.onopen = function(e){opened=true; console.log(`${url} connected!`);};
-    server.onclose = function(e){opened=false; console.log(`${url} disconnected!`);};
+    server.onopen = async function(e){
+      opened=true; console.log(`${url} connected!`); // 接続及びログ出力
+      // await ask('await checkout("system");').then(async function(res){
+      //   await ask('await cd("workspace/commands");').then(async function(res){
+      //     await ask('await pwd();');
+      //   });
+      // });
+    };
+    server.onclose = async function(e){
+      opened=false; console.log(`${url} disconnected!`);  // 切断及びログ出力
+    };
   };
   </script>
 

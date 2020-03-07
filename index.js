@@ -5,6 +5,14 @@
     (async function(){
       async function init(){
         await initialize();
+        // scape node system.
+        const system_node = await make('system', true);await checkout('system');
+        await make("workspace/commands");await cd("workspace/commands");
+        await make("CommandA");
+        await make("CommandB");
+        await make("CommandC");
+
+
         const root_node = await make('root', true);await checkout('root');
         await make("work");await cd("work");
 
