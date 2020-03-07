@@ -13,13 +13,21 @@
   let opened = false;
   let history = [];
   let history_size = 50;
-  const ask = q=>(opened&&!!server? server.send(q) : null);
+  let ask = null;
   window.onload = function(){
     server = new WebSocket(url);
-    server.onmessage = function(e){
-      m=e.data.split("\n"); m.pop(); m=m.join("\n"); //prompt削除
-      history.push(m); console.log(m); //保存及び出力
-      history=history.slice(-history_size); //最大件数
+    ask = async q=>{
+      if(!opened || !server) return null;
+      server.send(q);
+      return await new Promise((res,rej)=>{
+        server.onmessage = function(e){
+          m=e.data.split("\n"); m.pop(); m=m.join("\n"); //prompt削除
+          if(typeof m!=='undefined' && m!=null){
+            history.push(m); history=history.slice(-history_size); //履歴保存と最大件数処理
+            res(history.slice(-1)[0]);
+          }else{ res(null); }
+        };
+      });
     };
     server.onopen = function(e){opened=true; console.log(`${url} connected!`);};
     server.onclose = function(e){opened=false; console.log(`${url} disconnected!`);};
@@ -50,6 +58,7 @@
   }
   #CommandPalette .command{
     color: #EEE;
+    caret-color: #DDE;
     background-color: #303440;
     border: none;
     width: 100%;
@@ -72,9 +81,8 @@
     padding-left: 10px;
     line-height: 30px;
   }
-  #CommandPalette .predict .box:hover{
-    background-color: #505660;
-  }
+  #CommandPalette .predict .box:last-child{ border-bottom: none; }
+  #CommandPalette .predict .box:hover{ background-color: #505660; }
   </style>
 
   <div id="main">
