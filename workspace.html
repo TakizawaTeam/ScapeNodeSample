@@ -4,6 +4,9 @@
 </HEAD>
 <BODY style="margin:0px;">
   <script>
+  const bgf_color = (bg='white',f='black')=>`color:${f};background-color:${bg};`;
+  const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
+
   const protocpl = 'ws';
   const host = this.location.host;
   const page = 'repl';
@@ -22,26 +25,23 @@
     ask = async q=>{
       if(!opened || !server) return null;
       server.send(q);
-      if(command_log_flg) console.log(`%c${q}`, `color:#DDE;background-color:#335;`);
+      if(command_log_flg) console.log(`%c${q}`, bgf_color("#335","#DDE"));
       return await new Promise((res,rej)=>{
         server.onmessage = function(e){
           m=e.data.split("\n"); m.pop(); m=m.join("\n"); //prompt削除
-          console.log(q, m);
-          if(typeof m!=='undefined' && m!=null){
+          if(m!="" && typeof m!=='undefined' && m!=null){
             history.push(m); history=history.slice(-history_size); //履歴保存と最大件数処理
-            if(command_log_flg) console.log(`%c${m}`, `color:#DDE;background-color:#335;`);
+            if(command_log_flg) console.log(`%c${m}`, bgf_color("#335","#DDE"));
             res(history.slice(-1)[0]);
-          }else{ res(null); }
+          }
         };
       });
     };
     server.onopen = async function(e){
       opened=true; console.log(`${url} connected!`); // 接続及びログ出力
-      // await ask('await checkout("system");').then(async function(res){
-      //   await ask('await cd("workspace/commands");').then(async function(res){
-      //     await ask('await pwd();');
-      //   });
-      // });
+      await ask('await checkout("system");');
+      await ask('await cd("workspace/commands");');
+      await ask('await pwd();');
     };
     server.onclose = async function(e){
       opened=false; console.log(`${url} disconnected!`);  // 切断及びログ出力

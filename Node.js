@@ -170,7 +170,7 @@ module.exports = (async function(){
       return this.current;
     }else{return `cd() $path type error [${typeof path}]`;}
   };
-  this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key); };
+  this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key).join(' '); };
   this.pwd = async function(node=null){
     if(!node)node = this.current;
     let keys = [node.key];
