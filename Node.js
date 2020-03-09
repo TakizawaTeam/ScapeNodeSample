@@ -57,6 +57,7 @@ module.exports = (async function(){
     },
   };
 
+  const nodePresent = node=>{delete node._id; return node;};
   this.ROOT = null;
   this.current = null;
   this.woods = async function(){};
@@ -65,13 +66,13 @@ module.exports = (async function(){
     if(root){
       this.ROOT = root;
       this.current = this.ROOT;
-      return this.current;
+      return nodePresent(this.current);
     }else{ return null; }
   };
   await this.checkout();
   this.target = key=>{
     if(key==this.ROOT.key)return this.ROOT;
-    return this.current;
+    return nodePresent(this.current);
   };
   this.find = async function(path=""){
     if(typeof path==="string" && path.length>0){
@@ -167,7 +168,7 @@ module.exports = (async function(){
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
-      return this.current;
+      return nodePresent(this.current);
     }else{return `cd() $path type error [${typeof path}]`;}
   };
   this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key).join(' '); };
