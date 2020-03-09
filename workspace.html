@@ -17,9 +17,8 @@
   let history = [];
   let history_size = 50;
   let ask = null;
-  const serverLineDom = line=>{
+  const updateServerLine = line=>{
     const dom = document.querySelector("#ServerLine");
-    console.log(dom);
     if(line){
       dom.classList.add("on");
       dom.innerText = 'ON-LINE';
@@ -50,14 +49,14 @@
     };
     server.onopen = async function(e){
       opened=true; console.log(`${url} connected!`); // 接続及びログ出力
-      serverLineDom(true);
+      updateServerLine(true);
       await ask('await checkout("system");');
       await ask('await cd("workspace/commands");');
-      await ask('await pwd();');
+      await ask('await ls();');
     };
     server.onclose = async function(e){
       opened=false; console.log(`${url} disconnected!`);  // 切断及びログ出力
-      serverLineDom(false);
+      updateServerLine(false);
     };
   };
   </script>
