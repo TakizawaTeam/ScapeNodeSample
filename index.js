@@ -8,10 +8,13 @@
         // scape node system.
         const system_node = await make('system', true);await checkout('system');
         await make("workspace/commands");await cd("workspace/commands");
-        await make("CommandA");
-        await make("CommandB");
-        await make("CommandC");
-
+        await make("core:helper");
+        await make("core:import");
+        CommandPalette = await make("core:CommandPalette");
+        await make("core:Terminal");
+        await make("core:Editor");
+        await make("core:PathFinder");
+        await set({value: "<h3>import component test!</h3>"}, CommandPalette);
 
         const root_node = await make('root', true);await checkout('root');
         await make("work");await cd("work");

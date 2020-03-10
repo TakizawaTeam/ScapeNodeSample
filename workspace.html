@@ -9,9 +9,8 @@
     if(typeof target==='object') target = JSON.stringify(target);
     console.log(`%c${target}`, style);
   };
-  output_log(["aaa", "bbb", "ccc"]);
   const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
-  const str_code = d=>(new Function("return" + d))();
+  const str_var = str=>(new Function("return " + str))();
 
   const protocpl = 'ws';
   const host = this.location.host;
@@ -33,6 +32,12 @@
       dom.innerText = 'OFFLINE';
     }
   }
+  const importSystemDom = async (path, dom=document.querySelector("#main"))=>{ // NodeのPathから取り込み
+    await ask(`await checkout("system");`);
+    await ask(`await cd("${path}");`);
+    const el_str = await ask(`await cat();`);
+    dom.insertAdjacentHTML('beforeend', el_str);
+  };
 
   const command_log_flg = true;
   let commandLists = [];
@@ -44,8 +49,7 @@
       if(command_log_flg) output_log(`$ ${q}`);
       return await new Promise((res,rej)=>{
         server.onmessage = function(e){
-          m=e.data.split("\n"); m.pop(); m=m.join("\n");
-          m=str_code(m); //prompt削除
+          m=e.data.split("\n"); m.pop(); m=m.join("\n"); m=str_var(m); //prompt削除
           if(m!="" && typeof m!=='undefined'){
             history.push(m); history=history.slice(-history_size); //履歴保存と最大件数処理
             if(command_log_flg) output_log(m);
@@ -57,9 +61,7 @@
     server.onopen = async function(e){
       opened=true; console.log(`${url} connected!`); // 接続及びログ出力
       updateServerLine(true);
-      await ask('await checkout("system");');
-      await ask('await cd("workspace/commands");');
-      await ask('await ls();');
+      await importSystemDom("workspace/commands/core:CommandPalette");
     };
     server.onclose = async function(e){
       opened=false; console.log(`${url} disconnected!`);  // 切断及びログ出力
@@ -162,7 +164,5 @@
         </div>
       </div>
     </div>
-    <!--<div id="PathFinder" class="modal">
-    </div>-->
   </div>
 </BODY>
