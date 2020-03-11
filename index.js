@@ -19,7 +19,6 @@
           await set({value: cat}, node);
         };
         await add_core_node('helper');
-        await add_core_node('import');
         await add_core_node('CommandPalette');
         await add_core_node('Terminal');
         await add_core_node('Editor');
