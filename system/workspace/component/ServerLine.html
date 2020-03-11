@@ -1,0 +1,33 @@
+<div id="ServerLine">
+  <style>
+    #ServerLine .status{
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      background-color: red;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 75px;
+      height: 25px;
+    }
+    #ServerLine .status.on{
+      background-color: green;
+    }
+  </style>
+
+  <div class="status">OFFLINE</div>
+
+  <script>
+    const updateServerLine = line=>{
+      const dom = document.querySelector("#ServerLine .status");
+      if(line){
+        dom.classList.add("on");
+        dom.innerText = 'ON-LINE';
+      }else{
+        dom.classList.remove("on");
+        dom.innerText = 'OFFLINE';
+      }
+    }
+  </script>
+</div>

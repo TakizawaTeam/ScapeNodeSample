@@ -22,16 +22,6 @@
   let history = [];
   let history_size = 50;
   let ask = null;
-  const updateServerLine = line=>{
-    const dom = document.querySelector("#ServerLine");
-    if(line){
-      dom.classList.add("on");
-      dom.innerText = 'ON-LINE';
-    }else{
-      dom.classList.remove("on");
-      dom.innerText = 'OFFLINE';
-    }
-  }
   const importSystemDom = async (path, dom=document.querySelector("#main"))=>{ // NodeのPathから取り込み
     await ask(`await checkout("system");`);
     await ask(`await cd("${path}");`);
@@ -47,20 +37,19 @@
     }
   };
 
-  const command_log_flg = true;
-  let commandLists = [];
+  const COMMAND_LOG = true;
   window.onload = function(){
     server = new WebSocket(url);
     ask = async q=>{
       if(!opened || !server) return null;
       server.send(q);
-      if(command_log_flg) output_log(`$ ${q}`);
+      if(COMMAND_LOG) output_log(`$ ${q}`);
       return await new Promise((res,rej)=>{
         server.onmessage = function(e){
           m=e.data.split("\n"); m.pop(); m=m.join("\n"); m=str_var(m); //prompt削除
           if(m!="" && typeof m!=='undefined'){
             history.push(m); history=history.slice(-history_size); //履歴保存と最大件数処理
-            if(command_log_flg) output_log(m);
+            if(COMMAND_LOG) output_log(m);
             res(history.slice(-1)[0]);
           }
         };
@@ -68,6 +57,7 @@
     };
     server.onopen = async function(e){
       opened=true; console.log(`${url} connected!`); // 接続及びログ出力
+      await importSystemDom("workspace/commands/component:ServerLine");
       updateServerLine(true);
       await importSystemDom("workspace/commands/core:CommandPalette");
     };
@@ -88,23 +78,7 @@
     height: 100%;
     z-index: 9999;
   }
-  #ServerLine{
-    color: white;
-    font-size: 16px;
-    text-align: center;
-    background-color: red;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 75px;
-    height: 25px;
-  }
-  #ServerLine.on{
-    background-color: green;
-  }
   </style>
 
-  <div id="main">
-    <div id="ServerLine">OFFLINE</div>
-  </div>
+  <div id="main"></div>
 </BODY>

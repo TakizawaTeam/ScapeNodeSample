@@ -8,86 +8,32 @@
         // scape node system.
         const system_node = await make('system', true);await checkout('system');
         await make("workspace/commands");await cd("workspace/commands");
-        await make("core:helper");
-        await make("core:import");
-        CommandPalette = await make("core:CommandPalette");
-        await make("core:Terminal");
-        await make("core:Editor");
-        await make("core:PathFinder");
-        await set({value: `<div id="CommandPalette" class="modal">
-              <style>
-              #CommandPalette .window{
-                position: relative;
-                left: 50%;
-                top: 10px;
-                transform: translateX(-50%);
-                background-color: #404550;
-                max-width: 480px;
-                min-width: 240px;
-                height: 480px;
-                border-radius: 5px;
-                padding: 10px;
-              }
-              #CommandPalette .command{
-                color: #EEE;
-                caret-color: #DDE;
-                background-color: #303440;
-                border: none;
-                width: 100%;
-                margin-bottom: 10px;
-                padding-left: 5px;
-                font-size: 14px;
-                height: 25px;
-              }
-              #CommandPalette .predict{
-                background-color: #303440;
-                height: calc(100% - 35px);
-                border: solid 1px #303440;
-                overflow-y: scroll;
-              }
-              #CommandPalette .predict .box{
-                color: #CCD;
-                background-color: #404550;
-                border-bottom: solid 1px #303440;
-                height: 30px;
-                padding-left: 10px;
-                line-height: 30px;
-              }
-              #CommandPalette .predict .box:last-child{ border-bottom: none; }
-              #CommandPalette .predict .box:hover{ background-color: #505660; }
-              </style>
 
-              <div class="window">
-                <input type="text" class="command"/>
-                <div class="predict">
-                  <div class="box">dummyA</div>
-                  <div class="box">dummyB</div>
-                  <div class="box">dummyC</div>
+        const CORE_PATH = 'system/workspace/core';
+        const get_core_path = name=>`${CORE_PATH}/${name}.html`;
+        const add_core_node = async name=>{
+          const node = await make(`core:${name}`);
+          const cat = await APP.read_file( get_core_path(name) );
+          await set({value: cat}, node);
+        };
+        await add_core_node('helper');
+        await add_core_node('import');
+        await add_core_node('CommandPalette');
+        await add_core_node('Terminal');
+        await add_core_node('Editor');
+        await add_core_node('PathFinder');
 
-                  <div class="box">dummy1</div>
-                  <div class="box">dummy2</div>
-                  <div class="box">dummy3</div>
-                  <div class="box">dummy4</div>
-                  <div class="box">dummy5</div>
-                  <div class="box">dummy6</div>
-                  <div class="box">dummy7</div>
-                  <div class="box">dummy8</div>
-                  <div class="box">dummy9</div>
-                  <div class="box">dummy10</div>
-                  <div class="box">dummy11</div>
-                  <div class="box">dummy12</div>
-                  <div class="box">dummy13</div>
-                  <div class="box">dummy14</div>
-                  <div class="box">dummy15</div>
-                </div>
-              </div>
+        const COMPONENT_PATH = 'system/workspace/component';
+        const get_component_path = name=>`${COMPONENT_PATH}/${name}.html`;
+        const add_component_node = async name=>{
+          const node = await make(`component:${name}`);
+          const cat = await APP.read_file( get_component_path(name) );
+          await set({value: cat}, node);
+        };
+        await add_component_node('ServerLine');
 
-              <script>
-              console.log(document.querySelector("#CommandPalette"));
-              alert("Test!");
-              </script>
-            </div>`}, CommandPalette);
 
+        // work node
         const root_node = await make('root', true);await checkout('root');
         await make("work");await cd("work");
 
