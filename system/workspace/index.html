@@ -4,21 +4,9 @@
 </HEAD>
 <BODY style="margin:0px;">
   <script>
-  const bgf_color = (bg='white',f='black')=>`color:${f};background-color:${bg};`;
-  const output_log = (target=null, style=bgf_color("#335","#DDE"))=>{
-    if(typeof target==='object') target = JSON.stringify(target);
-    console.log(`%c${target}`, style);
-  };
-  const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
-  const str_var = str=>(new Function("return " + str))();
-
-  const protocpl = 'ws';
-  const host = this.location.host;
-  const page = 'repl';
-  const url = `${protocpl}://${host}/${page}`;
-
   let server = null;
   let opened = false;
+  const URL = `ws://${this.location.host}/repl`;
   let history = [];
   let history_size = 50;
   let ask = null;
@@ -36,10 +24,16 @@
       script.parentElement.removeChild(script);
     }
   };
+  const bgf_color = (bg='white',f='black')=>`color:${f};background-color:${bg};`;
+  const output_log = (target=null, style=bgf_color("#335","#DDE"))=>{
+    if(typeof target==='object') target = JSON.stringify(target);
+    console.log(`%c${target}`, style);
+  };
+  const str_var = str=>(new Function("return " + str))(); // ただの文字列をJSに変換
 
   const COMMAND_LOG = true;
   window.onload = function(){
-    server = new WebSocket(url);
+    server = new WebSocket(URL);
     ask = async q=>{
       if(!opened || !server) return null;
       server.send(q);
@@ -56,13 +50,13 @@
       });
     };
     server.onopen = async function(e){
-      opened=true; console.log(`${url} connected!`); // 接続及びログ出力
+      opened=true; console.log(`${URL} connected!`); // 接続及びログ出力
       await importSystemDom("workspace/commands/component:ServerLine");
       updateServerLine(true);
       await importSystemDom("workspace/commands/core:CommandPalette");
     };
     server.onclose = async function(e){
-      opened=false; console.log(`${url} disconnected!`);  // 切断及びログ出力
+      opened=false; console.log(`${URL} disconnected!`);  // 切断及びログ出力
       updateServerLine(false);
     };
   };
