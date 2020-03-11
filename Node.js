@@ -24,7 +24,7 @@ module.exports = (async function(){
   this.initialize = async function(){
     return await DB.connect(async connection=>{
       const Node = await DB.get_collection(`${APP.name}/nodes`);
-      return Node.remove();
+      return Node.deleteMany();
     });
   };
   this.one = { /* HASHによる直接操作 */

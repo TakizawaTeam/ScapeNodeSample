@@ -95,6 +95,8 @@ const { processTopLevelAwait } = require("node-repl-await");
     wso.on('message', async function(m){ await set_result(m); });
     wso.on('close', async function(){ await set_close(); });
   });
+
+  console.log(`[start Server http://localhost:${http_config['port']}/workspace]`);
 })({
 
 });
