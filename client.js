@@ -4,7 +4,7 @@ const URL = `ws://${this.location.host}/repl`;
 let history = [];
 let history_size = 50;
 let ask = null;
-const importSystemDom = async (path, dom=document.querySelector("#main"))=>{ // NodeのPathから取り込み
+const importNode = async (path, dom=document.querySelector("#main"))=>{ // NodeのPathから取り込み
   await ask(`await checkout("system");`);
   await ask(`await cd("${path}");`);
   const el_str = await ask(`await cat();`);
@@ -45,9 +45,9 @@ window.onload = function(){
   };
   server.onopen = async function(e){
     opened=true; console.log(`${URL} connected!`); // 接続及びログ出力
-    await importSystemDom("workspace/commands/component:ServerLine");
+    await importNode("workspace/component/ServerLine");
     updateServerLine(true);
-    await importSystemDom("workspace/commands/core:CommandPalette");
+    await importNode("workspace/component/CommandPalette");
   };
   server.onclose = async function(e){
     opened=false; console.log(`${URL} disconnected!`);  // 切断及びログ出力
