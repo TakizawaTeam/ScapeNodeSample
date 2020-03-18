@@ -9,30 +9,33 @@
 
         // scape node system.
         const system_node = await make('system', true);await checkout('system');
-        await make("workspace/commands");await cd("workspace/commands");
+        await make("workspace/component");
+        await make("workspace/command");
 
-        const CORE_PATH = 'system/workspace/core';
-        const get_core_path = name=>`${CORE_PATH}/${name}.html`;
-        const add_core_node = async name=>{
-          const node = await make(`core:${name}`);
-          const cat = await APP.read_file( get_core_path(name) );
-          await set({value: cat}, node);
-        };
-        await add_core_node('helper');
-        await add_core_node('CommandPalette');
-        await add_core_node('Terminal');
-        await add_core_node('Editor');
-        await add_core_node('PathFinder');
 
         const COMPONENT_PATH = 'system/workspace/component';
         const get_component_path = name=>`${COMPONENT_PATH}/${name}.html`;
         const add_component_node = async name=>{
-          const node = await make(`component:${name}`);
-          const cat = await APP.read_file( get_component_path(name) );
+          const node = await make(name);
+          const cat = await APP.read_file( get_core_path(name) );
           await set({value: cat}, node);
         };
+        await add_component_node('Helper');
+        await add_component_node('CommandPalette');
+        await add_component_node('Terminal');
+        await add_component_node('Editor');
+        await add_component_node('PathFinder');
         await add_component_node('ServerLine');
 
+
+        const COMMAND_PATH = 'system/workspace/command';
+        const get_command_path = name=>`${COMMAND_PATH}/${name}.html`;
+        const add_command_node = async name=>{
+          const node = await make(name);
+          const cat = await APP.read_file( get_core_path(name) );
+          await set({value: cat}, node);
+        };
+        await add_command_node('Component');
 
 
         // work node
