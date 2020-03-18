@@ -38,8 +38,8 @@ module.exports = (async function(){
     console.log(`${animal_icon}${this.log_counter++}`, msg);
   };
   this.ASYNC_FUNCTION = async function(){};
-  this.html_static = async (res, data)=>{
-    res.writeHead(200, {'content-type': 'text/html'});
+  this.html_static = async (res, data, head={'content-type': 'text/html'})=>{
+    res.writeHead(200, head);
     res.write(data);
     res.end();
     return true;

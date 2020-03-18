@@ -64,6 +64,11 @@ const { processTopLevelAwait } = require("node-repl-await");
         const data = await APP.read_file( http_static['workspace']['index'] );
         await APP.html_static(res, data);
       };
+    }else if(req.url=='/client'){
+      set_result = async function(){
+        const data = await APP.read_file( http_static['client'] );
+        await APP.html_static(res, data, {'content-type': 'text/javascript'});
+      };
     }
     await set_result();
   });
