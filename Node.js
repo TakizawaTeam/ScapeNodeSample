@@ -74,7 +74,7 @@ module.exports = (async function(){
     if(key==this.ROOT.key)return this.ROOT;
     return nodePresent(this.current);
   };
-  this.find = async function(path=""){
+  this.find = async function(path=""){ //ノード検索、無ければトレース履歴を配列で返す
     if(typeof path==="string" && path.length>0){
       const node_keys = path.split("/");
       let find_history = [];

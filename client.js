@@ -17,6 +17,7 @@ const importNode = async (path, dom=document.querySelector("#main"))=>{ // Nodeã
     script.parentElement.insertBefore(new_script, script);
     script.parentElement.removeChild(script);
   }
+  return true;
 };
 const bgf_color = (bg='white',f='black')=>`color:${f};background-color:${bg};`;
 const output_log = (target=null, style=bgf_color("#335","#DDE"))=>{

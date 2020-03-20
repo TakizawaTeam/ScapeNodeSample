@@ -1,8 +1,17 @@
-<script>
-global['command']['Component'] = function(){
+<div id="command-Component">
+  <script>
+  global['command']['Component'] = async function(cmd=null){
+    if(cmd){
+      args = cmd.split(' ');
+      if(args>=1) await importNode(`workspace/component/${args[1]}`);
+      return null;
+    }
 
-
-  // コマンドパレットに表示する一覧を返す
-
-};
-</script>
+    // コマンドパレットに表示する一覧を返す
+    await ask(`await checkout("system")`);
+    await ask(`await cd("workspace/component");`);
+    const component_names = (await ask(`await ls()`)).split(' ');
+    return component_names.map(cmd=>`Command:${cmd}`);
+  };
+  </script>
+</div>

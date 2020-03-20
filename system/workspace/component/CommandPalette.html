@@ -1,5 +1,5 @@
 <!--
-- ※※※ workspaceの必須読み込みコンポーネント ※※※ 
+- ※※※ workspaceの必須読み込みコンポーネント ※※※
 -->
 
 <div id="CommandPalette" class="modal">
@@ -57,14 +57,29 @@
   <div class="window">
     <input type="text" class="command"/>
     <div class="na hide">{No matches found}</div>
-    <div class="predict">
-      <div class="box">dummyA</div>
-      <div class="box">dummyB</div>
-      <div class="box">dummyC</div>
-    </div>
+    <div class="predict"></div>
   </div>
 
   <script>
-  console.log('読み込み：', document.querySelector("#CommandPalette"));
+  let global = {command: {}};
+  let command_list = [];
+  (async ()=>{
+    await ask(`await checkout("system")`);
+    await ask(`await cd("workspace/command");`);
+
+    // コマンドの取得
+    const command_names = (await ask(`await ls()`)).split(' ');
+    for(const [idx, name] of command_names.entries()){
+      await importNode(`workspace/command/${name}`);
+      const command_colors = await global['command'][name](); //コマンドの色彩を展開
+
+      // コマンド一覧に追加し、コマンドパレットに追加
+      command_list = command_list.concat(command_colors);
+      const list_dom = document.querySelector("#CommandPalette .predict");
+      for(const [idx2, color] of command_colors.entries()){
+        list_dom.insertAdjacentHTML('beforeend', `<div class="box">${color}</div>`);
+      }
+    }
+  })();
   </script>
 </div>

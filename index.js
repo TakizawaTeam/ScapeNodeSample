@@ -25,7 +25,7 @@
         await add_component_node('PathFinder');
         await add_component_node('ServerLine');
 
-        await make("workspace/command"); await cd("system/workspace/command");
+        await make("../command"); await cd("system/workspace/command");
         const COMMAND_PATH = 'system/workspace/command';
         const get_command_path = name=>`${COMMAND_PATH}/${name}.html`;
         const add_command_node = async name=>{
