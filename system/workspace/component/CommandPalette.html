@@ -64,6 +64,7 @@
   let global = {command: {}};
   let command_list = [];
   (async ()=>{
+    const component = document.querySelector("#CommandPalette");
     await ask(`await checkout("system")`);
     await ask(`await cd("workspace/command");`);
 
@@ -74,10 +75,16 @@
       const command_colors = await global['command'][name](); //コマンドの色彩を展開
 
       // コマンド一覧に追加し、コマンドパレットに追加
-      command_list = command_list.concat(command_colors);
-      const list_dom = document.querySelector("#CommandPalette .predict");
+      command_list = command_list.concat(command_colors.sort());
+      const list = component.querySelector(".predict");
       for(const [idx2, color] of command_colors.entries()){
-        list_dom.insertAdjacentHTML('beforeend', `<div class="box">${color}</div>`);
+        list.insertAdjacentHTML('beforeend', `<div class="box">${color}</div>`);
+        const box = list.lastElementChild;
+        box.addEventListener('click', function(e){
+          const input = component.querySelector(".command");
+          input.value = box.innerText;
+          input.focus();
+        });
       }
     }
   })();

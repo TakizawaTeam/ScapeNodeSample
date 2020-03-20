@@ -11,7 +11,7 @@
     await ask(`await checkout("system")`);
     await ask(`await cd("workspace/component");`);
     const component_names = (await ask(`await ls()`)).split(' ');
-    return component_names.map(cmd=>`Command:${cmd}`);
+    return component_names.map(cmd=>`Component:${cmd}`);
   };
   </script>
 </div>
