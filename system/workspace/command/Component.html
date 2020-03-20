@@ -1,10 +1,11 @@
 <div id="command-Component">
   <script>
   global['command']['Component'] = async function(cmd=null){
-    if(cmd){
-      args = cmd.split(' ');
-      if(args>=1) await importNode(`workspace/component/${args[1]}`);
-      return null;
+    if(cmd && cmd.split(":")[0]=='Component'){
+      cmd = cmd.split(":").slice(1).join("");
+      cmd_args = cmd.split(' ');
+      await importNode(`workspace/component/${cmd_args[0]}`);
+      return true;
     }
 
     // コマンドパレットに表示する一覧を返す
