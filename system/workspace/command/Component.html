@@ -4,6 +4,8 @@
     if(cmd && cmd.split(":")[0]=='Component'){
       cmd = cmd.split(":").slice(1).join("");
       cmd_args = cmd.split(' ');
+      
+      if(!cmd_args[0]) return false;
       await importNode(`workspace/component/${cmd_args[0]}`);
       return true;
     }
