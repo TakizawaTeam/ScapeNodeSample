@@ -65,10 +65,12 @@
   let command_list = [];
   (async ()=>{
     const component = document.querySelector("#CommandPalette");
+    const input = component.querySelector(".command");
+    const list = component.querySelector(".predict");
     await ask(`await checkout("system")`);
     await ask(`await cd("workspace/command");`);
 
-    // コマンドの取得
+    // コマンドの取得と追加
     const command_names = (await ask(`await ls()`)).split(' ');
     for(const [idx, name] of command_names.entries()){
       await importNode(`workspace/command/${name}`);
@@ -76,8 +78,6 @@
 
       // コマンド一覧に追加し、コマンドパレットに追加
       command_list = command_list.concat(command_colors.sort());
-      const input = component.querySelector(".command");
-      const list = component.querySelector(".predict");
       for(const [idx2, color] of command_colors.entries()){
         list.insertAdjacentHTML('beforeend', `<div class="box">${color}</div>`);
         const box = list.lastElementChild;
@@ -86,13 +86,18 @@
           input.focus();
         });
       }
+    }
 
-      input.addEventListener('keypress', async function(e){
-        if(e.keyCode!==13) return false; //Enter以外は通さない
+    // コマンド振り分けと実行
+    input.addEventListener('keypress', async function(e){
+      if(e.keyCode!==13) return false; //Enter以外は通さない
+
+      const name = input.value.split(':')[0];
+      if(!!name && !!global['command'][name]){
         await global['command'][name](input.value);
         input.value = '';
-      });
-    }
+      }
+    });
   })();
   </script>
 </div>
