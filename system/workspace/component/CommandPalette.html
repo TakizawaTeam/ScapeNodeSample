@@ -1,8 +1,8 @@
-<!--
-- ※※※ workspaceの必須読み込みコンポーネント ※※※
--->
+<div id="CommandPalette" class="component modal">
+  <!--
+  - ※※※ workspaceの必須読み込みコンポーネント ※※※
+  -->
 
-<div id="CommandPalette" class="modal">
   <style>
   #CommandPalette .window{
     position: relative;
@@ -90,6 +90,7 @@
       input.addEventListener('keypress', async function(e){
         if(e.keyCode!==13) return false; //Enter以外は通さない
         await global['command'][name](input.value);
+        input.value = '';
       });
     }
   })();

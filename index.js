@@ -24,6 +24,7 @@
         await add_component_node('Editor');
         await add_component_node('PathFinder');
         await add_component_node('ServerLine');
+        await add_component_node('ChunkLoader');
 
         await make("../command"); await cd("system/workspace/command");
         const COMMAND_PATH = 'system/workspace/command';

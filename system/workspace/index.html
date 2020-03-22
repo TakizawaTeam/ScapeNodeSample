@@ -5,15 +5,22 @@
 </HEAD>
 <BODY style="margin:0px;">
   <style>
+  /* 表示優先順(z-index値) 通常は2000~8000番台を使用
+  * 1000番台: 最下層コンポーネント
+  * 9000番台: モーダルコンポーネント
+  * 10000番台: 最上層コンポーネント
+  */
   .hide{display: none;}
   .modal{
-    position: absolute;
-    left: 0px;
-    top: 0px;
     background-color: rgba(0,0,0,0.3);
     width: 100%;
     height: 100%;
-    z-index: 9999;
+    z-index: 9000;
+  }
+  .component{
+    position: absolute;
+    left: 0px;
+    top: 0px;
   }
   </style>
 
