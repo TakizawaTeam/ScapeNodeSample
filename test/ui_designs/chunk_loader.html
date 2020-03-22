@@ -59,9 +59,14 @@
     let pre = {x: 0, y: 0};
     lattice_c.addEventListener('mousedown', function(e){
       drag_flag = true;
+      lattice_c.style.cursor = 'move';
       pre.x=e.clientX; pre.y=e.clientY;
     });
     lattice_c.addEventListener('mouseup', function(e){
+      drag_flag = false;
+      lattice_c.style.cursor = 'default';
+    });
+    lattice_c.addEventListener('mouseleave', function(e){
       drag_flag = false;
     });
     lattice_c.addEventListener('mousemove', function(e){
