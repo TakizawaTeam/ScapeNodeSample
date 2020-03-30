@@ -1,6 +1,10 @@
 <div id="script-KeyManager">
   <script>
-  alert("good!");
-  // document.addEventListener('keypress', function(e){});
+  document.addEventListener('keypress', function(e){
+    console.log(e);
+    if(e.shiftKey && e.metaKey && e.key=='p'){
+      console.log('good!');
+    }
+  });
   </script>
 </div>
