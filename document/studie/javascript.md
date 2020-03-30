@@ -30,3 +30,30 @@ for (const [key, value] of array2.entries()) { // ★
 ```
 arr1 = arr1.concat( arr2 );
 ```
+
+#### よく忘れるawait sleep
+```
+const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
+```
+
+#### await
+```
+async function A(){
+  return await new Promise(function(resolve, reject){
+    if(false) reject(true);
+    resolve(true);
+  });
+}
+```
+
+#### async eval
+```
+AsyncFunction = Object.getPrototypeOf(async function(){}).constructor; // AsyncFunctionコンストラクタの取得
+async_eval = async code=>{ await AsyncFunction(code)(); } // コード文字列のasync実行
+sleep = ms=>new Promise(res=>setTimeout(res,ms));
+
+(async ()=>{
+  await async_eval(`await sleep(3000); return console.log("act1");`);
+  console.log("act2");
+})();
+```
