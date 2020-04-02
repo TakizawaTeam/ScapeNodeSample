@@ -37,48 +37,47 @@
   setPosition = null;
   lattice = [];
   drag_flag = false;
-  window.onload = function(){
-    const lattice_a = document.querySelector("#ChunkLoader .layer.lattice_a");
-    const lattice_b = document.querySelector("#ChunkLoader .layer.lattice_b");
-    const lattice_c = document.querySelector("#ChunkLoader .layer.lattice_c");
-    lattice = [lattice_a, lattice_b, lattice_c];
+  
+  const lattice_a = document.querySelector("#ChunkLoader .layer.lattice_a");
+  const lattice_b = document.querySelector("#ChunkLoader .layer.lattice_b");
+  const lattice_c = document.querySelector("#ChunkLoader .layer.lattice_c");
+  lattice = [lattice_a, lattice_b, lattice_c];
 
-    changeLatticeSize = function(a=10, b=50, c=500){
-      lattice_a.style.backgroundSize = `${a}px ${a}px`;
-      lattice_b.style.backgroundSize = `${b}px ${b}px`;
-      lattice_c.style.backgroundSize = `${c}px ${c}px`;
-    }
-    setLatticePosition = function(x,y){
-      lattice_a.style.backgroundPosition = `${x%500}px ${y%500}px`;
-      lattice_b.style.backgroundPosition = `${x%500}px ${y%500}px`;
-      lattice_c.style.backgroundPosition = `${x%500}px ${y%500}px`;
-    };
-    changeLatticeSize();
-    setLatticePosition(0,0);
-
-    let pre = {x: 0, y: 0};
-    lattice_c.addEventListener('mousedown', function(e){
-      drag_flag = true;
-      lattice_c.style.cursor = 'move';
-      pre.x=e.clientX; pre.y=e.clientY;
-    });
-    lattice_c.addEventListener('mouseup', function(e){
-      drag_flag = false;
-      lattice_c.style.cursor = 'default';
-    });
-    lattice_c.addEventListener('mouseleave', function(e){
-      drag_flag = false;
-    });
-    lattice_c.addEventListener('mousemove', function(e){
-      if(drag_flag){
-        if(pre.x!=0 && pre.y!=0){
-          const x = parseInt(lattice_c.style.backgroundPositionX) + (e.clientX - pre.x);
-          const y = parseInt(lattice_c.style.backgroundPositionY) + (e.clientY - pre.y);
-          setLatticePosition(x, y);
-        }
-        pre.x=e.clientX; pre.y=e.clientY;
-      }
-    });
+  changeLatticeSize = function(a=10, b=50, c=500){
+    lattice_a.style.backgroundSize = `${a}px ${a}px`;
+    lattice_b.style.backgroundSize = `${b}px ${b}px`;
+    lattice_c.style.backgroundSize = `${c}px ${c}px`;
+  }
+  setLatticePosition = function(x,y){
+    lattice_a.style.backgroundPosition = `${x%500}px ${y%500}px`;
+    lattice_b.style.backgroundPosition = `${x%500}px ${y%500}px`;
+    lattice_c.style.backgroundPosition = `${x%500}px ${y%500}px`;
   };
+  changeLatticeSize();
+  setLatticePosition(0,0);
+
+  let pre = {x: 0, y: 0};
+  lattice_c.addEventListener('mousedown', function(e){
+    drag_flag = true;
+    lattice_c.style.cursor = 'move';
+    pre.x=e.clientX; pre.y=e.clientY;
+  });
+  lattice_c.addEventListener('mouseup', function(e){
+    drag_flag = false;
+    lattice_c.style.cursor = 'default';
+  });
+  lattice_c.addEventListener('mouseleave', function(e){
+    drag_flag = false;
+  });
+  lattice_c.addEventListener('mousemove', function(e){
+    if(drag_flag){
+      if(pre.x!=0 && pre.y!=0){
+        const x = parseInt(lattice_c.style.backgroundPositionX) + (e.clientX - pre.x);
+        const y = parseInt(lattice_c.style.backgroundPositionY) + (e.clientY - pre.y);
+        setLatticePosition(x, y);
+      }
+      pre.x=e.clientX; pre.y=e.clientY;
+    }
+  });
   </script>
 </div>
