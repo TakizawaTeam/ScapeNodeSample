@@ -46,6 +46,7 @@ window.onload = function(){
   };
   server.onopen = async function(e){
     opened=true; console.log(`${URL} connected!`); // 接続及びログ出力
+    await importNode("workspace/component/ChunkLoader");
     await importNode("workspace/component/ServerLine");
     updateServerLine(true);
     await importNode("workspace/component/CommandPalette");
