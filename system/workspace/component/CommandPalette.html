@@ -1,4 +1,4 @@
-<div id="CommandPalette" class="component modal">
+<div id="CommandPalette" class="component modal hide">
   <!--
   - ※※※ workspaceの必須読み込みコンポーネント ※※※
   -->
@@ -91,12 +91,18 @@
     // コマンド振り分けと実行
     input.addEventListener('keypress', async function(e){
       if(e.keyCode!==13) return false; //Enter以外は通さない
-
       const name = input.value.split(':')[0];
       if(!!name && !!global['command'][name]){
         await global['command'][name](input.value);
         input.value = '';
       }
+    });
+    component.addEventListener('click', function(){
+      component.classList.toggle('hide');
+    });
+    document.addEventListener('keypress', async function(e){
+      console.log(e);
+      if(e.shiftKey && e.ctrlKey && e.keyCode==16) component.classList.toggle('hide');
     });
   })();
   </script>
