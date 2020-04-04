@@ -26,36 +26,57 @@
     background-image: linear-gradient(#00F 1px, transparent 0), linear-gradient(90deg, #00F 1px, transparent 0);
     background-size: 500px 500px;
   }
+  #ChunkLoader .ground_zero{
+    left: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #F00;
+    border: solid 1px #00F;
+  }
   </style>
 
   <div class="layer lattice_a"></div>
   <div class="layer lattice_b"></div>
   <div class="layer lattice_c"></div>
+  <div class="component ground_zero"></div>
 
   <script>
   initLattice = null;
   setPosition = null;
   lattice = [];
   drag_flag = false;
-  
+
   const lattice_a = document.querySelector("#ChunkLoader .layer.lattice_a");
   const lattice_b = document.querySelector("#ChunkLoader .layer.lattice_b");
   const lattice_c = document.querySelector("#ChunkLoader .layer.lattice_c");
   lattice = [lattice_a, lattice_b, lattice_c];
 
+  const gz = document.querySelector("#ChunkLoader .ground_zero");
+
   changeLatticeSize = function(a=10, b=50, c=500){
     lattice_a.style.backgroundSize = `${a}px ${a}px`;
     lattice_b.style.backgroundSize = `${b}px ${b}px`;
     lattice_c.style.backgroundSize = `${c}px ${c}px`;
-  }
+  };
   setLatticePosition = function(x,y){
     lattice_a.style.backgroundPosition = `${x%500}px ${y%500}px`;
     lattice_b.style.backgroundPosition = `${x%500}px ${y%500}px`;
     lattice_c.style.backgroundPosition = `${x%500}px ${y%500}px`;
   };
+  setGroundZeroPosition = function(x,y){
+    gz.style.left = `${x-gz.clientWidth/2}px`;
+    gz.style.top = `${y-gz.clientHeight/2}px`;
+  };
   changeLatticeSize();
   setLatticePosition(0,0);
 
+  let movePoint = (_point, _move)=>{
+    setLatticePosition(_point.x, _point.y);
+    setGroundZeroPosition(_point.x, _point.y);
+  };
+  let point = {x: 0, y: 0};
+  let move = {x: 0, y: 0};
   let pre = {x: 0, y: 0};
   lattice_c.addEventListener('mousedown', function(e){
     drag_flag = true;
@@ -68,15 +89,17 @@
   });
   lattice_c.addEventListener('mouseleave', function(e){
     drag_flag = false;
+    lattice_c.style.cursor = 'default';
   });
   lattice_c.addEventListener('mousemove', function(e){
     if(drag_flag){
-      if(pre.x!=0 && pre.y!=0){
-        const x = parseInt(lattice_c.style.backgroundPositionX) + (e.clientX - pre.x);
-        const y = parseInt(lattice_c.style.backgroundPositionY) + (e.clientY - pre.y);
-        setLatticePosition(x, y);
-      }
+      move.x = e.clientX - pre.x;
+      move.y = e.clientY - pre.y;
+      point.x += move.x;
+      point.y += move.y;
       pre.x=e.clientX; pre.y=e.clientY;
+
+      movePoint(point, move);
     }
   });
   </script>

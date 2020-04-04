@@ -43,6 +43,7 @@
     overflow-y: scroll;
   }
   #CommandPalette .predict .box{
+    user-select: none;
     color: #CCD;
     background-color: #404550;
     border-bottom: solid 1px #303440;
@@ -97,9 +98,10 @@
         input.value = '';
       }
     });
-    component.addEventListener('click', function(){
-      component.classList.toggle('hide');
+    component.addEventListener('click', function(e){
+      component.classList.toggle('hide'); //window以外のmodal部分を押したら閉じる
     });
+    component.querySelector(".window").addEventListener('click', function(e){e.stopPropagation();}); //クリック時閉じないよう修正
     document.addEventListener('keypress', async function(e){
       if(e.shiftKey && e.ctrlKey && e.keyCode==16) component.classList.toggle('hide');
     });
