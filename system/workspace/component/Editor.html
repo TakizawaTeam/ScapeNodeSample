@@ -1,2 +1,25 @@
 
-<div class="Editor component">EditorComponent!</div>
+<div class="Editor component object">
+  <style>
+  .Editor{}
+  .Editor .header{
+    height: 10px;
+  }
+  .Editor .header:hover{cursor:grab;}
+  </style>
+
+  <div class="window">
+    <div class="header"></div>
+    <textarea></textarea>
+  </div>
+
+  <script>
+  (async ()=>{
+    const component = document.querySelector(".Editor:last-child");
+    component.style.left = '100px';
+    component.style.top = '100px';
+
+    component.querySelector(".window").addEventListener('click', function(e){e.stopPropagation();}); //背景がドラッグされないよう
+  })();
+  </script>
+</div>

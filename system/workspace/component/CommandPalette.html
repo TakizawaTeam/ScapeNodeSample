@@ -96,6 +96,7 @@
       if(!!name && !!global['command'][name]){
         await global['command'][name](input.value);
         input.value = '';
+        component.classList.toggle('hide');
       }
     });
     component.addEventListener('click', function(e){
