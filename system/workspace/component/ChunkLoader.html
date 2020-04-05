@@ -27,8 +27,9 @@
     background-size: 500px 500px;
   }
   #ChunkLoader .ground_zero{
+    position: absolute;
     left: -10px;
-    right: -10px;
+    top: -10px;
     width: 20px;
     height: 20px;
     background-color: #F00;
@@ -40,7 +41,7 @@
   <div class="layer lattice_a"></div>
   <div class="layer lattice_b"></div>
   <div class="layer lattice_c"></div>
-  <div class="object ground_zero"></div>
+  <div class="ground_zero"></div>
 
   <script>
   initLattice = null;
@@ -69,12 +70,27 @@
     gz.style.left = `${x-gz.clientWidth/2}px`;
     gz.style.top = `${y-gz.clientHeight/2}px`;
   };
+  setObjectPosition = function(target, x,y){
+    for(obj of target){
+      obj.style.left = `${x}px`;
+      obj.style.top = `${y}px`;
+    }
+  };
+  moveObjectPosition = function(target, x,y){
+    for(obj of target){
+      obj.style.left = `${parseInt(obj.style.left)+x}px`;
+      obj.style.top = `${parseInt(obj.style.top)+y}px`;
+    }
+  };
   changeLatticeSize();
   setLatticePosition(0,0);
+  setObjectPosition([gz], 0-parseInt(gz.clientWidth)/2, 0-parseInt(gz.clientHeight)/2);
 
   let movePoint = (_point, _move)=>{
     setLatticePosition(_point.x, _point.y);
-    setGroundZeroPosition(_point.x, _point.y);
+    console.log(_point.x-parseInt(gz.clientWidth)/2, _point.y-parseInt(gz.clientHeight)/2);
+    setObjectPosition([gz], _point.x-parseInt(gz.clientWidth)/2, _point.y-parseInt(gz.clientHeight)/2);
+    moveObjectPosition(document.querySelectorAll(".object"), _move.x, _move.y);
   };
   let point = {x: 0, y: 0};
   let move = {x: 0, y: 0};
