@@ -78,6 +78,8 @@
   };
   moveObjectPosition = function(target, x,y){
     for(obj of target){
+      if(obj.style.left=="") obj.style.left = '0px';
+      if(obj.style.top=="") obj.style.top = '0px';
       obj.style.left = `${parseInt(obj.style.left)+x}px`;
       obj.style.top = `${parseInt(obj.style.top)+y}px`;
     }
@@ -88,7 +90,6 @@
 
   let movePoint = (_point, _move)=>{
     setLatticePosition(_point.x, _point.y);
-    console.log(_point.x-parseInt(gz.clientWidth)/2, _point.y-parseInt(gz.clientHeight)/2);
     setObjectPosition([gz], _point.x-parseInt(gz.clientWidth)/2, _point.y-parseInt(gz.clientHeight)/2);
     moveObjectPosition(document.querySelectorAll(".object"), _move.x, _move.y);
   };
