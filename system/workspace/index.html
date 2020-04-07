@@ -3,13 +3,17 @@
   <meta charset="UTF-8"/>
   <script src="./client"></script>
 </HEAD>
-<BODY style="margin:0px;">
+<BODY>
   <style>
   /* 表示優先順(z-index値) 通常は2000~8000番台を使用
   * 1000番台: 最下層コンポーネント
   * 9000番台: モーダルコンポーネント
   * 10000番台: 最上層コンポーネント
   */
+  body{
+    margin:0px;
+    overflow: hidden;
+  }
   .hide{display: none;}
   .modal{
     background-color: rgba(0,0,0,0.3);

@@ -84,6 +84,9 @@
       obj.style.top = `${parseInt(obj.style.top)+y}px`;
     }
   };
+  touchMoveObject = function(target){
+
+  };
   changeLatticeSize();
   setLatticePosition(0,0);
   setObjectPosition([gz], 0-parseInt(gz.clientWidth)/2, 0-parseInt(gz.clientHeight)/2);
@@ -105,11 +108,11 @@
     drag_flag = false;
     lattice_c.style.cursor = 'default';
   });
-  lattice_c.addEventListener('mouseleave', function(e){
+  document.addEventListener('mouseleave', function(e){
     drag_flag = false;
     lattice_c.style.cursor = 'default';
   });
-  lattice_c.addEventListener('mousemove', function(e){
+  document.addEventListener('mousemove', function(e){
     if(drag_flag){
       move.x = e.clientX - pre.x;
       move.y = e.clientY - pre.y;
