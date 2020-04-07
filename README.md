@@ -3,7 +3,7 @@
 2. `npm install`
 3. `npm start`
 
-<img width="500px" height="300px" src="https://user-images.githubusercontent.com/15166116/78658685-70a6d300-7905-11ea-8c3e-c56668b1a21e.png"/>
+<img width="720px" height="480px" src="https://user-images.githubusercontent.com/15166116/78658685-70a6d300-7905-11ea-8c3e-c56668b1a21e.png"/>
 
 <br>
 <br>
