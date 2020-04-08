@@ -48,6 +48,7 @@
   setPosition = null;
   lattice = [];
   drag_flag = false;
+  lock_drag_flag = false;
 
   const lattice_a = document.querySelector("#ChunkLoader .layer.lattice_a");
   const lattice_b = document.querySelector("#ChunkLoader .layer.lattice_b");
@@ -99,6 +100,8 @@
   let point = {x: 0, y: 0};
   let move = {x: 0, y: 0};
   let pre = {x: 0, y: 0};
+
+  // drag
   lattice_c.addEventListener('mousedown', function(e){
     drag_flag = true;
     lattice_c.style.cursor = 'move';
@@ -112,10 +115,27 @@
     drag_flag = false;
     lattice_c.style.cursor = 'default';
   });
+
+  // lock_drag
+  document.addEventListener('keydown', function(e){
+    if(e.ctrlKey){
+      lock_drag_flag = true;
+      lattice_c.style.cursor = 'move';
+      document.body.requestPointerLock();
+    }
+  });
+  document.addEventListener('keyup', function(e){
+    if(!e.ctrlKey){
+      lock_drag_flag = false;
+      lattice_c.style.cursor = 'default';
+      document.exitPointerLock();
+    }
+  });
+
   document.addEventListener('mousemove', function(e){
-    if(drag_flag){
-      move.x = e.clientX - pre.x;
-      move.y = e.clientY - pre.y;
+    if(drag_flag || lock_drag_flag){
+      move.x = e.movementX;
+      move.y = e.movementY;
       point.x += move.x;
       point.y += move.y;
       pre.x=e.clientX; pre.y=e.clientY;
