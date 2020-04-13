@@ -5,6 +5,13 @@
 
 <img width="720px" height="480px" src="https://user-images.githubusercontent.com/15166116/78658685-70a6d300-7905-11ea-8c3e-c56668b1a21e.png"/>
 
+```
+As we make mistakes.
+carelessly our egos will take control.
+The loving words we say hide the undertones of envy.
+As we get distracted, we lose originality.
+```
+
 <br>
 <br>
 
