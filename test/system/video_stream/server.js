@@ -41,10 +41,17 @@ http.createServer(function (req, res) {
   } else {
     if(branch[0]=='_video_'){ // open
       if(video_path=='') not_found_res(req, res);
-      res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'video/mp4' });
+      res.writeHead(200, {'Content-Length': total, 'Content-Type': 'video/mp4'});
       fs.createReadStream(path).pipe(res);
 
-    }else if(req.url=='/'){ // find and listup
+    }else if(branch[0]=='_folder_'){ // dir listup
+      fs.readdir(`${root_path}${decodeURI(branch.slice(1).join('/'))}` ,(err,files)=>{
+        if(err) not_found_res(req, res);
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify(files));
+      });
+
+    }else{ // find and listup
       fs.readFile('./index.html','utf-8',function(err,data){
         if(!err) console.log(err);
         res.writeHead(200, {'content-type': 'text/html'});
@@ -52,7 +59,7 @@ http.createServer(function (req, res) {
         res.end();
       });
 
-    }else{ not_found_res(req, res); }
+    }
 
   }
 }).listen(1337, 'localhost');

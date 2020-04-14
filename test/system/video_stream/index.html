@@ -1,6 +1,8 @@
 <head>
   <meta charset='utf-8'/>
   <style>
+  .dir_grid{padding-left:10px;padding-right:10px;}
+  .dir_grid a{border: solid 1px;margin-right:5px;}
   .video_grid{font-size:0px;}
   .video_grid video{width:20%;}
   </style>
@@ -13,35 +15,53 @@
     });
     return !!k? cookie[k] : cookie;
   };
+  const createDirLink = name=>{
+    const link = document.createElement('a');
+    link.href = `${location.pathname}${name}/`;
+    link.innerText = name;
+    return link;
+  };
   const createVideo = path=>{
     const video = document.createElement('video');
-    video.src = `/_video_/${path}`;
+    video.src = `/_video_${path}`;
     video.setAttribute("controls","");
     video.addEventListener('volumechange', e=>setCookie('volume',e.target.volume)); //volume保持
     return video;
   };
   window.onload = ()=>{
-    const grid = document.querySelector('.video_grid');
-    const paths = [
-      'SyntheticSympathy_240p.mp4',
-      'Co_shu_Nie_240p.mp4',
-      'Q-vism_144p.mp4',
-      'S-cape_2_the_abs_144p.mp4',
-      'Fallen_144p.mp4',
-      '凛として時雨_240p.mp4',
-    ];
-    for(path of paths){
-      const video = createVideo(path);
-      if(grid && video){
-        if(!!getCookie('volume')) video.volume=getCookie('volume');
-        grid.appendChild(video);
-        console.log(video);
-      }
+    const dir_grid = document.querySelector('.dir_grid');
+    const video_grid = document.querySelector('.video_grid');
+
+    if(location.pathname!='/'){
+      const back_dir_link = document.createElement('a');
+      back_dir_link.href = '../';
+      back_dir_link.innerText = '../';
+      dir_grid.appendChild(back_dir_link);
     }
+    fetch(`/_folder_${location.pathname}`).then(res=>res.json()).then(files=>{ // folder取得
+      for(file of files){
+        // 階層リンク追加処理
+        if(file.indexOf(".")==-1){
+          const link = createDirLink(file);
+          dir_grid.appendChild(link);
+          console.log('DIR:', link);
+        }
+
+        // 動画追加処理
+        if(file.indexOf(".mp4")!=-1){ //mp4の場合のみ
+          const video = createVideo(`${location.pathname}${file}`);
+          if(video_grid && video){
+            if(!!getCookie('volume')) video.volume=getCookie('volume');
+            video_grid.appendChild(video);
+            console.log('VIDEO:', video);
+          }
+        }
+      }
+    });
   };
   </script>
 </head>
 <body style="margin:0px;">
-  <h3>検証用動画サイト</h3>
+  <div class="dir_grid"></div>
   <div class="video_grid"></div>
 </body>
