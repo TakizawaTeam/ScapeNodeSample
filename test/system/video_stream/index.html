@@ -5,10 +5,19 @@
   .video_grid video{width:20%;}
   </style>
   <script>
+  const setCookie = (k,v)=>document.cookie=`${k}=${v}`;
+  const getCookie = (k=null)=>{ cookie = {};
+    document.cookie.split('; ').forEach(v=>{
+      const idx = v.indexOf('=');
+      cookie[v.substr(0,idx)] = v.substr(idx+1);
+    });
+    return !!k? cookie[k] : cookie;
+  };
   const createVideo = path=>{
     const video = document.createElement('video');
     video.src = `/_video_/${path}`;
     video.setAttribute("controls","");
+    video.addEventListener('volumechange', e=>setCookie('volume',e.target.volume)); //volume保持
     return video;
   };
   window.onload = ()=>{
@@ -24,19 +33,11 @@
     for(path of paths){
       const video = createVideo(path);
       if(grid && video){
-        // if(!!document.cookie) video.volume = document.cookie;
-        video.volume = 0.5;
+        if(!!getCookie('volume')) video.volume=getCookie('volume');
         grid.appendChild(video);
         console.log(video);
       }
     }
-
-    /*
-    document.addEventListener('volumechange', e=>{ // volume保持
-      console.log(e.target);
-      document.cookie = `volume=${e.target.volume}`;
-    });
-    */
   };
   </script>
 </head>
