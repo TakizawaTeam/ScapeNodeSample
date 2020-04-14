@@ -19,7 +19,7 @@ http.createServer(function (req, res) {
 
   const branch = req.url.slice(1).split('/');
   if (req.headers['range']) { // streamer
-    video_path = branch.slice(1).join('/');
+    video_path = decodeURI( branch.slice(1).join('/') );
     path = `${root_path}${video_path}`;
     stat = fs.statSync(path);
     total = stat.size;

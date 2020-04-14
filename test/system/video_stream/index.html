@@ -1,18 +1,46 @@
 <head>
   <meta charset='utf-8'/>
   <style>
-  #main{}
-  video{
-    width: 20%;
-  }
+  .video_grid{font-size:0px;}
+  .video_grid video{width:20%;}
   </style>
+  <script>
+  const createVideo = path=>{
+    const video = document.createElement('video');
+    video.src = `/_video_/${path}`;
+    video.setAttribute("controls","");
+    return video;
+  };
+  window.onload = ()=>{
+    const grid = document.querySelector('.video_grid');
+    const paths = [
+      'SyntheticSympathy_240p.mp4',
+      'Co_shu_Nie_240p.mp4',
+      'Q-vism_144p.mp4',
+      'S-cape_2_the_abs_144p.mp4',
+      'Fallen_144p.mp4',
+      '凛として時雨_240p.mp4',
+    ];
+    for(path of paths){
+      const video = createVideo(path);
+      if(grid && video){
+        // if(!!document.cookie) video.volume = document.cookie;
+        video.volume = 0.5;
+        grid.appendChild(video);
+        console.log(video);
+      }
+    }
+
+    /*
+    document.addEventListener('volumechange', e=>{ // volume保持
+      console.log(e.target);
+      document.cookie = `volume=${e.target.volume}`;
+    });
+    */
+  };
+  </script>
 </head>
 <body style="margin:0px;">
-
-<h3>検証用動画サイト</h3>
-<video src="http://localhost:1337/_video_/SyntheticSympathy_240p.mp4" controls/></video><!--
---><video src="http://localhost:1337/_video_/Co_shu_Nie_240p.mp4" controls></video><!--
---><video src="http://localhost:1337/_video_/Can_You_Feel_My_Heart_240p.mp4" controls></video><!--
---><video src="http://localhost:1337/_video_/Born_of_Blood_Risen_240p.mp4" controls></video><!--
---><video src="http://localhost:1337/_video_/Goddess_240p.mp4" controls></video>
+  <h3>検証用動画サイト</h3>
+  <div class="video_grid"></div>
 </body>
