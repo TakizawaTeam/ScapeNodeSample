@@ -40,9 +40,18 @@ http.createServer(function (req, res) {
 
   } else {
     if(branch[0]=='_video_'){ // open
-      if(video_path=='') not_found_res(req, res);
-      res.writeHead(200, {'Content-Length': total, 'Content-Type': 'video/mp4'});
-      fs.createReadStream(path).pipe(res);
+      //if(video_path=='') not_found_res(req, res);
+      //res.writeHead(200, {'Content-Length': total, 'Content-Type': 'video/mp4'});
+      //fs.createReadStream(path).pipe(res);
+      const _video_path = decodeURI( branch.slice(1).join('/') );
+      if(_video_path=='') not_found_res(req, res);
+      const _path = `${root_path}${_video_path}`;
+      fs.readFile(_path,'utf-8',function(err,data){
+        const _total = fs.statSync(_path);
+        res.writeHead(200, {'Content-Length': _total, 'Content-Type': 'video/mp4'});
+        res.write(data);
+        res.end();
+      });
 
     }else if(branch[0]=='_folder_'){ // dir listup
       fs.readdir(`${root_path}${decodeURI(branch.slice(1).join('/'))}` ,(err,files)=>{
@@ -62,5 +71,5 @@ http.createServer(function (req, res) {
     }
 
   }
-}).listen(1337, 'localhost');
-console.log('Server running at http://localhost:1337/');
+}).listen(1362, 'localhost');
+console.log('Server running at http://localhost:1362/');

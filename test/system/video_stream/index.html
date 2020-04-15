@@ -3,8 +3,9 @@
   <style>
   .dir_grid{padding-left:10px;padding-right:10px;}
   .dir_grid a{border: solid 1px;margin-right:5px;}
-  .video_grid{font-size:0px;}
+  /* .video_grid{font-size:0px;} */
   .video_grid video{width:20%;}
+  .video_grid a{display: block;}
   </style>
   <script>
   const setCookie = (k,v)=>document.cookie=`${k}=${v}`;
@@ -18,6 +19,12 @@
   const createDirLink = name=>{
     const link = document.createElement('a');
     link.href = `${location.pathname}${name}/`;
+    link.innerText = name;
+    return link;
+  };
+  const createFileLink = name=>{
+    const link = document.createElement('a');
+    link.href = `/_video_${location.pathname}${name}`;
     link.innerText = name;
     return link;
   };
@@ -49,12 +56,17 @@
 
         // 動画追加処理
         if(file.indexOf(".mp4")!=-1){ //mp4の場合のみ
+          const video = createFileLink(file);
+          video_grid.appendChild(video);
+          console.log('VIDEO:', video);
+          /* //動画要素の直接表示
           const video = createVideo(`${location.pathname}${file}`);
           if(video_grid && video){
             if(!!getCookie('volume')) video.volume=getCookie('volume');
             video_grid.appendChild(video);
             console.log('VIDEO:', video);
           }
+          */
         }
       }
     });
