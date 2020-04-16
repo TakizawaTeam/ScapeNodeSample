@@ -18,13 +18,13 @@
   };
   const createDirLink = name=>{
     const link = document.createElement('a');
-    link.target = '_blank';
     link.href = `${location.pathname}${name}/`;
     link.innerText = name;
     return link;
   };
   const createFileLink = name=>{
     const link = document.createElement('a');
+    link.target = '_blank';
     link.href = `/_video_${location.pathname}${name}`;
     link.innerText = name;
     return link;
