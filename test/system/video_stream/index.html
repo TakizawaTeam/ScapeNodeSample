@@ -1,11 +1,15 @@
 <head>
   <meta charset='utf-8'/>
   <style>
+  .component{display: none;}
   .dir_grid{padding-left:10px;padding-right:10px;}
   .dir_grid a{border: solid 1px;margin-right:5px;}
-  /* .video_grid{font-size:0px;} */
-  .video_grid video{width:20%;}
-  .video_grid a{display: block;}
+  .video_grid{}
+  .video_cell{display:inline-block;width:20%;font-size:0px;}
+  .video_cell video{width:100%;}
+  .video_cell a{font-size:medium;}
+  /*.video_grid video{width:20%;}*/
+  /*.video_grid a{display: block;}*/
   </style>
   <script>
   const setCookie = (k,v)=>document.cookie=`${k}=${v}`;
@@ -16,25 +20,32 @@
     });
     return !!k? cookie[k] : cookie;
   };
+  const createComponent = id=>{
+    clone_node = document.querySelector(`#${id}`).cloneNode(true);
+    clone_node.removeAttribute('id');
+    clone_node.classList.remove('component');
+    clone_node.classList.add(id);
+    return clone_node;
+  };
+  const createVideoCell = name=>{
+    video_cell = createComponent('video_cell');
+    link = video_cell.querySelector('a');
+    link.href = `/_video_${location.pathname}${name}`;
+    link.innerText = name;
+    video = video_cell.querySelector('video');
+    video.src = `/_video_${location.pathname}${name}`;
+
+    if(!!getCookie('volume')) video.volume=getCookie('volume'); //volume get
+    video.addEventListener('volumechange', e=>setCookie('volume',e.target.volume)); //volume set
+
+    console.log(video_cell);
+    return video_cell;
+  };
   const createDirLink = name=>{
     const link = document.createElement('a');
     link.href = `${location.pathname}${name}/`;
     link.innerText = name;
     return link;
-  };
-  const createFileLink = name=>{
-    const link = document.createElement('a');
-    link.target = '_blank';
-    link.href = `/_video_${location.pathname}${name}`;
-    link.innerText = name;
-    return link;
-  };
-  const createVideo = path=>{
-    const video = document.createElement('video');
-    video.src = `/_video_${path}`;
-    video.setAttribute("controls","");
-    video.addEventListener('volumechange', e=>setCookie('volume',e.target.volume)); //volume保持
-    return video;
   };
   window.onload = ()=>{
     const dir_grid = document.querySelector('.dir_grid');
@@ -57,17 +68,8 @@
 
         // 動画追加処理
         if(file.indexOf(".mp4")!=-1){ //mp4の場合のみ
-          const video = createFileLink(file);
-          video_grid.appendChild(video);
-          console.log('VIDEO:', video);
-          /* //動画要素の直接表示
-          const video = createVideo(`${location.pathname}${file}`);
-          if(video_grid && video){
-            if(!!getCookie('volume')) video.volume=getCookie('volume');
-            video_grid.appendChild(video);
-            console.log('VIDEO:', video);
-          }
-          */
+          video_cell = createVideoCell(file);
+          video_grid.appendChild(video_cell);
         }
       }
     });
@@ -75,6 +77,11 @@
   </script>
 </head>
 <body style="margin:0px;">
+  <div id="video_cell" class="component">
+    <a href="#" target="_blank"></a>
+    <video src="" controls></video>
+  </div>
+
   <div class="dir_grid"></div>
   <div class="video_grid"></div>
 </body>
