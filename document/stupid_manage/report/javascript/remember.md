@@ -57,3 +57,11 @@ sleep = ms=>new Promise(res=>setTimeout(res,ms));
   console.log("act2");
 })();
 ```
+
+#### 一意の配列値
+```
+// new Set：一意な値だけの集合
+// Array.from：配列に戻す
+return Array.from(new Set(array));
+return [...new Set(array)];
+```
