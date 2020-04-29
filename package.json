@@ -4,8 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "mongo_start": "sudo mongod --dbpath=/var/lib/mongodb -f /usr/local/etc/mongod.conf --logpath /var/log/mongodb.log",
-    "start": "node index.js && node server.js",
+    "start": "npm run all",
+    "stop": "npm run all_stop",
+    "status": "npm run all_status",
+    "all": "npm run db && npm run server",
+    "all_stop": "npm run db_stop && npm run server_stop",
+    "all_status": "npm run db_status && npm run server_status",
+    "db": "mongod --fork --config /usr/local/etc/mongod.conf",
+    "db_stop": "kill `pgrep mongo`",
+    "db_status": "if [ \"`pgrep mongo`\" = \"\" ]; then echo \"Stopped⛔️\"; else echo \"Runnning✅\"; fi;",
+    "server": "node index.js && nohup node server.js &",
+    "server_stop": "kill `pgrep ScapeNode-0`",
+    "server_status": "if [ \"`pgrep ScapeNode-0`\" = \"\" ]; then echo \"Stopped⛔️\"; else echo \"Runnning✅\"; fi;",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,5 +24,8 @@
     "mongodb": "^3.3.2",
     "node-repl-await": "^0.1.1",
     "ws": "^7.2.1"
+  },
+  "_process_names": {
+    "ScapeNode-0": "ScapeNodeサーバー"
   }
 }

@@ -6,6 +6,8 @@ const net = require('net');
 const repl = require('repl');
 const { processTopLevelAwait } = require("node-repl-await");
 
+process.title = 'ScapeNode-0';
+
 (async function(conf){
   const APP = await require("./Application.js");
   const Node = await require('./Node.js');
