@@ -120,14 +120,12 @@
   document.addEventListener('keydown', function(e){
     if(e.ctrlKey){
       lock_drag_flag = true;
-      lattice_c.style.cursor = 'move';
       document.body.requestPointerLock();
     }
   });
   document.addEventListener('keyup', function(e){
     if(!e.ctrlKey){
       lock_drag_flag = false;
-      lattice_c.style.cursor = 'default';
       document.exitPointerLock();
     }
   });
