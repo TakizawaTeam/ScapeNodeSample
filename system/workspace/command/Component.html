@@ -1,13 +1,24 @@
 <div id="command-Component">
   <script>
   global['command']['Component'] = async function(cmd=null){
+    // Componentコマンド実行
     if(cmd && cmd.split(":")[0]=='Component'){
       cmd = cmd.split(":").slice(1).join("");
       cmd_args = cmd.split(' ');
-      
+
       if(!cmd_args[0]) return false;
-      await importNode(`workspace/component/${cmd_args[0]}`);
-      return true;
+      dom = await importNode(`workspace/component/${cmd_args[0]}`);
+      dom.addEventListener('click', function(e){ //Componentのクリック時
+        _target = e.currentTarget;
+        if(_target.classList.contains("object")){
+          // focusクラスを設定
+          document.querySelectorAll(".component.object").forEach(d=>{
+            if(d.classList.contains("focus")) d.classList.remove("focus");
+          });
+          _target.classList.add("focus");
+        }
+      });
+      return dom;
     }
 
     // コマンドパレットに表示する一覧を返す
