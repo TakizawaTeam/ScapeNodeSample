@@ -21,6 +21,10 @@
           const cat = await APP.read_file( get_component_path(name) );
           await set({value: cat}, node);
         };
+
+        await add_component_node('Helper');
+        await add_component_node('Header');
+        await add_component_node('Window');
         await add_component_node('Helper');
         await add_component_node('CommandPalette');
         await add_component_node('Terminal');

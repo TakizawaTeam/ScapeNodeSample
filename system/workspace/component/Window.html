@@ -1,0 +1,26 @@
+
+<div class="Window component object">
+
+  <style>
+  .Window{
+    width: 150px;
+    height: 50px;
+    background-color: #DDD;
+  }
+  .Window .body{
+    border: groove 3px;
+    height: calc(100% - 24px);
+    resize: both;
+  }
+  </style>
+
+  <script>
+  (async function(){
+    const component = document.querySelector(".Window:last-child");
+    const header = await global['command']['Component']('Component:Header');
+    component.insertBefore(header, component.firstElementChild);
+  })();
+  </script>
+
+  <div class="body"></div>
+</div>
