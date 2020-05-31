@@ -1,5 +1,6 @@
 <div id="command-Component">
   <script>
+  global['var']['command']['Component'] = {};
   global['command']['Component'] = async function(cmd=null){
     // Componentコマンド実行
     if(cmd && cmd.split(":")[0]=='Component'){
@@ -24,8 +25,8 @@
     // コマンドパレットに表示する一覧を返す
     await ask(`await checkout("system")`);
     await ask(`await cd("workspace/component");`);
-    const component_names = (await ask(`await ls()`)).split(' ');
-    return component_names.map(cmd=>`Component:${cmd}`);
+    const component_nodes = await ask(`await ls()`);
+    return component_nodes.split(' ').map(cmd=>`Component:${cmd}`);
   };
   </script>
 </div>

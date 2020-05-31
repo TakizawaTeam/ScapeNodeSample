@@ -1,9 +1,11 @@
-let server = null;
-let opened = false;
-const URL = `ws://${this.location.host}/repl`;
-let history = [];
-let history_size = 50;
-let ask = null;
+
+// クライアント処理
+let global = {
+  command: {},
+  var: {
+    command: {},
+  },
+};
 const importNode = async (path, dom=document.querySelector("#main"))=>{ // NodeのPathから取り込み
   await ask(`await checkout("system");`);
   await ask(`await cd("${path}");`);
@@ -26,7 +28,16 @@ const output_log = (target=null, style=bgf_color("#335","#DDE"))=>{
 };
 const str_var = str=>(new Function("return " + str))(); // ただの文字列をJSに変換
 
+
+// replサーバー接続処理
+let server = null;
+let opened = false;
+const URL = `ws://${this.location.host}/repl`;
+let history = [];
+let history_size = 50;
+let ask = null;
 const COMMAND_LOG = true;
+
 window.onload = function(){
   server = new WebSocket(URL);
   ask = async q=>{
@@ -36,7 +47,7 @@ window.onload = function(){
     return await new Promise((res,rej)=>{
       server.onmessage = function(e){
         m=e.data.split("\n"); m.pop(); m=m.join("\n"); m=str_var(m); //prompt削除
-        if(m!="" && typeof m!=='undefined'){
+        if(typeof m!=='undefined'){
           history.push(m); history=history.slice(-history_size); //履歴保存と最大件数処理
           if(COMMAND_LOG) output_log(m);
           res(history.slice(-1)[0]);
@@ -50,6 +61,7 @@ window.onload = function(){
     await importNode("workspace/component/ServerLine");
     updateServerLine(true);
     await importNode("workspace/component/CommandPalette"); //原因不明だが最後でないと失敗する
+    //await importNode("workspace/component/KeyManager");
   };
   server.onclose = async function(e){
     opened=false; console.log(`${URL} disconnected!`);  // 切断及びログ出力

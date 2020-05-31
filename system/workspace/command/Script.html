@@ -1,5 +1,6 @@
 <div id="command-Script">
   <script>
+  global['var']['command']['Script'] = {};
   global['command']['Script'] = async function(cmd=null){
     if(cmd && cmd.split(":")[0]=='Script'){
       cmd = cmd.split(":").slice(1).join("");
@@ -13,8 +14,9 @@
     // コマンドパレットに表示する一覧を返す
     await ask(`await checkout("system");`);
     await ask(`await cd("workspace/script");`);
-    const script_names = (await ask(`await ls()`)).split(' ');
-    return script_names.map(cmd=>`Script:${cmd}`);
+    const script_nodes = await ask(`await ls();`);
+    if(!script_nodes) return [];
+    return script_nodes.split(' ').map(cmd=>`Script:${cmd}`);
   };
   </script>
 </div>
