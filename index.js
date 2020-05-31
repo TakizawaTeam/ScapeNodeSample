@@ -8,9 +8,12 @@
 
 
         // scape node system.
-        const system_node = await make('system', true);await checkout('system');
+        const system_node = await make('system', true);
+        await checkout('system');
 
-        await make("workspace/component"); await cd("system/workspace/component");
+        // Component
+        await make("workspace/component");
+        await cd("system/workspace/component");
         const COMPONENT_PATH = 'system/workspace/component';
         const get_component_path = name=>`${COMPONENT_PATH}/${name}.html`;
         const add_component_node = async name=>{
@@ -25,7 +28,20 @@
         await add_component_node('PathFinder');
         await add_component_node('ServerLine');
         await add_component_node('ChunkLoader');
+        await add_component_node('KeyManager');
 
+        // Script
+        await make("../script"); await cd("system/workspace/script");
+        const SCRIPT_PATH = 'system/workspace/script';
+        const get_script_path = name=>`${SCRIPT_PATH}/${name}.html`;
+        const add_script_node = async name=>{
+          const node = await make(name);
+          const cat = await APP.read_file( get_script_path(name) );
+          await set({value: cat}, node);
+        };
+        //await add_script_node('-');
+
+        // Command
         await make("../command"); await cd("system/workspace/command");
         const COMMAND_PATH = 'system/workspace/command';
         const get_command_path = name=>`${COMMAND_PATH}/${name}.html`;
@@ -36,16 +52,6 @@
         };
         await add_command_node('Component');
         await add_command_node('Script');
-
-        await make("../script"); await cd("system/workspace/script");
-        const SCRIPT_PATH = 'system/workspace/script';
-        const get_script_path = name=>`${SCRIPT_PATH}/${name}.html`;
-        const add_script_node = async name=>{
-          const node = await make(name);
-          const cat = await APP.read_file( get_script_path(name) );
-          await set({value: cat}, node);
-        };
-        await add_script_node('KeyManager');
 
 
         // work node

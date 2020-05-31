@@ -62,7 +62,6 @@
   </div>
 
   <script>
-  let global = {command: {}};
   let command_list = [];
   (async ()=>{
     const component = document.querySelector("#CommandPalette");
@@ -70,6 +69,7 @@
     const list = component.querySelector(".predict");
     await ask(`await checkout("system")`);
     await ask(`await cd("workspace/command");`);
+
 
     // コマンドの取得と追加
     const command_names = (await ask(`await ls()`)).split(' ');
@@ -97,6 +97,7 @@
         await global['command'][name](input.value);
         input.value = '';
         component.classList.toggle('hide');
+
       }
     });
     component.addEventListener('click', function(e){
