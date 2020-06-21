@@ -5,6 +5,8 @@
   .Window{
     width: calc(150px - 2px);
     height: calc(150px - 2px);
+    min-width: 150px;
+    min-height: 50px;
     background-color: #FFF;
     border: solid 1px #000;
     resize: both;
@@ -13,6 +15,54 @@
   .Window .body{
     width: 100%;
     height: calc(100% - 20px);
+  }
+  .Window .body .setting{
+    background-color: #DAA;
+    width: 100%;
+    height: 100%;
+  }
+  .Window .body .setting .page{
+    font-size: 10px;
+    padding: 3px;
+    width: calc(100% - 6px);
+    height: 100%;
+  }
+  .Window .body .setting .page .area{
+    border: solid 1px;
+    padding: 1px;
+    margin-bottom: 3px;
+  }
+  .Window .body .setting .page .title{}
+  .Window .body .setting .page .area .title{
+    border-bottom: solid 1px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  .Window .body .setting .page .area .content{
+    padding-left: 5px;
+  }
+  .Window .body .setting .page .area .content div{
+    margin-bottom: 1px;
+  }
+
+  .button.alert{
+    display: inline-block;
+    background-color: #F00;
+    width: 20px;
+    height: 20px;
+  }
+  .button.warn{
+    display: inline-block;
+    background-color: #FF0;
+    width: 20px;
+    height: 20px;
+  }
+  .button.safe{
+    display: inline-block;
+    background-color: #0F0;
+    width: 20px;
+    height: 20px;
   }
   </style>
 
@@ -24,5 +74,22 @@
   })();
   </script>
 
-  <div class="body"></div>
+  <div class="body">
+    <div class="setting">
+
+      <div class="page core">
+        <div class="title">Core</div>
+        <div class="area">
+          <div class="title">Window</div>
+          <div class="content">
+            <div>
+              <div class="button alert" style="margin-right:1px;"></div>
+              <div class="button warn" style="margin-right:1px;"></div>
+              <div class="button safe" style="margin-right:1px;"></div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
