@@ -79,6 +79,7 @@
   };
   moveObjectPosition = function(target, x,y){
     for(obj of target){
+      if(obj.classList.contains('fixed')) continue;
       if(obj.style.left=="") obj.style.left = '0px';
       if(obj.style.top=="") obj.style.top = '0px';
       obj.style.left = `${parseInt(obj.style.left)+x}px`;

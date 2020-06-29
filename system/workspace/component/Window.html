@@ -10,7 +10,7 @@
     background-color: #FFF;
     border: solid 1px #000;
     resize: both;
-    overflow: auto;
+    overflow: hidden;
   }
   .Window.icon_tab{
     height: 19px;
@@ -19,6 +19,7 @@
   .Window .body{
     width: 100%;
     height: calc(100% - 20px);
+    overflow: scroll;
   }
   .Window .body .setting{
     margin-top: 3px;
@@ -69,7 +70,9 @@
     f.appendChild( await global['command']['Component']('Component:Button') );
     f.appendChild( await global['command']['Component']('Component:Button') );
     f.appendChild( await global['command']['Component']('Component:Button') );
-    ['alert','warn','safe'].map((c,i)=>f.children[i].classList.add(c));
+    [['alert','close'], ['warn','hide'], ['safe','fix']].map((c,i)=>{
+      f.children[i].classList.add(c[0], c[1]);
+    });
 
     f.querySelector(".alert").addEventListener('click', function(){
       component.remove(); //window close
@@ -78,7 +81,7 @@
       component.classList.add('icon_tab');
     });
     f.querySelector(".safe").addEventListener('click', function(){
-
+      component.classList.toggle('fixed');
     });
     component.querySelector(".body .setting .core .area").appendChild(f);
   })();
@@ -88,12 +91,24 @@
     <div class="setting hiding">
 
       <div class="page core">
+        <div class="area"></div>
         <div class="area">
-          <!--
-          <div class="close button alert" style="margin-right:1px;"></div>
-          <div class="hide button warn" style="margin-right:1px;"></div>
-          <div class="scale button safe" style="margin-right:1px;"></div>
-          -->
+          <div class="title">scale</div>
+          <div class="content">
+            <div>
+              <input type="number" class="w_size" style="width:60px;"/>
+              <input type="number" class="h_size" style="width:60px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="area">
+          <div class="title">position</div>
+          <div class="content">
+            <div>
+              <input type="number" class="x_pos" style="width:60px;"/>
+              <input type="number" class="y_pos" style="width:60px;"/>
+            </div>
+          </div>
         </div>
       </div>
 
