@@ -8,16 +8,17 @@
     background-color: #AAA;
     border-bottom: solid 1px #FFF;
   }
-  .Header:hover{ cursor:grab; }
   .Header .controller{
-    background-color: #D88;
+    background-color: #888;
     width: 19px;
     height: 100%;
     display: inline-block;
     border-right: solid 1px #FFF;
-    cursor: point;
   }
-  .Header .controller:hover{ cursor: point; }
+  .Header .controller:active{
+    background-color: #777;
+    cursor: pointer;
+  }
   .Header .container{
     background-color: #CCC;
     height: 20px;
@@ -30,6 +31,26 @@
     display: inline-block;
   }
   </style>
+
+  <script>
+  (async function(){
+    const component = document.querySelector(".Header:last-child");
+    const toggle_settings = flg=>{
+      const body_settings = component.parentElement.querySelector(".body .setting");
+      if(!body_settings) return false;
+
+      if(typeof flg==="undefined"){
+        body_settings.classList.toggle("hiding");
+      }else{
+        if(flg){ body_settings.classList.add("hiding"); }
+        else{ body_settings.classList.remove("hiding"); }
+      }
+    };
+    component.querySelector(".controller").addEventListener('click', function(){
+      toggle_settings();
+    });
+  })();
+  </script>
 
   <div class="controller"></div><!--
   --><div class="menu"></div>

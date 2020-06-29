@@ -1,4 +1,4 @@
-<div id="CommandPalette" class="component modal hide">
+<div id="CommandPalette" class="component modal hiding">
   <!--
   - ※※※ workspaceの必須読み込みコンポーネント ※※※
   -->
@@ -62,7 +62,7 @@
 
   <div class="palette_window">
     <input type="text" class="command"/>
-    <div class="na hide">{No matches found}</div>
+    <div class="na hiding">{No matches found}</div>
     <div class="predict"></div>
   </div>
 
@@ -101,16 +101,16 @@
       if(!!name && !!global['command'][name]){
         await global['command'][name](input.value);
         input.value = '';
-        component.classList.toggle('hide');
+        component.classList.toggle('hiding');
 
       }
     });
     component.addEventListener('click', function(e){
-      component.classList.toggle('hide'); //palette_window以外のmodal部分を押したら閉じる
+      component.classList.toggle('hiding'); //palette_window以外のmodal部分を押したら閉じる
     });
     component.querySelector(".palette_window").addEventListener('click', function(e){e.stopPropagation();}); //クリック時閉じないよう修正
     document.addEventListener('keypress', async function(e){
-      if(e.shiftKey && e.ctrlKey && e.keyCode==16) component.classList.toggle('hide');
+      if(e.shiftKey && e.ctrlKey && e.keyCode==16) component.classList.toggle('hiding');
     });
   })();
   </script>

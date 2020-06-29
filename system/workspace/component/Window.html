@@ -6,20 +6,25 @@
     width: calc(150px - 2px);
     height: calc(150px - 2px);
     min-width: 150px;
-    min-height: 50px;
+    min-height: 19px;
     background-color: #FFF;
     border: solid 1px #000;
     resize: both;
     overflow: auto;
+  }
+  .Window.icon_tab{
+    height: 19px;
+    resize: horizontal;
   }
   .Window .body{
     width: 100%;
     height: calc(100% - 20px);
   }
   .Window .body .setting{
-    background-color: #DAA;
+    margin-top: 3px;
+    background-color: #888;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 3px);
   }
   .Window .body .setting .page{
     font-size: 10px;
@@ -45,48 +50,60 @@
   .Window .body .setting .page .area .content div{
     margin-bottom: 1px;
   }
-
-  .button.alert{
-    display: inline-block;
-    background-color: #F00;
-    width: 20px;
-    height: 20px;
-  }
-  .button.warn{
-    display: inline-block;
-    background-color: #FF0;
-    width: 20px;
-    height: 20px;
-  }
-  .button.safe{
-    display: inline-block;
-    background-color: #0F0;
-    width: 20px;
-    height: 20px;
-  }
   </style>
 
   <script>
   (async function(){
+    const Import = global['command']['Component'];
+
+
     const component = document.querySelector(".Window:last-child");
-    const header = await global['command']['Component']('Component:Header');
+    const header = await Import('Component:Header');
+    header.querySelector(".controller").addEventListener('click', function(){
+      component.classList.remove('icon_tab');
+    });
     component.insertBefore(header, component.firstElementChild);
+
+
+    let f = document.createDocumentFragment();
+    f.appendChild( await global['command']['Component']('Component:Button') );
+    f.appendChild( await global['command']['Component']('Component:Button') );
+    f.appendChild( await global['command']['Component']('Component:Button') );
+    ['alert','warn','safe'].map((c,i)=>f.children[i].classList.add(c));
+
+    f.querySelector(".alert").addEventListener('click', function(){
+      component.remove(); //window close
+    });
+    f.querySelector(".warn").addEventListener('click', function(){
+      component.classList.add('icon_tab');
+    });
+    f.querySelector(".safe").addEventListener('click', function(){
+
+    });
+    component.querySelector(".body .setting .core .area").appendChild(f);
   })();
   </script>
 
   <div class="body">
-    <div class="setting">
+    <div class="setting hiding">
 
       <div class="page core">
-        <div class="title">Core</div>
         <div class="area">
-          <div class="title">Window</div>
+          <!--
+          <div class="close button alert" style="margin-right:1px;"></div>
+          <div class="hide button warn" style="margin-right:1px;"></div>
+          <div class="scale button safe" style="margin-right:1px;"></div>
+          -->
+        </div>
+      </div>
+
+      <div class="page test hiding">
+        <div class="title">TestPage</div>
+        <div class="area">
+          <div class="title">Area</div>
           <div class="content">
-            <div>
-              <div class="button alert" style="margin-right:1px;"></div>
-              <div class="button warn" style="margin-right:1px;"></div>
-              <div class="button safe" style="margin-right:1px;"></div>
-            </div>
+            <div>content...</div>
+          </div>
         </div>
       </div>
 
