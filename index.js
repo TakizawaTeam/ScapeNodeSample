@@ -23,6 +23,7 @@
         };
 
         await add_component_node('Helper');
+        await add_component_node('Button');
         await add_component_node('Header');
         await add_component_node('Window');
         await add_component_node('Helper');
