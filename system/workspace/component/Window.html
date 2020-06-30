@@ -13,13 +13,12 @@
     overflow: hidden;
   }
   .Window.icon_tab{
-    height: 19px;
+    height: 19px !important;
     resize: horizontal;
   }
   .Window .body{
     width: 100%;
     height: calc(100% - 20px);
-    overflow: scroll;
   }
   .Window .body .setting{
     margin-top: 3px;
@@ -31,10 +30,11 @@
     font-size: 10px;
     padding: 3px;
     width: calc(100% - 6px);
-    height: 100%;
+    height: calc(100% - 3px);
+    overflow: scroll;
   }
   .Window .body .setting .page .area{
-    border: solid 1px;
+    /* border: solid 1px; */
     padding: 1px;
     margin-bottom: 3px;
   }
@@ -74,13 +74,14 @@
       f.children[i].classList.add(c[0], c[1]);
     });
 
-    f.querySelector(".alert").addEventListener('click', function(){
+    f.querySelector(".alert").addEventListener('click', function(e){
       component.remove(); //window close
     });
-    f.querySelector(".warn").addEventListener('click', function(){
+    f.querySelector(".warn").addEventListener('click', function(e){
       component.classList.add('icon_tab');
     });
-    f.querySelector(".safe").addEventListener('click', function(){
+    f.querySelector(".safe").addEventListener('click', function(e){
+      e.target.classList.toggle('on');
       component.classList.toggle('fixed');
     });
     component.querySelector(".body .setting .core .area").appendChild(f);
