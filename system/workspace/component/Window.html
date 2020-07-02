@@ -57,7 +57,7 @@
   (async function(){
     const Import = global['command']['Component'];
 
-
+    // window header
     const component = document.querySelector(".Window:last-child");
     const header = await Import('Component:Header');
     header.querySelector(".controller").addEventListener('click', function(){
@@ -65,7 +65,7 @@
     });
     component.insertBefore(header, component.firstElementChild);
 
-
+    // window buttons
     let f = document.createDocumentFragment();
     f.appendChild( await global['command']['Component']('Component:Button') );
     f.appendChild( await global['command']['Component']('Component:Button') );
@@ -85,6 +85,31 @@
       component.classList.toggle('fixed');
     });
     component.querySelector(".body .setting .core .area").appendChild(f);
+
+    // window scale resize
+    const setting_core = component.querySelector(".body .setting .core");
+    const setWindowScale = (w,h)=>{
+      component.style.width = `${w}px`;
+      component.style.height = `${h}px`;
+    };
+    setting_core.querySelector('.w_size').addEventListener('change', function(e){
+      setWindowScale(e.target.value, setting_core.querySelector('.h_size').value);
+    });
+    setting_core.querySelector('.h_size').addEventListener('change', function(e){
+      setWindowScale(setting_core.querySelector('.w_size').value, e.target.value);
+    });
+    setting_core.querySelector('.x_pos').addEventListener('change', function(e){
+      setObjectPosition( [component],
+        point.x + parseInt(e.target.value),
+        point.y + parseInt(setting_core.querySelector('.y_pos').value)
+      );
+    });
+    setting_core.querySelector('.y_pos').addEventListener('change', function(e){
+      setObjectPosition( [component],
+        point.x + parseInt(setting_core.querySelector('.x_pos').value),
+        point.y + parseInt(e.target.value)
+      );
+    });
   })();
   </script>
 
@@ -94,20 +119,20 @@
       <div class="page core">
         <div class="area"></div>
         <div class="area">
-          <div class="title">scale</div>
+          <div class="title">position</div>
           <div class="content">
             <div>
-              <input type="number" class="w_size" style="width:60px;"/>
-              <input type="number" class="h_size" style="width:60px;"/>
+              <input type="text" class="x_pos" value="50" style="width:60px;"/>
+              <input type="text" class="y_pos" value="50" style="width:60px;"/>
             </div>
           </div>
         </div>
         <div class="area">
-          <div class="title">position</div>
+          <div class="title">scale</div>
           <div class="content">
             <div>
-              <input type="number" class="x_pos" style="width:60px;"/>
-              <input type="number" class="y_pos" style="width:60px;"/>
+              <input type="text" class="w_size" value="300" style="width:60px;"/>
+              <input type="text" class="h_size" value="300" style="width:60px;"/>
             </div>
           </div>
         </div>
