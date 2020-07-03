@@ -88,27 +88,41 @@
 
     // window scale resize
     const setting_core = component.querySelector(".body .setting .core");
+    const w_size_input = setting_core.querySelector('.w_size');
+    const h_size_input = setting_core.querySelector('.h_size');
+    const y_pos_input = setting_core.querySelector('.y_pos');
+    const x_pos_input = setting_core.querySelector('.x_pos');
+
     const setWindowScale = (w,h)=>{
       component.style.width = `${w}px`;
       component.style.height = `${h}px`;
     };
-    setting_core.querySelector('.w_size').addEventListener('change', function(e){
-      setWindowScale(e.target.value, setting_core.querySelector('.h_size').value);
+    w_size_input.addEventListener('change', function(e){
+      setWindowScale(e.target.value, h_size_input.value);
     });
-    setting_core.querySelector('.h_size').addEventListener('change', function(e){
-      setWindowScale(setting_core.querySelector('.w_size').value, e.target.value);
+    h_size_input.addEventListener('change', function(e){
+      setWindowScale(w_size_input.value, e.target.value);
     });
-    setting_core.querySelector('.x_pos').addEventListener('change', function(e){
+    x_pos_input.addEventListener('change', function(e){
       setObjectPosition( [component],
         point.x + parseInt(e.target.value),
-        point.y + parseInt(setting_core.querySelector('.y_pos').value)
+        point.y + parseInt(y_pos_input.value)
       );
     });
-    setting_core.querySelector('.y_pos').addEventListener('change', function(e){
+    y_pos_input.addEventListener('change', function(e){
       setObjectPosition( [component],
-        point.x + parseInt(setting_core.querySelector('.x_pos').value),
+        point.x + parseInt(x_pos_input.value),
         point.y + parseInt(e.target.value)
       );
+    });
+    const observer = new MutationObserver(() => { //component resize
+        console.log(component.style.width, component.style.height);
+        w_size_input.value = parseInt(component.clientWidth);
+        h_size_input.value = parseInt(component.clientHeight);
+    });
+    observer.observe(component, {
+      attriblutes: true,
+      attributeFilter: ["style"]
     });
   })();
   </script>
