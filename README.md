@@ -8,7 +8,7 @@
 ```
 As we make mistakes.
 carelessly our egos will take control.
-The loving words we say hide the undertones of envy.
+The loving words we say  the undertones of envy.
 As we get distracted, we lose originality.
 ```
 

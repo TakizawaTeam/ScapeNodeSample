@@ -65,3 +65,17 @@ sleep = ms=>new Promise(res=>setTimeout(res,ms));
 return Array.from(new Set(array));
 return [...new Set(array)];
 ```
+
+#### eventのバブリング(子から親への伝搬)
+```
+preventDefault()
+自身の持つイベントを停止するが、親要素のもつイベントは発動させる。
+親へのバブリングは行なうということ。
+
+stopPropagation()
+自身の持つイベントは実行するが、親要素のもつイベントは停止させる。
+親へのバブリングを行なわないということ。
+
+return false
+自身の持つイベントも伝播も停止する。
+```
