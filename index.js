@@ -5,6 +5,61 @@
     (async function(){
       async function init(){
         await initialize();
+
+
+        // scape node system.
+        const system_node = await make('system', true);
+        await checkout('system');
+
+        // Component
+        await make("workspace/component");
+        await cd("system/workspace/component");
+        const COMPONENT_PATH = 'system/workspace/component';
+        const get_component_path = name=>`${COMPONENT_PATH}/${name}.html`;
+        const add_component_node = async name=>{
+          const node = await make(name);
+          const cat = await APP.read_file( get_component_path(name) );
+          await set({value: cat}, node);
+        };
+
+        await add_component_node('Helper');
+        await add_component_node('Button');
+        await add_component_node('Header');
+        await add_component_node('Window');
+        await add_component_node('Helper');
+        await add_component_node('CommandPalette');
+        await add_component_node('Terminal');
+        await add_component_node('Editor');
+        await add_component_node('PathFinder');
+        await add_component_node('ServerLine');
+        await add_component_node('ChunkLoader');
+        await add_component_node('KeyManager');
+
+        // Script
+        await make("../script"); await cd("system/workspace/script");
+        const SCRIPT_PATH = 'system/workspace/script';
+        const get_script_path = name=>`${SCRIPT_PATH}/${name}.html`;
+        const add_script_node = async name=>{
+          const node = await make(name);
+          const cat = await APP.read_file( get_script_path(name) );
+          await set({value: cat}, node);
+        };
+        //await add_script_node('-');
+
+        // Command
+        await make("../command"); await cd("system/workspace/command");
+        const COMMAND_PATH = 'system/workspace/command';
+        const get_command_path = name=>`${COMMAND_PATH}/${name}.html`;
+        const add_command_node = async name=>{
+          const node = await make(name);
+          const cat = await APP.read_file( get_command_path(name) );
+          await set({value: cat}, node);
+        };
+        await add_command_node('Component');
+        await add_command_node('Script');
+
+
+        // work node
         const root_node = await make('root', true);await checkout('root');
         await make("work");await cd("work");
 
@@ -45,9 +100,10 @@
       // //console.log('result:', explor_nodes);
 
       //await rm();
-      let create_node = await make('root/work/TestH');
-      create_node = await set({value: 'cp test.'}, create_node);
-      await cp(create_node, 'root/work/TestA/TestB/TestG/TestH');
+
+      // let create_node = await make('root/work/TestH');
+      // create_node = await set({value: 'cp test.'}, create_node);
+      // await cp(create_node, 'root/work/TestA/TestB/TestG/TestH');
     }).bind(Node)();
   }
 })({

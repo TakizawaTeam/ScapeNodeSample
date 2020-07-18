@@ -1,0 +1,19 @@
+#####################################################################
+# Setting  ##########################################################
+#####################################################################
+scapenode_project=/Users/mizunuma/work/Project/scape_node
+scapenode_project=/Users/mizunuma/work/Project/scape_node_memo
+scapenode_project_base(){ set_project_base $scapenode_project; }
+scapenode_sample_project=/Users/mizunuma/work/Project/Test/content191018-scape_node_sample/ScapeNodeSample
+scapenode_memo_project=/Users/mizunuma/work/Project/scape_node_memo/scape_node
+#
+
+#####################################################################
+# Function ##########################################################
+#####################################################################
+#
+
+#####################################################################
+# Constractor #######################################################
+#####################################################################
+#

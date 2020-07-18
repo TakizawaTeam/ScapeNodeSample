@@ -1,0 +1,147 @@
+<div id="ChunkLoader" class="component">
+  <!-- element_space上での、DOMの仮装化技術による要素及びデータの読み込み -->
+
+  <style>
+  #ChunkLoader{
+    z-index: 999;
+    width:100%; height:100%;
+  }
+  #ChunkLoader .layer.lattice_a{
+    position: absolute; left: 0px; top: 0px;
+    width:100%; height:100%;
+    background-image: linear-gradient(#EEE 1px, transparent 0), linear-gradient(90deg, #EEE 1px, transparent 0);
+    background-position: 0px 0px;
+    background-size: 10px 10px;
+  }
+  #ChunkLoader .layer.lattice_b{
+    position: absolute; left: 0px; top: 0px;
+    width:100%; height:100%;
+    background-image: linear-gradient(#DDD 1px, transparent 0), linear-gradient(90deg, #DDD 1px, transparent 0);
+    background-position: 0px 0px;
+    background-size: 50px 50px;
+  }
+  #ChunkLoader .layer.lattice_c{
+    position: absolute; left: 0px; top: 0px;
+    width:100%; height:100%;
+    background-image: linear-gradient(#00F 1px, transparent 0), linear-gradient(90deg, #00F 1px, transparent 0);
+    background-size: 500px 500px;
+  }
+  #ChunkLoader .ground_zero{
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    width: 20px;
+    height: 20px;
+    background-color: #F00;
+    border: solid 1px #00F;
+    border-radius: 100%;
+  }
+  </style>
+
+  <div class="layer lattice_a"></div>
+  <div class="layer lattice_b"></div>
+  <div class="layer lattice_c"></div>
+  <div class="ground_zero"></div>
+
+  <script>
+  initLattice = null;
+  setPosition = null;
+  lattice = [];
+  drag_flag = false;
+  lock_drag_flag = false;
+
+  const lattice_a = document.querySelector("#ChunkLoader .layer.lattice_a");
+  const lattice_b = document.querySelector("#ChunkLoader .layer.lattice_b");
+  const lattice_c = document.querySelector("#ChunkLoader .layer.lattice_c");
+  lattice = [lattice_a, lattice_b, lattice_c];
+
+  const gz = document.querySelector("#ChunkLoader .ground_zero");
+
+  changeLatticeSize = function(a=10, b=50, c=500){
+    lattice_a.style.backgroundSize = `${a}px ${a}px`;
+    lattice_b.style.backgroundSize = `${b}px ${b}px`;
+    lattice_c.style.backgroundSize = `${c}px ${c}px`;
+  };
+  setLatticePosition = function(x,y){
+    lattice_a.style.backgroundPosition = `${x%500}px ${y%500}px`;
+    lattice_b.style.backgroundPosition = `${x%500}px ${y%500}px`;
+    lattice_c.style.backgroundPosition = `${x%500}px ${y%500}px`;
+  };
+  setGroundZeroPosition = function(x,y){
+    gz.style.left = `${x-gz.clientWidth/2}px`;
+    gz.style.top = `${y-gz.clientHeight/2}px`;
+  };
+  setObjectPosition = function(target, x,y){
+    for(obj of target){
+      obj.style.left = `${x}px`;
+      obj.style.top = `${y}px`;
+    }
+  };
+  moveObjectPosition = function(target, x,y){
+    for(obj of target){
+      if(obj.classList.contains('fixed')) continue;
+      if(obj.style.left=="") obj.style.left = '0px';
+      if(obj.style.top=="") obj.style.top = '0px';
+      obj.style.left = `${parseInt(obj.style.left)+x}px`;
+      obj.style.top = `${parseInt(obj.style.top)+y}px`;
+    }
+  };
+  touchMoveObject = function(target){
+
+  };
+  changeLatticeSize();
+  setLatticePosition(0,0);
+  setObjectPosition([gz], 0-parseInt(gz.clientWidth)/2, 0-parseInt(gz.clientHeight)/2);
+
+  let movePoint = (_point, _move)=>{
+    setLatticePosition(_point.x, _point.y);
+    setObjectPosition([gz], _point.x-parseInt(gz.clientWidth)/2, _point.y-parseInt(gz.clientHeight)/2);
+    moveObjectPosition(document.querySelectorAll(".object"), _move.x, _move.y);
+  };
+  let point = {x: 0, y: 0};
+  let move = {x: 0, y: 0};
+  let pre = {x: 0, y: 0};
+
+  // drag
+  lattice_c.addEventListener('mousedown', function(e){
+    drag_flag = true;
+    lattice_c.style.cursor = 'move';
+    pre.x=e.clientX; pre.y=e.clientY;
+  });
+  lattice_c.addEventListener('mouseup', function(e){
+    drag_flag = false;
+    lattice_c.style.cursor = 'default';
+  });
+  document.addEventListener('mouseleave', function(e){
+    drag_flag = false;
+    lock_drag_flag = false;
+    lattice_c.style.cursor = 'default';
+  });
+
+  // lock_drag
+  document.addEventListener('keydown', function(e){
+    if(e.ctrlKey){
+      lock_drag_flag = true;
+      document.body.requestPointerLock();
+    }
+  });
+  document.addEventListener('keyup', function(e){
+    if(!e.ctrlKey){
+      lock_drag_flag = false;
+      document.exitPointerLock();
+    }
+  });
+
+  document.addEventListener('mousemove', function(e){
+    if(drag_flag || lock_drag_flag){
+      move.x = e.movementX;
+      move.y = e.movementY;
+      point.x += move.x;
+      point.y += move.y;
+      pre.x=e.clientX; pre.y=e.clientY;
+
+      movePoint(point, move);
+    }
+  });
+  </script>
+</div>

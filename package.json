@@ -4,7 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "mongo_start": "sudo mongod --dbpath=/var/lib/mongodb -f /usr/local/etc/mongod.conf --logpath /var/log/mongodb.log",
+    "start": "npm run all",
+    "stop": "npm run all:stop",
+    "status": "npm run all:status",
+    "restart": "npm run all:restart",
+    "all": "npm run db && npm run server",
+    "all:stop": "npm run db:stop && npm run server:stop",
+    "all:status": "npm run db:status && npm run server:status",
+    "all:restart": "npm run db:stop && npm run server:stop && npm run db && npm run server",
+    "db": "mongod --fork --config /usr/local/etc/mongod.conf",
+    "db:stop": "kill `pgrep mongo`",
+    "db:status": "if [ \"`pgrep mongo`\" = \"\" ]; then echo \"Stopped⛔️\"; else echo \"Runnning✅\"; fi;",
+    "server": "node index.js && nohup node server.js &",
+    "server:stop": "kill `pgrep ScapeNode-0`",
+    "server:status": "if [ \"`pgrep ScapeNode-0`\" = \"\" ]; then echo \"Stopped⛔️\"; else echo \"Runnning✅\"; fi;",
+    "postinstall": "Hello ScapeNode!",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -13,5 +27,8 @@
     "mongodb": "^3.3.2",
     "node-repl-await": "^0.1.1",
     "ws": "^7.2.1"
+  },
+  "_process_names": {
+    "ScapeNode-0": "ScapeNodeサーバー"
   }
 }

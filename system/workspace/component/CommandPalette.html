@@ -1,0 +1,117 @@
+<div id="CommandPalette" class="component modal hiding">
+  <!--
+  - ※※※ workspaceの必須読み込みコンポーネント ※※※
+  -->
+
+  <style>
+  #CommandPalette{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+  }
+  #CommandPalette .palette_window{
+    position: relative;
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+    background-color: #404550;
+    max-width: 480px;
+    min-width: 240px;
+    max-height: 480px;
+    min-height: 65px;
+    border-radius: 5px;
+    padding: 10px;
+  }
+  #CommandPalette .command{
+    color: #EEE;
+    caret-color: #DDE;
+    background-color: #303440;
+    border: none;
+    width: 100%;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    font-size: 14px;
+    height: 25px;
+  }
+  #CommandPalette .na{
+    color: #AAA;
+    font-size: 12px;
+    position: absolute;
+    left: calc(10px + 10px);
+    top: calc(40px + 12px);
+  }
+  #CommandPalette .predict{
+    background-color: #303440;
+    max-height: calc(480px - 35px);
+    min-height: calc(65px - 35px);
+    border: solid 1px #303440;
+    overflow-y: scroll;
+  }
+  #CommandPalette .predict .box{
+    user-select: none;
+    color: #CCD;
+    background-color: #404550;
+    border-bottom: solid 1px #303440;
+    height: 30px;
+    padding-left: 10px;
+    line-height: 30px;
+  }
+  #CommandPalette .predict .box:last-child{ border-bottom: none; }
+  #CommandPalette .predict .box:hover{ background-color: #505660; }
+  </style>
+
+  <div class="palette_window">
+    <input type="text" class="command"/>
+    <div class="na hiding">{No matches found}</div>
+    <div class="predict"></div>
+  </div>
+
+  <script>
+  let command_list = [];
+  (async ()=>{
+    const component = document.querySelector("#CommandPalette");
+    const input = component.querySelector(".command");
+    const list = component.querySelector(".predict");
+    await ask(`await checkout("system")`);
+    await ask(`await cd("workspace/command");`);
+
+
+    // コマンドの取得と追加
+    const command_names = (await ask(`await ls()`)).split(' ');
+    for(const [idx, name] of command_names.entries()){
+      await importNode(`workspace/command/${name}`);
+      const command_colors = await global['command'][name](); //コマンドの色彩を展開
+
+      // コマンド一覧に追加し、コマンドパレットに追加
+      command_list = command_list.concat(command_colors.sort());
+      for(const [idx2, color] of command_colors.entries()){
+        list.insertAdjacentHTML('beforeend', `<div class="box">${color}</div>`);
+        const box = list.lastElementChild;
+        box.addEventListener('click', function(e){
+          input.value = box.innerText;
+          input.focus();
+        });
+      }
+    }
+
+    // コマンド振り分けと実行
+    input.addEventListener('keypress', async function(e){
+      if(e.keyCode!==13) return false; //Enter以外は通さない
+      const name = input.value.split(':')[0];
+      if(!!name && !!global['command'][name]){
+        await global['command'][name](input.value);
+        input.value = '';
+        component.classList.toggle('hiding');
+
+      }
+    });
+    component.addEventListener('click', function(e){
+      component.classList.toggle('hiding'); //palette_window以外のmodal部分を押したら閉じる
+    });
+    component.querySelector(".palette_window").addEventListener('click', function(e){e.stopPropagation();}); //クリック時閉じないよう修正
+    document.addEventListener('keypress', async function(e){
+      if(e.shiftKey && e.ctrlKey && e.keyCode==16) component.classList.toggle('hiding');
+    });
+  })();
+  </script>
+</div>

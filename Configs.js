@@ -4,7 +4,8 @@ module.exports = {
     port: 8000,
     static: {
       page404: {message: '404not found!'},
-      workspace: {index: './workspace.html'},
+      workspace: {index: './system/workspace/index.html'},
+      client: './client.js',
     },
     page404: {},
     pageWorkbench: {}

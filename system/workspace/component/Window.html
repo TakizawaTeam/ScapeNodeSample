@@ -1,0 +1,167 @@
+
+<div class="Window component object">
+
+  <style>
+  .Window{
+    width: calc(150px - 2px);
+    height: calc(150px - 2px);
+    min-width: 150px;
+    min-height: 19px;
+    background-color: #FFF;
+    border: solid 1px #000;
+    resize: both;
+    overflow: hidden;
+  }
+  .Window.icon_tab{
+    height: 19px !important;
+    resize: horizontal;
+  }
+  .Window .body{
+    width: 100%;
+    height: calc(100% - 20px);
+  }
+  .Window .body .setting{
+    margin-top: 3px;
+    background-color: #888;
+    width: 100%;
+    height: calc(100% - 3px);
+  }
+  .Window .body .setting .page{
+    font-size: 10px;
+    padding: 3px;
+    width: calc(100% - 6px);
+    height: calc(100% - 3px);
+    overflow: scroll;
+  }
+  .Window .body .setting .page .area{
+    /* border: solid 1px; */
+    padding: 1px;
+    margin-bottom: 3px;
+  }
+  .Window .body .setting .page .title{}
+  .Window .body .setting .page .area .title{
+    border-bottom: solid 1px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  .Window .body .setting .page .area .content{
+    padding-left: 5px;
+  }
+  .Window .body .setting .page .area .content div{
+    margin-bottom: 1px;
+  }
+  </style>
+
+  <script>
+  (async function(){
+    const Import = global['command']['Component'];
+
+    // window header
+    const component = document.querySelector(".Window:last-child");
+    const header = await Import('Component:Header');
+    header.querySelector(".controller").addEventListener('click', function(){
+      component.classList.remove('icon_tab');
+    });
+    component.insertBefore(header, component.firstElementChild);
+
+    // window buttons
+    let f = document.createDocumentFragment();
+    f.appendChild( await global['command']['Component']('Component:Button') );
+    f.appendChild( await global['command']['Component']('Component:Button') );
+    f.appendChild( await global['command']['Component']('Component:Button') );
+    [['alert','close'], ['warn','hide'], ['safe','fix']].map((c,i)=>{
+      f.children[i].classList.add(c[0], c[1]);
+    });
+
+    f.querySelector(".alert").addEventListener('click', function(e){
+      component.remove(); //window close
+    });
+    f.querySelector(".warn").addEventListener('click', function(e){
+      component.classList.add('icon_tab');
+    });
+    f.querySelector(".safe").addEventListener('click', function(e){
+      e.target.classList.toggle('on');
+      component.classList.toggle('fixed');
+    });
+    component.querySelector(".body .setting .core .area").appendChild(f);
+
+    // window scale resize
+    const setting_core = component.querySelector(".body .setting .core");
+    const w_size_input = setting_core.querySelector('.w_size');
+    const h_size_input = setting_core.querySelector('.h_size');
+    const y_pos_input = setting_core.querySelector('.y_pos');
+    const x_pos_input = setting_core.querySelector('.x_pos');
+
+    const setWindowScale = (w,h)=>{
+      component.style.width = `${w}px`;
+      component.style.height = `${h}px`;
+    };
+    w_size_input.addEventListener('change', function(e){
+      setWindowScale(e.target.value, h_size_input.value);
+    });
+    h_size_input.addEventListener('change', function(e){
+      setWindowScale(w_size_input.value, e.target.value);
+    });
+    x_pos_input.addEventListener('change', function(e){
+      setObjectPosition( [component],
+        point.x + parseInt(e.target.value),
+        point.y + parseInt(y_pos_input.value)
+      );
+    });
+    y_pos_input.addEventListener('change', function(e){
+      setObjectPosition( [component],
+        point.x + parseInt(x_pos_input.value),
+        point.y + parseInt(e.target.value)
+      );
+    });
+    const observer = new MutationObserver(() => { //component resize
+        console.log(component.style.width, component.style.height);
+        w_size_input.value = parseInt(component.clientWidth);
+        h_size_input.value = parseInt(component.clientHeight);
+    });
+    observer.observe(component, {
+      attriblutes: true,
+      attributeFilter: ["style"]
+    });
+  })();
+  </script>
+
+  <div class="body">
+    <div class="setting hiding">
+
+      <div class="page core">
+        <div class="area"></div>
+        <div class="area">
+          <div class="title">position</div>
+          <div class="content">
+            <div>
+              <input type="text" class="x_pos" value="50" style="width:60px;"/>
+              <input type="text" class="y_pos" value="50" style="width:60px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="area">
+          <div class="title">scale</div>
+          <div class="content">
+            <div>
+              <input type="text" class="w_size" value="300" style="width:60px;"/>
+              <input type="text" class="h_size" value="300" style="width:60px;"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page test hiding">
+        <div class="title">TestPage</div>
+        <div class="area">
+          <div class="title">Area</div>
+          <div class="content">
+            <div>content...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

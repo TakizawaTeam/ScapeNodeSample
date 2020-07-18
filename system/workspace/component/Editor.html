@@ -1,0 +1,96 @@
+
+<div class="Editor component object">
+  <style>
+  .Editor .header{
+    height: 20px;
+    background-color: #000;
+  }
+  .Editor .header .controller{
+    background-color: #000;
+    width: 19px;
+    height: calc(100% - 1px);
+    display: inline-block;
+    border-right: solid 1px #FFF;
+    border-bottom: solid 1px #FFF;
+    cursor: point;
+  }
+  .Editor .header .controller:hover{cursor: point;}
+  .Editor .header .font_size{
+    -webkit-appearance: none;
+    background-color: #FFF;
+    height: 100%;
+    border-radius: 0px;
+    border: solid 1px;
+    vertical-align: top; /*selectの謎の上余白*/
+  }
+  .Editor .header .background_color{
+    vertical-align: top;
+    height: 100%;
+    width: 20px;
+    padding: 0px;
+  }
+  .Editor .header .font_color{
+    vertical-align: top;
+    height: 100%;
+    width: 20px;
+    padding: 0px;
+  }
+  .Editor .header:hover{cursor:grab;}
+  .Editor .body textarea{
+    color: #000;
+    font-size: 12px;
+    background-color: #FFF;
+    width: 100%;
+    height: 30px;
+    min-width: 150px;
+    min-height: 30px;
+  }
+  .Editor .body textarea:focus{
+    outline: none;
+  }
+  </style>
+
+  <div class="window">
+    <div class="header">
+      <div class="controller"></div>
+      <select class="font_size"></select>
+      <input type="color" class="background_color" value="#ffffff"/>
+      <input type="color" class="font_color" value="#000000"/>
+    </div>
+    <div class="body">
+      <textarea></textarea>
+    </div>
+    <div class="footer"></div>
+  </div>
+
+  <script>
+  (async ()=>{
+    const FONT_SIZE_DEFAULT = 12;
+    const FONT_SIZE_SCALE = {MIN: 5, MAX: 75};
+    const component = document.querySelector(".Editor:last-child");
+    component.style.left = '100px';
+    component.style.top = '100px';
+
+    const textarea = component.querySelector(".body textarea");
+    const font_size_select = component.querySelector(".header .font_size");
+    for(var i=FONT_SIZE_SCALE.MIN;i<=FONT_SIZE_SCALE.MAX;i++){
+      let size_option = document.createElement("option");
+      size_option.value = i;
+      size_option.text = `${i}px`;
+      if(i==FONT_SIZE_DEFAULT) size_option.selected = true;
+      font_size_select.appendChild(size_option);
+    }
+    font_size_select.addEventListener('change', e=>{
+      textarea.style.fontSize = `${e.target.value}px`;
+    });
+    const background_color_select = component.querySelector(".header .background_color");
+    background_color_select.addEventListener('change', e=>{
+      textarea.style.backgroundColor = e.target.value;
+    });
+    const font_color_select = component.querySelector(".header .font_color");
+    font_color_select.addEventListener('change', e=>{
+      textarea.style.color = e.target.value;
+    });
+  })();
+  </script>
+</div>

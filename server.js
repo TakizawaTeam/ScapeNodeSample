@@ -6,6 +6,8 @@ const net = require('net');
 const repl = require('repl');
 const { processTopLevelAwait } = require("node-repl-await");
 
+process.title = 'ScapeNode-0';
+
 (async function(conf){
   const APP = await require("./Application.js");
   const Node = await require('./Node.js');
@@ -64,6 +66,11 @@ const { processTopLevelAwait } = require("node-repl-await");
         const data = await APP.read_file( http_static['workspace']['index'] );
         await APP.html_static(res, data);
       };
+    }else if(req.url=='/client'){
+      set_result = async function(){
+        const data = await APP.read_file( http_static['client'] );
+        await APP.html_static(res, data, {'content-type': 'text/javascript'});
+      };
     }
     await set_result();
   });
@@ -95,6 +102,8 @@ const { processTopLevelAwait } = require("node-repl-await");
     wso.on('message', async function(m){ await set_result(m); });
     wso.on('close', async function(){ await set_close(); });
   });
+
+  console.log(`[start Server http://localhost:${http_config['port']}/workspace]`);
 })({
 
 });

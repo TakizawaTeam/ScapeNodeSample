@@ -1,0 +1,37 @@
+<div id="ServerLine" class="component">
+  <style>
+    #ServerLine{}
+    #ServerLine .status{
+      z-index: 10100;
+      user-select: none;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      background-color: red;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 75px;
+      height: 25px;
+      border-radius: 5px;
+    }
+    #ServerLine .status.on{
+      background-color: green;
+    }
+  </style>
+
+  <div class="status">OFFLINE</div>
+
+  <script>
+    const updateServerLine = line=>{
+      const dom = document.querySelector("#ServerLine .status");
+      if(line){
+        dom.classList.add("on");
+        dom.innerText = 'ONLINE';
+      }else{
+        dom.classList.remove("on");
+        dom.innerText = 'OFFLINE';
+      }
+    }
+  </script>
+</div>

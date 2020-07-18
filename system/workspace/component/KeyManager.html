@@ -1,0 +1,18 @@
+<div id="KeyManager">
+  <script>
+  (async ()=>{
+    const component = document.querySelector("#KeyManager");
+    component.var = {
+      status: {},
+      check: Function(),
+    };
+
+    // キーダウンチェック
+    component.var.check = name=>!!component.var.status[name];
+
+    // イベントによりキー状態を設定
+    document.addEventListener('keydown', function(e){ component.var.status[e.key] = true; });
+    document.addEventListener('keyup', function(e){ component.var.status[e.key] = false; });
+  })();
+  </script>
+</div>

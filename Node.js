@@ -24,7 +24,7 @@ module.exports = (async function(){
   this.initialize = async function(){
     return await DB.connect(async connection=>{
       const Node = await DB.get_collection(`${APP.name}/nodes`);
-      return Node.remove();
+      return Node.deleteMany();
     });
   };
   this.one = { /* HASHによる直接操作 */
@@ -57,6 +57,7 @@ module.exports = (async function(){
     },
   };
 
+  const nodePresent = node=>{delete node._id; return node;};
   this.ROOT = null;
   this.current = null;
   this.woods = async function(){};
@@ -65,15 +66,15 @@ module.exports = (async function(){
     if(root){
       this.ROOT = root;
       this.current = this.ROOT;
-      return this.current;
+      return nodePresent(this.current);
     }else{ return null; }
   };
   await this.checkout();
   this.target = key=>{
     if(key==this.ROOT.key)return this.ROOT;
-    return this.current;
+    return nodePresent(this.current);
   };
-  this.find = async function(path=""){
+  this.find = async function(path=""){ //ノード検索、無ければトレース履歴を配列で返す
     if(typeof path==="string" && path.length>0){
       const node_keys = path.split("/");
       let find_history = [];
@@ -167,10 +168,10 @@ module.exports = (async function(){
   this.cd = async function(path=""){
     if(typeof path==="string" && path.length>0){
       this.current = path.length==0? this.ROOT : await this.find(path);
-      return this.current;
+      return nodePresent(this.current);
     }else{return `cd() $path type error [${typeof path}]`;}
   };
-  this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key); };
+  this.ls = async function(key){ return (await this.childs(key)).map(n=>n.key).join(' '); };
   this.pwd = async function(node=null){
     if(!node)node = this.current;
     let keys = [node.key];
