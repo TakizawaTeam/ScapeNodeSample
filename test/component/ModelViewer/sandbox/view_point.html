@@ -3,6 +3,9 @@
 </head>
 <body>
   <canvas id="myCanvas"></canvas>
+  <div id="debug_view">
+    <div class="main"></div>
+  </div>
 
   <script>
   function Point(x,y){ //座標(set/get, sum)
@@ -68,6 +71,7 @@
     p1 = new Point(obj.position.x, obj.position.z);
     p2 = new Point(target.position.x, target.position.z);
     rotate = rot_enc(radPoint(p2, p1));
+    console.log(p1, p2, rotate);
     move_point = disRotPoint(p1, dis, rotate+rot);
     obj.position.x = move_point.x;
     obj.position.z = move_point.y;
@@ -97,8 +101,8 @@
   /* TODO: テクスチャサイズが正しくないとエラー
   * 『256x256, 512x512, 1024x1024』の2の累乗が適切
   *  最大サイズで作成して、sprite処理描画範囲と位置で調整する
-  */ 
-  const set_label = (label, text, reso=6)=>{
+  */
+  const set_label = (label, text, reso=256)=>{
     const texture = draw_texture(ctx=>{
       ctx.fillStyle = "rgb(255,255,255)";
       ctx.fillRect(0,0,reso*(text.length*2),reso);
@@ -107,7 +111,7 @@
       ctx.fillStyle = "rgb(0,0,0)";
       ctx.font = `${reso}px 'ＭＳ ゴシック'`;
       ctx.fillText(text,reso*0.2,reso*0.8);
-    }, Math.pow(2,6*text.length), Math.pow(2,6));
+    }, reso*2, reso);
     label.material.map = texture;
     label.material.map.needsUpdate = true;
     return texture;
@@ -149,8 +153,9 @@
     scene.add(grid);
     scene.add(ground);
     ground.rotation.set(rad_enc(90), 0, 0);
+    sphere.position.set(0, 0, -50);
     player.add(camera);
-    scene.add(sphere);
+    player.add(sphere);
     player.position.set(0, FLAT, 100);
     scene.add(player);
     scene.add(debag_text);
@@ -170,14 +175,6 @@
     moveX = 0;
     moveY = 0;
 
-    // カメラのカーソル及び移動処理
-    cursor_distance = 50;
-    camera_pos = new Point(player.position.x, player.position.z);
-    cursor_rot = (360-rot_enc(player.rotation.y)%360) - 90;
-    cursor_movepos = disRotPoint(camera_pos, cursor_distance, cursor_rot);
-    sphere.position.x = cursor_movepos.x;
-    sphere.position.z = cursor_movepos.y;
-
     camera_speed = 1;
     if(keyflg[87] && !keyflg[83]) object_move(player, sphere, camera_speed);
     if(keyflg[83] && !keyflg[87]) object_move(player, sphere, camera_speed, 180);
@@ -195,10 +192,18 @@
     render.setSize(config.screen.size.width, config.screen.size.height);
     render.setClearColor(0xaaaaff, 1.0);
 
+    const debug_view = document.querySelector("#debug_view");
+    const debug_view_main = debug_view.querySelector(".main");
+
     initialize();
     frame();
     function frame(){
       drawframe(render);
+      debug_view_main.innerText = `
+      frame: ${frame_counter}
+      point: ${parseInt(player.position.x)}, ${parseInt(player.position.y)}, ${parseInt(player.position.z)}
+      rotate: ${parseInt(rot_enc(player.rotation.x))}, ${parseInt(rot_enc(player.rotation.y))}, ${parseInt(rot_enc(player.rotation.z))}
+      `;
       requestAnimationFrame(frame); //アニメーション処理実行
     }
   };
