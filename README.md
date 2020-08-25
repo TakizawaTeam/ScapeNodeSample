@@ -26,7 +26,7 @@ As we get distracted, we lose originality.
 3. `node server.js`
 
 #### №3 開発環境準備 [TBI]
-1. ブラウザから`http://localhost:8000/workbench`に接続
+1. ブラウザから`http://localhost:8000/workspace`に接続
 2. コマンドパレッド[Shift+Command+P]から`tarminal`でweb_tarminalを起動
 3. web_tarminalでconnectしてからrootノードを生成する
 ```
