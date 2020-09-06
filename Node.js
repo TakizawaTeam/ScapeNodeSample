@@ -1,6 +1,6 @@
 module.exports = (async function(){
-  const APP = await require("./Application.js");
-  const DB = require("./Database.js");
+  this.APP = await require("./Application.js");
+  this.DB = require("./Database.js");
 
   this.ROOT_HASH = 'NodeHash_ROOT';
   this.format = {
@@ -202,7 +202,7 @@ module.exports = (async function(){
     const node_data = this.createModel({parent: parent_hash, key: key});
     const create_node = await this.one.create(node_data);
     //return await this.cd(await this.pwd(create_node)); // make後にcd
-    return create_node;
+    return nodePresent(create_node);
   };
   this.set = async function(data, node=null){
     if(!node)node = this.current;

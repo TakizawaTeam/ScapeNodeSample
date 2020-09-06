@@ -11,6 +11,9 @@
         const system_node = await make('system', true);
         await checkout('system');
 
+        // session
+        await make("session");
+
         // Component
         await make("workspace/component");
         await cd("system/workspace/component");

@@ -32,6 +32,7 @@ const str_var = str=>(new Function("return " + str))(); // ただの文字列を
 // replサーバー接続処理
 let server = null;
 let opened = false;
+let client_hash_node = null;
 const URL = `ws://${this.location.host}/repl`;
 let history = [];
 let history_size = 50;
@@ -57,6 +58,18 @@ window.onload = function(){
   };
   server.onopen = async function(e){
     opened=true; console.log(`${URL} connected!`); // 接続及びログ出力
+
+    // client session
+    await ask(`await checkout("system");`);
+    await ask(`await cd("session");`);
+    client_hash_node = await ask(`await make( APP.createHash('WorkspaceHash_', 30) );`);
+    if(!!client_hash_node){
+      await ask(`await cd("${client_hash_node.key}");`);
+      await ask(`await make("created_at");`);
+    }
+
+    // workspace build
+    await ask(`await checkout("system");`);
     await importNode("workspace/component/ChunkLoader");
     await importNode("workspace/component/ServerLine");
     updateServerLine(true);
