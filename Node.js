@@ -212,7 +212,7 @@ module.exports = (async function(){
     target_node = Object.assign(target_node, data);
     target_node.updated_at = APP.s_date();
     await this.one.update(target_node);
-    return target_node;
+    return nodePresent(target_node);
   };
   this.cat = async function(column="value", node=null){
     if(!node)node = this.current;

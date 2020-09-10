@@ -65,7 +65,9 @@ window.onload = function(){
     client_hash_node = await ask(`await make( APP.createHash('WorkspaceHash_', 30) );`);
     if(!!client_hash_node){
       await ask(`await cd("${client_hash_node.key}");`);
-      await ask(`await make("created_at");`);
+      node = await ask(`await make("created_at");`);
+      test = await ask(`await set({value: APP.s_date()}, ${JSON.stringify(node)});`);
+      console.log(test);
     }
 
     // workspace build
