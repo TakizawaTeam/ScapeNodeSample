@@ -57,6 +57,16 @@
   (async function(){
     const Import = global['command']['Component'];
 
+    // window session
+    await ask(`await checkout('system');`);
+    await ask(`await cd("session");`);
+    component_hash_node = await ask(`await make( APP.createHash('WorkspaceComponent_', 30) );`);
+    if(!!component_hash_node){
+      await ask(`await cd("${component_hash_node.key}");`);
+      node = await ask(`await make("created_at");`);
+      test = await ask(`await set({value: APP.s_date()}, ${JSON.stringify(node)});`);
+    }
+
     // window header
     const component = document.querySelector(".Window:last-child");
     const header = await Import('Component:Header');
@@ -124,10 +134,6 @@
       attriblutes: true,
       attributeFilter: ["style"]
     });
-
-    // セッションにコンポーネント追加
-    await checkout("system");
-
   })();
   </script>
 

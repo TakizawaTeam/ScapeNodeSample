@@ -9,6 +9,7 @@
 
       if(!cmd_args[0]) return false;
       dom = await importNode(`workspace/component/${cmd_args[0]}`);
+
       dom.addEventListener('click', function(e){ //Componentのクリック時
         _target = e.currentTarget;
         if(_target.classList.contains("object")){
