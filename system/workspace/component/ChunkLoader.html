@@ -94,6 +94,7 @@
       v.style.top = `${cursor_point.y}px`;
     });
   };
+
   changeLatticeSize();
   setLatticePosition(0,0);
   setObjectPosition([gz], 0-parseInt(gz.clientWidth)/2, 0-parseInt(gz.clientHeight)/2);
@@ -118,22 +119,18 @@
     lattice_c.style.cursor = 'default';
   });
   document.addEventListener('mousedown', function(e){
-    if(!!e.target.closest(".object")){
+    const drag_object = e.target.closest(".object");
+    if(!!drag_object && e.target.classList.contains("drag_area")){
       focus_drag_flag = true;
     }
   });
   document.addEventListener('mouseup', function(e){
-    if(!!e.target.closest(".object")){
-      focus_drag_flag = false;
-    }
+    focus_drag_flag = false;
   });
   document.addEventListener('mouseleave', function(e){
-    if(!!e.target.closest(".object")){
-      focus_drag_flag = false;
-    }else{
-      drag_flag = false;
-      lock_drag_flag = false;
-    }
+    focus_drag_flag = false;
+    drag_flag = false;
+    lock_drag_flag = false;
     lattice_c.style.cursor = 'default';
   });
 
