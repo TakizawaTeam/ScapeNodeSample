@@ -121,6 +121,7 @@
   document.addEventListener('mousedown', function(e){
     const drag_object = e.target.closest(".object");
     if(!!drag_object && e.target.classList.contains("drag_area")){
+      if(!drag_object.classList.contains("focus")) drag_object.classList.add("focus"); //なぜかfocusされない為
       focus_drag_flag = true;
     }
   });
