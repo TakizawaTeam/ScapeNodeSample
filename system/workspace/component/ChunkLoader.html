@@ -87,11 +87,11 @@
       obj.style.top = `${parseInt(obj.style.top)+y}px`;
     }
   };
-  moveFocusObject = function(cursor_point){
+  moveFocusObject = function(cursor_point, move){
     const focus_object = document.querySelectorAll(".component.object.focus");
     focus_object.forEach(function(v){
-      v.style.left = `${cursor_point.x}px`;
-      v.style.top = `${cursor_point.y}px`;
+      v.style.left = `${parseInt(v.style.left) + move.x}px`;
+      v.style.top = `${parseInt(v.style.top) + move.y}px`;
     });
   };
 
@@ -150,8 +150,10 @@
 
   document.addEventListener('mousemove', function(e){
     if(focus_drag_flag){
-      moveFocusObject({x: e.clientX, y: e.clientY});
-
+      moveFocusObject(
+        {x: e.clientX, y: e.clientY},
+        {x: e.movementX, y: e.movementY}
+      );
     }else if(drag_flag || lock_drag_flag){
       move.x = e.movementX;
       move.y = e.movementY;
