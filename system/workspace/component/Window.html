@@ -126,7 +126,6 @@
       );
     });
     const observer = new MutationObserver(() => { //component resize
-        console.log(component.style.width, component.style.height);
         w_size_input.value = parseInt(component.clientWidth);
         h_size_input.value = parseInt(component.clientHeight);
     });
@@ -175,7 +174,7 @@
         <div class="area">
           <div class="title">Area</div>
           <div class="content">
-            <div>content...</div>
+            <div>content...</div>　
           </div>
         </div>
       </div>

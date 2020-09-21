@@ -49,6 +49,7 @@
   lattice = [];
   drag_flag = false;
   lock_drag_flag = false;
+  focus_drag_flag = false;
 
   const lattice_a = document.querySelector("#ChunkLoader .layer.lattice_a");
   const lattice_b = document.querySelector("#ChunkLoader .layer.lattice_b");
@@ -86,8 +87,12 @@
       obj.style.top = `${parseInt(obj.style.top)+y}px`;
     }
   };
-  touchMoveObject = function(target){
-
+  moveFocusObject = function(cursor_point){
+    const focus_object = document.querySelectorAll(".component.object.focus");
+    focus_object.forEach(function(v){
+      v.style.left = `${cursor_point.x}px`;
+      v.style.top = `${cursor_point.y}px`;
+    });
   };
   changeLatticeSize();
   setLatticePosition(0,0);
@@ -105,20 +110,34 @@
   // drag
   lattice_c.addEventListener('mousedown', function(e){
     drag_flag = true;
-    lattice_c.style.cursor = 'move';
     pre.x=e.clientX; pre.y=e.clientY;
+    lattice_c.style.cursor = 'move';
   });
   lattice_c.addEventListener('mouseup', function(e){
     drag_flag = false;
     lattice_c.style.cursor = 'default';
   });
+  document.addEventListener('mousedown', function(e){
+    if(!!e.target.closest(".object")){
+      focus_drag_flag = true;
+    }
+  });
+  document.addEventListener('mouseup', function(e){
+    if(!!e.target.closest(".object")){
+      focus_drag_flag = false;
+    }
+  });
   document.addEventListener('mouseleave', function(e){
-    drag_flag = false;
-    lock_drag_flag = false;
+    if(!!e.target.closest(".object")){
+      focus_drag_flag = false;
+    }else{
+      drag_flag = false;
+      lock_drag_flag = false;
+    }
     lattice_c.style.cursor = 'default';
   });
 
-  // lock_drag
+  // ctrl drag
   document.addEventListener('keydown', function(e){
     if(e.ctrlKey){
       lock_drag_flag = true;
@@ -133,7 +152,10 @@
   });
 
   document.addEventListener('mousemove', function(e){
-    if(drag_flag || lock_drag_flag){
+    if(focus_drag_flag){
+      moveFocusObject({x: e.clientX, y: e.clientY});
+
+    }else if(drag_flag || lock_drag_flag){
       move.x = e.movementX;
       move.y = e.movementY;
       point.x += move.x;
