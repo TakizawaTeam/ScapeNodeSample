@@ -47,9 +47,9 @@
   initLattice = null;
   setPosition = null;
   lattice = [];
-  drag_flag = false;
+  drag_flag = false; //座標移動用のドラッグ
   lock_drag_flag = false;
-  focus_drag_flag = false;
+  focus_drag_flag = false; //focus対象のドラッグ
 
   const lattice_a = document.querySelector("#ChunkLoader .layer.lattice_a");
   const lattice_b = document.querySelector("#ChunkLoader .layer.lattice_b");
@@ -120,9 +120,14 @@
   });
   document.addEventListener('mousedown', function(e){
     const drag_object = e.target.closest(".object");
-    if(!!drag_object && e.target.classList.contains("drag_area")){
-      if(!drag_object.classList.contains("focus")) drag_object.classList.add("focus"); //なぜかfocusされない為
-      focus_drag_flag = true;
+
+    // focusクラスを設定
+    document.querySelectorAll(".component.object").forEach(d=>{ //解除
+      if(d.classList.contains("focus")) d.classList.remove("focus");
+    });
+    if(!!drag_object){
+      drag_object.classList.add("focus"); // 設定
+      if(e.target.classList.contains("drag_area")) focus_drag_flag = true;
     }
   });
   document.addEventListener('mouseup', function(e){
