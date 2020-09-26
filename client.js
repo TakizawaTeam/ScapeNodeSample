@@ -74,8 +74,8 @@ window.onload = function(){
     await importNode("workspace/component/ChunkLoader");
     await importNode("workspace/component/ServerLine");
     updateServerLine(true);
+    await importNode("workspace/component/KeyManager");
     await importNode("workspace/component/CommandPalette"); //原因不明だが最後でないと失敗する
-    //await importNode("workspace/component/KeyManager");
   };
   server.onclose = async function(e){
     opened=false; console.log(`${URL} disconnected!`);  // 切断及びログ出力

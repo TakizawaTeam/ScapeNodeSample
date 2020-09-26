@@ -122,9 +122,15 @@
     const drag_object = e.target.closest(".object");
 
     // focusクラスを設定
-    document.querySelectorAll(".component.object").forEach(d=>{ //解除
-      if(d.classList.contains("focus")) d.classList.remove("focus");
-    });
+    const KeyManager = document.querySelector('#KeyManager');
+    const shift_down = KeyManager.var.check("Shift");
+    if(!shift_down){
+      if(!drag_object || !drag_object.classList.contains("focus")){
+        document.querySelectorAll(".component.object").forEach(d=>{ //全解除
+          if(d.classList.contains("focus")) d.classList.remove("focus");
+        });
+      }
+    }
     if(!!drag_object){
       drag_object.classList.add("focus"); // 設定
       if(e.target.classList.contains("drag_area")) focus_drag_flag = true;
