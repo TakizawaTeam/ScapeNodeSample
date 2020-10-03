@@ -70,13 +70,11 @@
       node = await ask(`await make("created_at");`);
       test = await ask(`await set({value: APP.s_date()}, ${JSON.stringify(node)});`);
     }
-    test1 = await ask(`await make("test1");`);
-    await ask(`await set("test1-document", ${JSON.stringify(test1)});`);
-    test2 = await ask(`await make("test2");`);
-    await ask(`await set("test2-document", ${JSON.stringify(test2)});`);
+
 
     // window header
     const header = await Import('Component:Header');
+    header.querySelector(".menu").innerText = component.node.key;
     header.querySelector(".controller").addEventListener('click', function(){
       component.classList.remove('icon_tab');
     });
@@ -107,6 +105,7 @@
     // node editor
     await ask(`await checkout('system');`);
     await ask(`await cd("session/${component.node.key}");`);
+    // child_names
     const child_node_names = (await ask(`await ls();`)).split(' ');
     f = document.createDocumentFragment();
     for(let k in child_node_names){
@@ -116,11 +115,15 @@
       f.appendChild(link);
     }
     const setting_node = component.querySelector(".body .setting .core .node");
-    console.log(component);
-    console.log(setting_node);
-    console.log(setting_node.querySelector(".child_nodes"));
     setting_node.querySelector(".child_nodes").appendChild(f);
-
+    // path
+    setting_node.querySelector(".path").value = await ask(`await pwd();`);
+    // editor
+    if(!!child_node_names.length){
+      setting_node.querySelector(".value").setAttribute('disabled', '');
+    }else{
+      setting_node.querySelector(".value").value = await ask(`await cat();`);
+    }
 
     // window scale resize
     const setting_core = component.querySelector(".body .setting .core");
@@ -189,8 +192,8 @@
           <div class="title">node</div>
           <div class="content">
             <div class="child_nodes"></div>
-            <div><input type="text" style="width:100%;"/></div>
-            <div><textarea style="width:100%;resize:vertical;"></textarea></div>
+            <div><input type="text" class="path" style="width:100%;"/></div>
+            <div><textarea class="value" style="width:100%;resize:vertical;"></textarea></div>
             <div><input type="button" value="edit" style="width:100%;"/></div>
           </div>
         </div>
