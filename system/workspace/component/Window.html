@@ -2,7 +2,7 @@
 <div class="Window component object">
 
   <style>
-  .Window{
+  #main > .Window{
     width: calc(150px - 2px);
     height: calc(150px - 2px);
     min-width: 150px;
@@ -12,63 +12,70 @@
     resize: both;
     overflow: hidden;
   }
-  .Window.icon_tab{
+  #main > .Window.icon_tab{
     height: 19px !important;
     resize: horizontal;
   }
-  .Window .body{
+  #main > .Window .body{
     width: 100%;
     height: calc(100% - 20px);
   }
-  .Window .body .setting{
+  #main > .Window .body .setting{
     margin-top: 3px;
     background-color: #888;
     width: 100%;
     height: calc(100% - 3px);
   }
-  .Window .body .setting .page{
+  #main > .Window .body .setting .page{
     font-size: 10px;
     padding: 3px;
     width: calc(100% - 6px);
     height: calc(100% - 3px);
     overflow: scroll;
   }
-  .Window .body .setting .page .area{
+  #main > .Window .body .setting .page .area{
     /* border: solid 1px; */
     padding: 1px;
     margin-bottom: 3px;
   }
-  .Window .body .setting .page .title{}
-  .Window .body .setting .page .area .title{
+  #main > .Window .body .setting .page .title{}
+  #main > .Window .body .setting .page .area .title{
     border-bottom: solid 1px;
     margin-left: 5px;
     margin-right: 5px;
     margin-bottom: 5px;
   }
-  .Window .body .setting .page .area .content{
+  #main > .Window .body .setting .page .area .content{
     padding-left: 5px;
   }
-  .Window .body .setting .page .area .content div{
+  #main > .Window .body .setting .page .area .content div{
     margin-bottom: 1px;
+  }
+  #main > .Window .body .setting .page .area .content .child_nodes > a{
+    margin-right: 3px;
   }
   </style>
 
   <script>
   (async function(){
     const Import = global['command']['Component'];
+    const component = document.querySelector(".Window:last-child");
 
     // window session
     await ask(`await checkout('system');`);
     await ask(`await cd("session");`);
-    component_hash_node = await ask(`await make( APP.createHash('WorkspaceComponent_', 30) );`);
-    if(!!component_hash_node){
-      await ask(`await cd("${component_hash_node.key}");`);
+    component.node = await ask(`await make( APP.createHash('WorkspaceComponent_', 30) );`);
+    if(!!component.node){
+      await ask(`await cd("${component.node.key}");`);
       node = await ask(`await make("created_at");`);
       test = await ask(`await set({value: APP.s_date()}, ${JSON.stringify(node)});`);
     }
+    test1 = await ask(`await make("test1");`);
+    await ask(`await set("test1-document", ${JSON.stringify(test1)});`);
+    test2 = await ask(`await make("test2");`);
+    await ask(`await set("test2-document", ${JSON.stringify(test2)});`);
 
     // window header
-    const component = document.querySelector(".Window:last-child");
     const header = await Import('Component:Header');
     header.querySelector(".controller").addEventListener('click', function(){
       component.classList.remove('icon_tab');
@@ -98,10 +105,9 @@
     component.querySelector(".body .setting .core .window").appendChild(f);
 
     // node editor
-    const setting_node = component.querySelector(".body .setting .core .node");
     await ask(`await checkout('system');`);
-    await ask(`await cd("session/${component_hash_node.key}");`);
-    const child_node_names = (await ask(`await childs();`)).split(' ');
+    await ask(`await cd("session/${component.node.key}");`);
+    const child_node_names = (await ask(`await ls();`)).split(' ');
     f = document.createDocumentFragment();
     for(let k in child_node_names){
       const link = document.createElement('a');
@@ -109,7 +115,12 @@
       link.innerText = child_node_names[k];
       f.appendChild(link);
     }
-    setting_node.querySelector('child_nodes').appendChild(f);
+    const setting_node = component.querySelector(".body .setting .core .node");
+    console.log(component);
+    console.log(setting_node);
+    console.log(setting_node.querySelector(".child_nodes"));
+    setting_node.querySelector(".child_nodes").appendChild(f);
+
 
     // window scale resize
     const setting_core = component.querySelector(".body .setting .core");
