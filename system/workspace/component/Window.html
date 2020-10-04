@@ -12,6 +12,7 @@
     resize: both;
     overflow: hidden;
   }
+  #main > .Window.focus{border-color: #00F;}
   #main > .Window.icon_tab{
     height: 19px !important;
     resize: horizontal;
@@ -22,7 +23,7 @@
   }
   #main > .Window .body .setting{
     margin-top: 3px;
-    background-color: #888;
+    background-color: #AAA;
     width: 100%;
     height: calc(100% - 3px);
   }
@@ -117,7 +118,8 @@
     const setting_node = component.querySelector(".body .setting .core .node");
     setting_node.querySelector(".child_nodes").appendChild(f);
     // path
-    setting_node.querySelector(".path").value = await ask(`await pwd();`);
+    component.current = await ask(`await pwd();`);
+    setting_node.querySelector(".path").value = component.current;
     // editor
     if(!!child_node_names.length){
       setting_node.querySelector(".value").setAttribute('disabled', '');
