@@ -155,8 +155,10 @@
       );
     });
     const observer = new MutationObserver(() => { //component resize
-        w_size_input.value = parseInt(component.clientWidth);
-        h_size_input.value = parseInt(component.clientHeight);
+      x_pos_input.value = parseInt(component.style.left) - point.x;
+      y_pos_input.value = parseInt(component.style.top) - point.y;
+      w_size_input.value = parseInt(component.clientWidth);
+      h_size_input.value = parseInt(component.clientHeight);
     });
     observer.observe(component, {
       attriblutes: true,
