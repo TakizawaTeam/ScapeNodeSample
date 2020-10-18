@@ -6,13 +6,14 @@ let global = {
     command: {},
   },
 };
-const importNode = async (path, dom=document.querySelector("#main"))=>{ // NodeのPathから取り込み
+const importNode = async (path, args=null, dom=document.querySelector("#main"))=>{ // NodeのPathから取り込み
   await ask(`await checkout("system");`);
   await ask(`await cd("${path}");`);
   const el_str = await ask(`await cat();`);
   dom.insertAdjacentHTML('beforeend', el_str);
 
   const import_dom = dom.lastElementChild;
+  import_dom.var = {args: args}; //読み込み時のパラメータ
   for(let script of import_dom.querySelectorAll("script")){ // innerHTMLでは実行されない為js再配置
     var new_script = document.createElement('script');
     new_script.innerHTML = script.innerHTML;

@@ -54,6 +54,7 @@
   }
   #main > .Window .body .setting .page .area .content .child_nodes > a{
     margin-right: 3px;
+    word-break: break-all;
   }
   </style>
 
@@ -62,16 +63,25 @@
     const Import = global['command']['Component'];
     const component = document.querySelector(".Window:last-child");
 
-    // window session
-    await ask(`await checkout('system');`);
-    await ask(`await cd("session");`);
-    component.node = await ask(`await make( APP.createHash('WorkspaceComponent_', 30) );`);
-    if(!!component.node){
-      await ask(`await cd("${component.node.key}");`);
-      node = await ask(`await make("created_at");`);
-      test = await ask(`await set({value: APP.s_date()}, ${JSON.stringify(node)});`);
+    // window node
+    const node_access = async function(path){
+      const branch = path.split('/');
+      await ask(`await checkout('${branch[0]}');`);
+      component.node = await ask(`await cd("${branch.splice(1).join('/')}");`);
     }
-
+    if(!!component.var && component.var.args.length>=2){
+      await node_access(component.var.args[1]);
+    }else{ // window session
+      await ask(`await checkout('system');`);
+      await ask(`await cd("session");`);
+      component.node = await ask(`await make( APP.createHash('WorkspaceComponent_', 30) );`);
+      if(!!component.node){
+        await ask(`await cd("${component.node.key}");`);
+        node = await ask(`await make("created_at");`);
+        test = await ask(`await set({value: APP.s_date()}, ${JSON.stringify(node)});`);
+      }
+    }
+    component.current = await ask(`await pwd();`);
 
     // window header
     const header = await Import('Component:Header');
@@ -104,8 +114,9 @@
     component.querySelector(".body .setting .core .window").appendChild(f);
 
     // node editor
-    await ask(`await checkout('system');`);
-    await ask(`await cd("session/${component.node.key}");`);
+    const setting_node = component.querySelector(".body .setting .core .node");
+    await node_access(component.current);
+    setting_node.querySelector(".path").value = component.current;
     // child_names
     const child_node_names = (await ask(`await ls();`)).split(' ');
     f = document.createDocumentFragment();
@@ -115,11 +126,7 @@
       link.innerText = child_node_names[k];
       f.appendChild(link);
     }
-    const setting_node = component.querySelector(".body .setting .core .node");
     setting_node.querySelector(".child_nodes").appendChild(f);
-    // path
-    component.current = await ask(`await pwd();`);
-    setting_node.querySelector(".path").value = component.current;
     // editor
     if(!!child_node_names.length){
       setting_node.querySelector(".value").setAttribute('disabled', '');

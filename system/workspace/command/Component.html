@@ -8,9 +8,7 @@
       cmd_args = cmd.split(' ');
 
       if(!cmd_args[0]) return false;
-      const dom_node = await importNode(`workspace/component/${cmd_args[0]}`);
-      dom_node.var = {args: cmd_args};
-      return dom_node;
+      return await importNode(`workspace/component/${cmd_args[0]}`, cmd_args);
     }
 
     // コマンドパレットに表示する一覧を返す
