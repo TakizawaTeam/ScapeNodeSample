@@ -94,9 +94,9 @@
     // window body
     // main buttons
     let f = document.createDocumentFragment();
-    f.appendChild( await global['command']['Component']('Component:Button') );
-    f.appendChild( await global['command']['Component']('Component:Button') );
-    f.appendChild( await global['command']['Component']('Component:Button') );
+    f.appendChild( await Import('Component:Button') );
+    f.appendChild( await Import('Component:Button') );
+    f.appendChild( await Import('Component:Button') );
     [['alert','close'], ['warn','hide'], ['safe','fix']].map((c,i)=>{
       f.children[i].classList.add(c[0], c[1]);
     });
@@ -117,16 +117,24 @@
     const setting_node = component.querySelector(".body .setting .core .node");
     await node_access(component.current);
     setting_node.querySelector(".path").value = component.current;
+    
     // child_names
     const child_node_names = (await ask(`await ls();`)).split(' ');
+    child_node_names.unshift('..');
+
     f = document.createDocumentFragment();
     for(let k in child_node_names){
       const link = document.createElement('a');
       link.href = '#';
+      link.setAttribute('path', `${component.current}/${child_node_names[k]}`);
+      link.addEventListener('click', async function(e){
+        await Import(`Component:Window ${e.target.getAttribute('path')}`);
+      });
       link.innerText = child_node_names[k];
       f.appendChild(link);
     }
     setting_node.querySelector(".child_nodes").appendChild(f);
+
     // editor
     if(!!child_node_names.length){
       setting_node.querySelector(".value").setAttribute('disabled', '');
@@ -202,8 +210,9 @@
         <div class="area node">
           <div class="title">node</div>
           <div class="content">
-            <div class="child_nodes"></div>
             <div><input type="text" class="path" style="width:100%;"/></div>
+            <div class="child_nodes"></div>
+            <div><input type="text" class="current_path" style="width:100%;" disabled/></div>
             <div><textarea class="value" style="width:100%;resize:vertical;"></textarea></div>
             <div><input type="button" value="edit" style="width:100%;"/></div>
           </div>
