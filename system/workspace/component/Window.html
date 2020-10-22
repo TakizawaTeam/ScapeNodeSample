@@ -117,7 +117,7 @@
     const setting_node = component.querySelector(".body .setting .core .node");
     await node_access(component.current);
     setting_node.querySelector(".path").value = component.current;
-    
+
     // child_names
     const child_node_names = (await ask(`await ls();`)).split(' ');
     child_node_names.unshift('..');
@@ -128,7 +128,13 @@
       link.href = '#';
       link.setAttribute('path', `${component.current}/${child_node_names[k]}`);
       link.addEventListener('click', async function(e){
-        await Import(`Component:Window ${e.target.getAttribute('path')}`);
+        const child_node_window = await Import(`Component:Window ${e.target.getAttribute('path')}`);
+        child_node_window.style.width = component.style.width;
+        child_node_window.style.height = component.style.height;
+        setObjectPosition( [child_node_window],
+          parseInt(component.style.left) + parseInt(component.style.width),
+          parseInt(component.style.top)
+        );
       });
       link.innerText = child_node_names[k];
       f.appendChild(link);
