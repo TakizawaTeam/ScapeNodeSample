@@ -1,0 +1,50 @@
+<script>
+  (()=>{
+    let resources = 0;
+    let actors = [];
+    const actor_model = {hash: '', life: 10, resource: 10};
+    const CreateHash = (prefix, num)=>{
+      var h = '';
+      while( h.length<num ) h+="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[parseInt(Math.random()*62)];
+      return `${prefix}${h}`;
+    };
+    const CreateActor = ()=>{
+      data = Object.assign({}, actor_model);
+      data.hash = CreateHash('Actor_', 10);
+      actors.push(data);
+    };
+    const Give = a=>{a.resource-=1;resources+=1;};
+    const Take = a=>{resources-=1;a.life+=1;};
+
+    const init = ()=>{
+      for(let i=0;i<10;i++) CreateActor();
+    };
+    init();
+    const render = ()=>{
+      // 検証データ
+      R = resources; //社会リソース
+      L = actors.length //社会ライフ
+      RS = !actors.length ? 0 : actors.map(a=>a.resource).reduce((p,c)=>p+c); //合計リソース
+      RA = !actors.length ? 0 : parseInt(RS/actors.length); //平均リソース
+      LS = !actors.length ? 0 : actors.map(a=>a.life).reduce((p,c)=>p+c); //合計ライフ
+      LA = !actors.length ? 0 : parseInt(LS/actors.length); //平均ライフ
+      console.log(`R:${R},L:${L},RS:${RS},RA:${RA},LS:${LS},LA:${LA}`);
+
+      // 事象
+      for(let k in actors){
+        actors[k].life -= 1; //生命力処理
+        if(actors[k].resource < 10) actors[k].resource += 1; //エネルギー処理
+        if(actors[k].life <= 0){ // 削除処理
+          console.log(`dead ${actors[k].hash}.`);
+          actors[k] = null;
+        }
+      }
+      actors = actors.filter(v=>v); // 死亡処理
+
+      for(let k in actors){Give(actors[k]);}
+      resources += parseInt(actors.length); // 社会の生産処理
+      for(let k in actors){Take(actors[k]);}
+    };
+    setInterval(render, 2000);
+  })();
+</script>
