@@ -13,8 +13,11 @@
       data.hash = CreateHash('Actor_', 10);
       actors.push(data);
     };
-    const Give = a=>{a.resource-=1;resources+=1;};
-    const Take = a=>{resources-=1;a.life+=1;};
+    // Acter1主体のリソース処理
+    const Give = a1=>{a1.resource -= 1; resources += 1;};
+    const Take = a1=>{resources -= 1; a1.life += 1; };
+    const GiveAway = (a1,a2)=>{a1.resource -= 1; a2.resource += 1;};
+    const TakeAway = (a1,a2)=>{a2.resource -= 1; a1.life += 1;};
 
     const init = ()=>{
       for(let i=0;i<10;i++) CreateActor();
@@ -24,11 +27,11 @@
       // 検証データ
       R = resources; //社会リソース
       L = actors.length //社会ライフ
-      RS = !actors.length ? 0 : actors.map(a=>a.resource).reduce((p,c)=>p+c); //合計リソース
-      RA = !actors.length ? 0 : parseInt(RS/actors.length); //平均リソース
       LS = !actors.length ? 0 : actors.map(a=>a.life).reduce((p,c)=>p+c); //合計ライフ
       LA = !actors.length ? 0 : parseInt(LS/actors.length); //平均ライフ
-      console.log(`R:${R},L:${L},RS:${RS},RA:${RA},LS:${LS},LA:${LA}`);
+      RS = !actors.length ? 0 : actors.map(a=>a.resource).reduce((p,c)=>p+c); //合計リソース
+      RA = !actors.length ? 0 : parseInt(RS/actors.length); //平均リソース
+      console.log(`R:${R},L:${L},LS:${LS},LA:${LA},RS:${RS},RA:${RA}`);
 
       // 事象
       for(let k in actors){
