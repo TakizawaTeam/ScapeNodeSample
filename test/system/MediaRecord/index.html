@@ -1,0 +1,21 @@
+<script>
+let download_link = document.createElement('a');
+
+// 最初の動画要素取得(Youtube等)
+let video = document.getElementsByTagName('video')[0];
+let stream = video.captureStream();
+
+recorder = new MediaRecorder(stream, {mimeType:'video/webm;codecs=vp9'});
+recorder.ondataavailable = function(e) {
+  var videoBlob = new Blob([e.data], { type: e.data.type });
+  blobUrl = window.URL.createObjectURL(videoBlob);
+  download_link.download = `output.webm`;
+  download_link.href = blobUrl;
+  download_link.click();
+}
+
+// 録画開始
+start=()=>recorder.start();
+// 録画終了
+stop=()=>recorder.stop();
+</script>
