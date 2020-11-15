@@ -1,0 +1,24 @@
+<script>
+let download_link = document.createElement('a');
+
+// 最初の音声要素取得
+let audio = document.getElementsByTagName('audio')[0];
+navigator.mediaDevices.getUserMedia({ audio: true })
+.then(stream => {
+  recorder = new MediaRecorder(stream, {mimeType:'audio/webm;'});
+  recorder.ondataavailable = function(e) {
+    var audioBlob = new Blob([e.data], { type: e.data.type });
+    blobUrl = window.URL.createObjectURL(audioBlob);
+    download_link.download = `output.webm`;
+    download_link.href = blobUrl;
+    download_link.click();
+  }
+
+  recorder.start();
+})
+.catch(err => {
+  console.log("error! "+err);
+});
+
+// recorder.stop();
+</script>

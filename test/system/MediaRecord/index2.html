@@ -1,0 +1,21 @@
+<script>
+let download_link = document.createElement('a');
+
+// 最初の音声要素取得
+let audio = document.getElementsByTagName('audio')[0];
+let stream = audio.captureStream();
+
+recorder = new MediaRecorder(stream, {mimeType:'audio/webm;'});
+recorder.ondataavailable = function(e) {
+  var audioBlob = new Blob([e.data], { type: e.data.type });
+  blobUrl = window.URL.createObjectURL(audioBlob);
+  download_link.download = `output.webm`;
+  download_link.href = blobUrl;
+  download_link.click();
+}
+
+// 録画開始
+start=()=>recorder.start();
+// 録画終了
+stop=()=>recorder.stop();
+</script>
