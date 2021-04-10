@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r124/three.min.js" integrity="sha512-jeYvJdyAYkpQCY/omvCYQo89qA5YxDW4JBT7COPsHT2sOAanwxkZRFeP9gc69b5reSDpZIoyCqZQZcWZkbB5Gw==" crossorigin="anonymous"></script>
+		<script>
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+      // Cube
+		  geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+			material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+
+      // LineCube
+      r = 1;
+      geometry = new THREE.BoxGeometry(r,r,r);
+      material = new THREE.MeshBasicMaterial();
+      box = new THREE.Mesh(geometry,material);
+      //BoxHelperを生成
+      frameBox = new THREE.BoxHelper(box,0xFFFFFF);
+      scene.add(frameBox);
+
+      // Line
+      // https://www.pentacreation.com/blog/2020/07/200704.html
+      points = [];
+      points.push( new THREE.Vector3( 1, 0, 0 ) );
+      points.push( new THREE.Vector3( 0, 1, 0 ) );
+      points.push( new THREE.Vector3( -1, 0, 0 ) );
+      points.push( new THREE.Vector3( 0, -1, 0 ) );
+      points.push( new THREE.Vector3( 1, 0, 0 ) );
+
+      geometry = new THREE.BufferGeometry().setFromPoints( points );
+      line = new THREE.Line( geometry, material );
+      scene.add( line );
+
+			camera.position.z = 5;
+
+			const animate = function () {
+				requestAnimationFrame( animate );
+
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+        line.rotation.y += 0.01;
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+	</body>
+</html>
