@@ -17,3 +17,13 @@ class MyWritable extends Writable{
 }
 
 src.pipe( new MyWritable('dest.txt','utf8',function(){}) );
+
+
+
+/*
+const fs = require('fs');
+const rl = require('readline');
+
+const rl = rl.createInterface({input: fs.createReadStream('./input.csv')});
+rl.on('line', (str)=>console.log(str));
+*/
