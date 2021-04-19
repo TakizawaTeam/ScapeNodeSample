@@ -15,3 +15,22 @@ nohup node app.js > out.log 2> error.log &
 
 #### 作成時の注意点
 https://yakst.com/ja/posts/31
+
+
+#### zsh
+```
+PS1="%1~ %(!.#.%%) "
+setopt interactivecomments
+HISTSIZE=1000000
+SAVEHIST=1000000
+
+mkdircd(){ mkdir $1;cd $1; }
+zpu(){ source ~/.zprofile }
+zpe(){ vi ~/.zprofile && zpu }
+```
+
+
+#### 環境変数一覧
+```
+printenv
+```
