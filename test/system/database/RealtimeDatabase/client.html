@@ -1,13 +1,17 @@
 <head></head>
 <body>
-  <input type="text" placeholder="入力してください"/>
+  <input type="text" placeholder="入力してください" style="width:100%;"/>
+  <div id="messages"></div>
 
   <script>
   let server = null;
   window.onload = function(){
     server = new WebSocket(`ws://localhost:5002/`);
+    messages = document.querySelector('#messages');
     server.onmessage = function(e){
-      console.log(e.data);
+      message = document.createElement('div');
+      message.innerText = e.data;
+      messages.prepend(message);
     }
     server.onopen = async function(e){
       console.log('open ws!');
