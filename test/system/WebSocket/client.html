@@ -1,0 +1,27 @@
+<head></head>
+<body>
+  <input type="text" placeholder="入力してください"/>
+  <input type="button" value="送信"/>
+
+  <script>
+  let server = null;
+  window.onload = function(){
+    server = new WebSocket(`ws://localhost:5002/`);
+    server.onmessage = function(e){
+      console.log(e.data);
+    }
+    server.onopen = async function(e){
+      console.log('open ws!');
+    }
+    server.onclose = async function(e){
+      console.log('close ws!');
+    }
+
+    input = document.querySelector('input[type=text]');
+    button = document.querySelector('input[type=button]');
+    button.addEventListener('click', function(e){
+      server.send(input.value);
+    });
+  }
+  </script>
+</body>
