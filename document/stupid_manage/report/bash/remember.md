@@ -34,3 +34,9 @@ zpe(){ vi ~/.zprofile && zpu }
 ```
 printenv
 ```
+
+#### コミットファイル名
+```
+git log --stat
+git log --name-status
+```
