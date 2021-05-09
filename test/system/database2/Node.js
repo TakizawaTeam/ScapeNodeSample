@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const Git = require('simple-git/promise');
 
 module.exports = (async function(){
+  this.APP = await require("./Application.js");
   this.repo = null;
   this.root = null;
   this.current = null;
@@ -18,7 +19,7 @@ module.exports = (async function(){
   this.checkout = async (_path="db")=>{
     this.repo = Git(_path);
     this.root = __dirname;
-    this.current = path.resolve(__dirname, _path);
+    this.current = _path;
   };
   this.connect = async callback=>{
     try{
@@ -28,19 +29,42 @@ module.exports = (async function(){
       await this.repo.commit("db commit!");
     }catch(e){ await this.repo.clean("dfx"); }
   };
+  this.one = {
+    format: {parent:"",key:"",value:"",created_at:"",updated_at:""},
+    model: async params=>{
+      node = Object.assign({}, params);
+      node_data.created_at = APP.s_date();
+      node_data.updated_at = APP.s_date();
+      return node;
+    },
+    create: async node=>{
+      path = path.resolve(node.parent, node.key);
+      await fs.mkdir(path,{recursive:true});
+      await fs.writeFile(path.resolve(path, ".value"),value);
+    },
+    read: async node=>{},
+    update: async node=>{},
+    delete: async node=>{}
+  };
+  this.change_node = async function(_path=null){};
+  this.stat = async function(_path=null){
+    return {
+      parent: "",
+      key: "",
+      value: "",
+      created_at: "",
+      updated_at: ""
+    };
+  };
   this.childs = async function(_path=null){
     if(!_path)_path = this.current;
     return await fs.readdir(_path);
-  };
-  this.make = async function(_path=null){
-    // await fs.mkdir(_path,{recursive:true});
-    // await fs.writeFile(`${path.resolve(__dirname, _path)}/.index`,'');
   };
 
   // commands
   this.ls = async path=>(await this.childs(path)).join(' ');
   const mk = ()=>{};
-  const cd = ()=>{};
+  const cn = ()=>{};
   const set = ()=>{};
   const cat = ()=>{};
   const rm = ()=>{};
