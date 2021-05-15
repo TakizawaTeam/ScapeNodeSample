@@ -69,9 +69,32 @@ module.exports = (async function(){
       return result;
     }catch(e){ await this.repo.clean("dfx"); }
   };
+  this.one = {
+    format: {parent:"",key:"",value:"",created_at:"",updated_at:""},
+    model: async params=>{
+      node = Object.assign({}, params);
+      node_data.created_at = APP.s_date();
+      node_data.updated_at = APP.s_date();
+      return node;
+    },
+    create: async node=>{
+      path = path.resolve(node.parent, node.key);
+      await fs.mkdir(path,{recursive:true});
+      await fs.writeFile(path.resolve(path, ".value"),value);
+    },
+    read: async node=>{},
+    update: async node=>{},
+    delete: async node=>{}
+  };
   this.change_node = async function(_path=null){};
   this.stat = async function(_path=null){
-    return this.one.format;
+    return {
+      parent: "",
+      key: "",
+      value: "",
+      created_at: "",
+      updated_at: ""
+    };
   };
   this.childs = async function(_path=null){
     if(!_path) _path = this.current;
