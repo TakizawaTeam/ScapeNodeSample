@@ -20,6 +20,5 @@ module.exports = (async function(){
     while( h.length<num ) h+="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[parseInt(Math.random()*62)];
     return `${prefix}${h}`;
   };
-  this.exist = async _path=>await fs.stat(_path).catch(()=>null);
   return this;
 })();
