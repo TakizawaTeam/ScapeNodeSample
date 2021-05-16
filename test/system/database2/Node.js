@@ -16,20 +16,24 @@ module.exports = (async function(){
       return node;
     },
     exist: async _path=>await fs.stat(_path).catch(()=>null),
-    create: async obj=>{
-      _path = path.resolve(obj.parent, obj.key);
-      await fs.mkdir(_path,{recursive:true});
-      await fs.writeFile(path.resolve(_path, ".value"),obj.value);
+    list: async _path=>{
+      list = await fs.readdir(_path).catch(()=>[]);
+      return list.filter(name=>!/^\./.test(name)); //隠しファイルは非表示
     },
-    read: async obj=>{
-      node = null;
-      _path = path.resolve(obj.parent, obj.key);
+    path: node=>path.resolve(node.parent, node.key),
+    create: async node=>{
+      _path = this.one.path(node);
+      await fs.mkdir(_path,{recursive:true});
+      await fs.writeFile(path.resolve(_path, ".value"),node.value);
+    },
+    read: async node=>{
+      _path = this.one.path(node);
       stat = await fs.stat(_path).catch(()=>null);
       if(!!stat){
         value = await fs.readFile(path.join(_path, ".value"), "utf-8").catch(()=>"");
         node = Object.assign(this.one.model, {
-          parent: obj.parent,
-          key: obj.key,
+          parent: node.parent,
+          key: node.key,
           value: value,
           created_at: APP.system_date(stat["ctime"]),
           updated_at: APP.system_date(stat["mtime"])
@@ -37,8 +41,8 @@ module.exports = (async function(){
       }
       return node;
     },
-    update: async obj=>{},
-    delete: async obj=>{}
+    update: async node=>{},
+    delete: async node=>{}
   };
   this.initialize =  async (_path="Database")=>{
     if(await this.one.exist(_path)) return null;
@@ -69,9 +73,17 @@ module.exports = (async function(){
       return result;
     }catch(e){ await this.repo.clean("dfx"); }
   };
-  this.childs = async function(_path=null){
-    if(!_path) _path = this.current;
-    return await fs.readdir(_path);
+  this.childs = async function(node=null){
+    if(!node) node = this.current;
+    _path = this.one.path(node);
+    return this.one.list(_path);
+  };
+
+  // commands
+  this.ls = async _path=>(await this.childs()).join(" ");
+  this.mk = async _path=>{};
+  this.cd = async _path=>{
+    console.log("run Node.cd");
   };
   return this;
 })();
