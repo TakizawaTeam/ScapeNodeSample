@@ -7,6 +7,8 @@ module.exports = (async function(){
   this.repo = null;
   this.root = null;
   this.current = null;
+
+  // 絶対パス変換とノード操作
   this.one = {
     format: {parent:"",key:"",value:"",created_at:"",updated_at:""},
     model: params=>{
@@ -22,9 +24,11 @@ module.exports = (async function(){
     },
     path: node=>path.resolve(node.parent, node.key),
     create: async node=>{
-      _path = this.one.path(node);
+      root_path = this.one.path(this.root);
+      _path = path.join(root_path, `${node.parent}/${node.key}`);
       await fs.mkdir(_path,{recursive:true});
       await fs.writeFile(path.resolve(_path, ".value"),node.value);
+      return this.one.read(node);
     },
     read: async node=>{
       _path = this.one.path(node);
@@ -73,17 +77,29 @@ module.exports = (async function(){
       return result;
     }catch(e){ await this.repo.clean("dfx"); }
   };
-  this.childs = async function(node=null){
-    if(!node) node = this.current;
-    _path = this.one.path(node);
+
+  // ノード変換
+  this.create = async function(_path=null){
+    if(!_path) return null;
+    nodes = _path.split("/");
+    key = nodes.pop();
+    node = this.one.model({parent: nodes.join("/"), key: key});
+    return this.one.create(node);
+  };
+  this.childs = async function(_path=null){
+    if(!_path) _path = this.one.path(this.current);
     return this.one.list(_path);
   };
 
-  // commands
-  this.ls = async _path=>(await this.childs()).join(" ");
-  this.mk = async _path=>{};
+  // commands 相対パス引き渡し
+  this.ls = async _path=>(await this.childs(_path)).join(" ");
+  this.mk = async _path=>await this.create(_path);
   this.cd = async _path=>{
     console.log("run Node.cd");
   };
   return this;
 })();
+
+/* TODO バグをコードに直接リストアップ
+* rootのnode直下にmkすると、currentが何故か書き換わる
+*/
