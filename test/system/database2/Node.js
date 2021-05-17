@@ -8,7 +8,7 @@ module.exports = (async function(){
   this.root = null;
   this.current = null;
 
-  // 絶対パス変換とノード操作
+  // 絶対パスへの変換とノード操作
   this.one = {
     format: {parent:"",key:"",value:"",created_at:"",updated_at:""},
     model: params=>{
@@ -78,25 +78,31 @@ module.exports = (async function(){
     }catch(e){ await this.repo.clean("dfx"); }
   };
 
-  // ノード変換
-  this.create = async function(_path=null){
+  // ノード変換(相対パス)
+  this.create = async function(_path=null){ // mk
     if(!_path) return null;
     nodes = _path.split("/");
     key = nodes.pop();
     node = this.one.model({parent: nodes.join("/"), key: key});
     return this.one.create(node);
   };
-  this.childs = async function(_path=null){
+  this.childs = async function(_path=null){ // ls
     if(!_path) _path = this.one.path(this.current);
     return this.one.list(_path);
+  };
+  this.change_node = async function(_path=null){ // cn
+    if(!_path) return null;
+    nodes = _path.split("/");
+    key = nodes.pop();
+    node = this.one.model({parent: nodes.join("/"), key: key});
+    if(!node) return null;
+    return this.current = node;
   };
 
   // commands 相対パス引き渡し
   this.ls = async _path=>(await this.childs(_path)).join(" ");
   this.mk = async _path=>await this.create(_path);
-  this.cd = async _path=>{
-    console.log("run Node.cd");
-  };
+  this.cn = async _path=>await this.change_node(_path);
   return this;
 })();
 
