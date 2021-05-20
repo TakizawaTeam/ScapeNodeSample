@@ -5,10 +5,39 @@ const Git = require('simple-git/promise');
 module.exports = (()=>{
   this.root = null;
   this.current = null;
-  this.checkout = _path=>{
+
+  // database
+  this.initialize = async (_paht="Database")=>{
+    _path = this.path(_path);
+    if(!await this.exist(_path)) this.make(_path);
+    this.repo = Git(_path);
+    await this.repo.init();
+    await this.repo.add('.value');
+    await this.repo.addConfig("user.name", "dummy")
+    await this.repo.addConfig("user.email", "dummy")
+    await this.repo.commit("first commit!");
+    this.repo = null;
+    return `initialize completed: ${_path}`;
+  };
+  this.checkout = async _path=>{
+    this.repo = null; this.root = null; this.current = null;
+    if(!await this.exist(this.path(_path))) return null;
+    this.repo = Git(_path);
     this.root = _path;
     this.current = "";
   };
+  this.connect = async callback=>{
+    if(!!this.repo) return null;
+    try{
+      await this.repo.clean("dfx");
+      result = await callback();
+      await this.repo.add("./*");
+      await this.repo.commit("Database commit!");
+      return result;
+    }catch(e){ await this.repo.clean("dfx"); }
+  };
+
+  // node
   this.path = (_path="")=>path.resolve(path.join(this.root, this.current), _path);
   this.exist = async _path=>await fs.stat(this.path(_path)).catch(()=>null);
   this.child = async _path=>{
@@ -35,5 +64,8 @@ module.exports = (()=>{
     if(!await this.exist(this.path(_path))) return null;
     return this.current = _path;
   };
+
+  // Commnds
+  this.pwd = ()=>this.current;
   return this;
 })();
