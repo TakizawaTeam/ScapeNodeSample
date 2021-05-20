@@ -2,55 +2,14 @@ const path = require("path");
 const fs = require('fs').promises;
 const Git = require('simple-git/promise');
 
-module.exports = (async function(){
-  this.APP = await require("./Application.js");
-  this.repo = null;
-  this.root = null;
-  this.current = null;
+module.exports = (()=>{
+  this.root = "";
+  this.current = "";
 
-  // 絶対パスへの変換とノード操作
-  this.one = {
-    format: {parent:"",key:"",value:"",created_at:"",updated_at:""},
-    model: params=>{
-      node = Object.assign(this.one.format, params);
-      node.created_at = APP.system_date();
-      node.updated_at = APP.system_date();
-      return node;
-    },
-    exist: async _path=>await fs.stat(_path).catch(()=>null),
-    list: async _path=>{
-      list = await fs.readdir(_path).catch(()=>[]);
-      return list.filter(name=>!/^\./.test(name)); //隠しファイルは非表示
-    },
-    path: node=>path.resolve(node.parent, node.key),
-    create: async node=>{
-      root_path = this.one.path(this.root);
-      _path = path.join(root_path, `${node.parent}/${node.key}`);
-      await fs.mkdir(_path,{recursive:true});
-      await fs.writeFile(path.resolve(_path, ".value"),node.value);
-      return this.one.read(node);
-    },
-    read: async node=>{
-      _path = this.one.path(node);
-      stat = await fs.stat(_path).catch(()=>null);
-      if(!!stat){
-        value = await fs.readFile(path.join(_path, ".value"), "utf-8").catch(()=>"");
-        node = Object.assign(this.one.model, {
-          parent: node.parent,
-          key: node.key,
-          value: value,
-          created_at: APP.system_date(stat["ctime"]),
-          updated_at: APP.system_date(stat["mtime"])
-        });
-      }
-      return node;
-    },
-    update: async node=>{},
-    delete: async node=>{}
-  };
-  this.initialize =  async (_path="Database")=>{
-    if(await this.one.exist(_path)) return null;
-    await this.one.create(this.one.model({key:_path}));
+  // database
+  this.initialize = async (_path="Database")=>{
+    _path = this.path(_path);
+    if(!await this.exist(_path)) this.make(_path);
     this.repo = Git(_path);
     await this.repo.init();
     await this.repo.add('.value');
@@ -61,11 +20,12 @@ module.exports = (async function(){
     return `initialize completed: ${_path}`;
   };
   this.checkout = async (_path="Database")=>{
-    if(!await this.one.exist(_path)) return null;
+    this.repo = null; this.root = ""; this.current = "";
+    if(!await this.exist(this.path(_path))) return null;
     this.repo = Git(_path);
-    this.root = await this.one.read(this.one.model({key:_path}));
-    this.current = this.root;
-    return this.current;
+    this.root = _path;
+    this.current = "";
+    return `checkout: ${_path}`;
   };
   this.connect = async callback=>{
     if(!!this.repo) return null;
@@ -78,34 +38,38 @@ module.exports = (async function(){
     }catch(e){ await this.repo.clean("dfx"); }
   };
 
-  // ノード変換(相対パス)
-  this.create = async function(_path=null){ // mk
-    if(!_path) return null;
-    nodes = _path.split("/");
-    key = nodes.pop();
-    node = this.one.model({parent: nodes.join("/"), key: key});
-    return this.one.create(node);
+  // node
+  this.path = (_path="")=>path.resolve(path.join(this.root, this.current), _path);
+  this.exist = async _path=>await fs.stat(this.path(_path)).catch(()=>null);
+  this.child = async _path=>{
+    list = await fs.readdir(this.path(_path)).catch(()=>[]);
+    return list.filter(name=>!/^\./.test(name)); //隠しファイルは非表示
   };
-  this.childs = async function(_path=null){ // ls
-    if(!_path) _path = this.one.path(this.current);
-    return this.one.list(_path);
+  this.make = async _path=>{
+    if(await this.exist(_path)) return null;
+    await fs.mkdir(this.path(_path), {recursive:true}).catch(()=>null);
+    _path = path.join(this.path(_path), ".value");
+    await fs.writeFile(_path, "");
+    return `create: ${_path}`;
   };
-  this.change_node = async function(_path=null){ // cn
-    if(!_path) return null;
-    nodes = _path.split("/");
-    key = nodes.pop();
-    node = this.one.model({parent: nodes.join("/"), key: key});
-    if(!node) return null;
-    return this.current = node;
+  this.set = async (value="",_path)=>{
+    _path = path.join(this.path(_path), ".value");
+    await fs.writeFile(_path, value).catch(()=>null);
+    return `write: ${value} ${_path}`;
+  };
+  this.catenate = async _path=>{
+    _path = path.join(this.path(_path), ".value");
+    return await fs.readFile(_path, "utf-8").catch(()=>"");
+  };
+  this.statistics = async _path=>{
+    return await fs.stat(this.path(_path)).catch(()=>null);
+  };
+  this.change = async _path=>{
+    if(!await this.exist(this.path(_path))) return null;
+    return this.current = path.join(this.current, _path);
   };
 
-  // commands 相対パス引き渡し
-  this.ls = async _path=>(await this.childs(_path)).join(" ");
-  this.mk = async _path=>await this.create(_path);
-  this.cn = async _path=>await this.change_node(_path);
+  // Commnds
+  this.pwd = ()=>this.current;
   return this;
 })();
-
-/* TODO バグをコードに直接リストアップ
-* rootのnode直下にmkすると、currentが何故か書き換わる
-*/
