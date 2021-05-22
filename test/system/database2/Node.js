@@ -1,5 +1,5 @@
 const path = require("path");
-const fs = require('fs').promises;
+const fs = require('fs-extra');
 const Git = require('simple-git/promise');
 
 module.exports = (()=>{
@@ -28,20 +28,25 @@ module.exports = (()=>{
     current = "";
     return `checkout: ${_path}`;
   };
-  connect = async callback=>{
-    if(!!repo) return null;
-    try{
-      await repo.clean("dfx");
+  rollback = async ()=>{if(repo) await repo.clean("dfx");}
+  commit = async ()=>{
+    if(!repo) return null;
+    repo.add("./*");
+    repo.commit("commit!");
+  };
+  connect = async (callback, _binding)=>{
+    if(!repo) return null;
+    await rollback(); try{
       result = await callback();
-      await repo.add("./*");
-      await repo.commit("Database commit!");
+      await commit();
       return result;
-    }catch(e){ await repo.clean("dfx"); }
+    }catch(e){ await rollback(); }
   };
 
+
   // node
-  ex_path = (_path="")=>path.resolve(path.join(root, current), _path);
-  exist = async _path=>await fs.stat(ex_path(_path)).catch(()=>null);
+  ex_path = (_path="")=>path.resolve(path.join(root, current), _path); // Lorentz
+  exist = async _path=>!!await statistics(_path);
   child = async _path=>{
     list = await fs.readdir(ex_path(_path)).catch(()=>[]);
     return list.filter(name=>!/^\./.test(name)); //隠しファイルは非表示
@@ -53,24 +58,38 @@ module.exports = (()=>{
     await fs.writeFile(_path, "");
     return `create: ${_path}`;
   };
-  set = async (value="",_path)=>{
+  set = async (value="",_path="")=>{
     _path = path.join(ex_path(_path), ".value");
     await fs.writeFile(_path, value).catch(()=>null);
     return `write: ${value} ${_path}`;
   };
   catenate = async _path=>{
     _path = path.join(ex_path(_path), ".value");
-    return await fs.readFile(_path, "utf-8").catch(()=>"");
+    return await fs.readFile(_path, "utf-8").catch(()=>null);
   };
-  statistics = async _path=>{
-    return await fs.stat(ex_path(_path)).catch(()=>null);
-  };
+  statistics = async _path=>await fs.stat(ex_path(_path)).catch(()=>null);
   change = async _path=>{
-    if(!await exist(ex_path(_path))) return null;
+    if(!await exist(_path)) return null;
     return current = path.join(current, _path);
+  };
+  remove = async _path=>{
+    if(!await exist(_path)) return null;
+    await fs.remove(ex_path(_path));
+  };
+  copy = async (_path, dest="")=>{
+    if(!await exist(_path)) return null;
+    if(await exist(dest)) return null;
+    await fs.copy(ex_path(_path), ex_path(dest));
+  };
+  move = async (_path, dest="")=>{
+    if(!await exist(_path)) return null;
+    if(await exist(dest)) return null;
+    await fs.move(ex_path(_path), ex_path(dest));
   };
 
   // Commnds
   pwd = ()=>current;
+  explor = async _path=>{};
+  survey = async _path=>{};
   return this;
 })();
