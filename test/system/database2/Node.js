@@ -10,7 +10,7 @@ module.exports = (()=>{
   // database
   initialize = async (_path="Database")=>{
     _path = ex_path(_path);
-    if(!await exist(_path)) this.make(_path);
+    if(!await exist(_path)) await make(_path);
     repo = Git(_path);
     await repo.init();
     await repo.add('.value');
@@ -34,7 +34,7 @@ module.exports = (()=>{
     repo.add("./*");
     repo.commit("commit!");
   };
-  connect = async (callback, _binding)=>{
+  connect = async callback=>{
     if(!repo) return null;
     await rollback(); try{
       result = await callback();
