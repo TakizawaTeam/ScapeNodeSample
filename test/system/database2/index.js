@@ -3,7 +3,7 @@ const Node = require('./Node.js');
 (async ()=>{
   await initialize();
   await checkout();
-  await connect(async function(){
+  await correct(async function(){
     if(await exist("user")) await remove("user");
     await make("user");
     await change("user");
@@ -15,4 +15,5 @@ const Node = require('./Node.js');
     await remove("n-mizunuma@froide.co.jp/name");
     // throw "rollback test!";
   });
+  console.log(await repo.log());
 }).bind(Node)();

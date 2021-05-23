@@ -18,7 +18,7 @@ module.exports = (()=>{
     await repo.addConfig("user.email", "dummy")
     await repo.commit("first commit!");
     repo = null;
-    return `initialize completed: ${_path}`;
+    return `initialize: ${_path}`;
   };
   checkout = async (_path="Database")=>{
     repo = null; root = ""; current = "";
@@ -34,7 +34,7 @@ module.exports = (()=>{
     repo.add("./*");
     repo.commit("commit!");
   };
-  connect = async callback=>{
+  correct = async callback=>{
     if(!repo) return null;
     await rollback(); try{
       result = await callback();
