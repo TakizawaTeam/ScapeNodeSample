@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const http = require('http');
 const mime = require('mime-types');
 
+const stat = async _path=>await fs.stat(_path).catch(()=>null);
 const files = [
   "dir/test.json",
   "dir/150x150.png"
@@ -10,10 +11,9 @@ const files = [
 
 const server = http.createServer(async function(req, res){
   const _path = `.${req.url}`;
-  const stat = async _path=>await fs.stat(_path).catch(()=>null);
 
-  const mime_type = mime.contentType(path.extname(_path));
   if(await stat(_path)){
+    const mime_type = mime.contentType(path.extname(_path));
     const data = await fs.readFile(_path);
     res.writeHead(200, {'content-type': mime_type});
     res.write(data);
