@@ -26,7 +26,7 @@
   "dependencies": {
     "mongodb": "^3.3.2",
     "node-repl-await": "^0.1.1",
-    "ws": "^7.2.1"
+    "ws": "^7.4.6"
   },
   "_process_names": {
     "ScapeNode-0": "ScapeNodeサーバー"
